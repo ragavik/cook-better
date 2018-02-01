@@ -1,1 +1,2 @@
-# cookbetter
+# Cook Better
+Recommendation systems have become quite an integral part for majority in the 21st century. This paper intends to focus on the Recommendation System for Personalized Recipes. Current websites and applications incorporate the factors of ingredients available to the user, rating of the user and the recipe, but not on preferences and requirements of the user. We concentrate on a Personalized Recommendation System that takes into account the health conditions and dietary restrictions over and above what the present Recommendation Systems offer.We propose to deliver recipes engineered to an individual preference level by means of a slack bot with an aim of providing users with a convenient and easy-to-interact-with interface.
