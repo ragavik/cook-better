@@ -58,7 +58,7 @@ public class ResponseConstructionUtil {
         actionsitem_age.put("name","age");
         actionsitem_age.put("text","Plase enter your Age");
         actionsitem_age.put("type","textbox");
-        actions.put("Age_action",actionsitem_age);
+        actions.put(actionsitem_age);
         JSONObject actionsitem_allergies=new JSONObject();
         actionsitem_allergies.put("name","Allergies");
         actionsitem_allergies.put("text","Please check the allergies you suffer from");
@@ -76,6 +76,11 @@ public class ResponseConstructionUtil {
         options.put(option1);
         options.put(option2);
         options.put(option3);
+        actionsitem_allergies.put("options", options);
+        actions.put(actionsitem_allergies);
+        item_personalise.put("actions", actions);
+        attachments.put(item_personalise);
+        response.put("attachments", attachments);
         return response;
     }
 
