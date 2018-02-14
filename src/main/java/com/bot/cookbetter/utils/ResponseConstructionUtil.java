@@ -3,10 +3,17 @@ package com.bot.cookbetter.utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class ResponseConstructionUtil {
 
     private static ResponseConstructionUtil responseConstructionUtil;
+    final Logger logger = LoggerFactory.getLogger(ResponseConstructionUtil.class);
 
     public static ResponseConstructionUtil getInstance() {
         if(responseConstructionUtil == null) {
@@ -16,34 +23,24 @@ public class ResponseConstructionUtil {
     }
 
     public JSONObject invokeSearch() throws JSONException {
-        // Sample JSON constructed
-        // Values should be populated from the database
-        JSONObject response = new JSONObject();
-        response.put("text", "Choose Ingredients");
-        response.put("response_type", "in_channel");
-        JSONArray attachments = new JSONArray();
-        JSONObject item = new JSONObject();
-        item.put("text", "Ingredients");
-        item.put("attachment_type", "default");
-        JSONArray actions = new JSONArray();
-        JSONObject actionsItem = new JSONObject();
-        actionsItem.put("name", "ingredients_list");
-        actionsItem.put("text", "Select ingredients...");
-        actionsItem.put("type", "select");
-        JSONArray options = new JSONArray();
-        JSONObject option1 = new JSONObject();
-        option1.put("text", "Onion");
-        option1.put("value", "onion");
-        JSONObject option2 = new JSONObject();
-        option2.put("text", "Tomato");
-        option2.put("value", "tomato");
-        options.put(option1);
-        options.put(option2);
-        actionsItem.put("options", options);
-        actions.put(actionsItem);
-        item.put("actions", actions);
-        attachments.put(item);
-        response.put("attachments", attachments);
+        JSONObject response;
+        String result = "";
+        try {
+            InputStream is = getClass().getResourceAsStream("/search_options.json");
+            //BufferedReader br = new BufferedReader(new FileReader("./resources/search_options.json"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+            while (line != null) {
+                sb.append(line);
+                line = br.readLine();
+            }
+            result = sb.toString();
+            logger.info(result);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        response = new JSONObject(result);
         return response;
     }
 
@@ -58,7 +55,7 @@ public class ResponseConstructionUtil {
         actionsitem_age.put("name","age");
         actionsitem_age.put("text","Plase enter your Age");
         actionsitem_age.put("type","textbox");
-        actions.put("Age_action",actionsitem_age);
+        actionsitem_age.put("Age_action",actionsitem_age);
         JSONObject actionsitem_allergies=new JSONObject();
         actionsitem_allergies.put("name","Allergies");
         actionsitem_allergies.put("text","Please check the allergies you suffer from");

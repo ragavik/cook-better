@@ -1,0 +1,154 @@
+{
+   "text":"Search for Recipes",
+   "response_type":"in_channel",
+   "attachments":[
+      {
+         "text":"Select Ingredients (at least 1):",
+         "color":"#3AA3E3",
+         "attachment_type":"default",
+         "callback_id":"ingredients_callback",
+         "actions":[
+            {
+               "name":"ingredient_1",
+               "text":"Ingredient 1",
+               "type":"select",
+               "options":[
+                  {
+                     "text":"test 1",
+                     "value":"test 1"
+                  }
+               ]
+            },
+            {
+               "name":"ingredient_2",
+               "text":"Ingredient 2",
+               "type":"select",
+               "options":[
+                  {
+                     "text":"test 2",
+                     "value":"test 2"
+                  }
+               ]
+            },
+            {
+               "name":"ingredient_2",
+               "text":"Ingredient 2",
+               "type":"select",
+               "options":[
+                  {
+                     "text":"test 3",
+                     "value":"test 3"
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "text":"What type of a recipe do you want? (Optional)",
+         "color":"#3AA3E3",
+         "attachment_type":"default",
+         "callback_id":"recipe_type_callback",
+         "actions":[
+            {
+               "name":"recipe_type",
+               "text":"Recipe Type",
+               "type":"select",
+               "options":[
+                  {
+                     "text":"Breakfast",
+                     "value":"breakfast"
+                  },
+                  {
+                     "text":"Lunch",
+                     "value":"lunch"
+                  },
+                  {
+                     "text":"Dinner",
+                     "value":"dinner"
+                  },
+                  {
+                     "text":"Dessert",
+                     "value":"dessert"
+                  },
+                  {
+                     "text":"Appetizer",
+                     "value":"appetizer"
+                  },
+                  {
+                     "text":"Smoothie",
+                     "value":"smoothie"
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "text":"Do you want a recipe you can make under 30 minutes? (Optional)",
+         "color":"#3AA3E3",
+         "attachment_type":"default",
+         "callback_id":"quick_meal_callback",
+         "actions":[
+            {
+               "name":"quick_meal",
+               "text":"Yes",
+               "type":"button",
+               "value":"yes"
+            },
+            {
+               "name":"quick_meal",
+               "text":"No",
+               "type":"button",
+               "value":"no"
+            }
+         ]
+      },
+      {
+         "text":"Is this for a special occasion? (Optional)",
+         "color":"#3AA3E3",
+         "attachment_type":"default",
+         "callback_id":"special_occasion_callback",
+         "actions":[
+            {
+               "name":"special_occasions",
+               "type":"select",
+               "text":"Special Occasion",
+               "options":[
+                  {
+                     "text":"Birthday",
+                     "value":"birthday"
+                  },
+                  {
+                     "text":"Anniversary",
+                     "value":"anniversary"
+                  },
+                  {
+                     "text":"Christmas",
+                     "value":"christmas"
+                  },
+                  {
+                     "text":"Halloween",
+                     "value":"halloween"
+                  },
+                  {
+                     "text":"Easter",
+                     "value":"easter"
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "text":"",
+         "attachment_type":"default",
+         "callback_id":"search_button_callback",
+         "actions":[
+            {
+               "name":"search_button",
+               "text":"Find Recipes",
+               "type":"button",
+               "value":"pressed"
+            }
+         ]
+      }
+   ]
+}

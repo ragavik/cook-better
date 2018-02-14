@@ -7,7 +7,9 @@ import org.springframework.http.*;
 
 import org.springframework.web.client.RestTemplate;
 
+
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
 import java.util.*;
 
 public class RequestHandlerUtil {
@@ -40,6 +42,17 @@ public class RequestHandlerUtil {
         }
     }
 
+    public void handleInteractiveSlackRequest(HttpServletRequest request) {
+        logger.info("Inside actual interactive method");
+        Enumeration<String> headerNames = request.getHeaderNames();
+        Enumeration<String> params = request.getParameterNames();
+        while(params.hasMoreElements()){
+            String paramName = params.nextElement();
+            logger.info("Parameter Name - "+paramName+", Value - "+request.getParameter(paramName));
+        }
+
+    }
+
     private Map<String, String> readSlackRequest(HttpServletRequest request) throws Exception {
         Map<String, String> requestMap = new HashMap<>();
 
@@ -52,7 +65,7 @@ public class RequestHandlerUtil {
         requiredParams.add("response_url");
 
         Map<String, String[]> paramMap = request.getParameterMap();
-
+        // TODO: Remove this code
         for(String param : requiredParams) {
             if(paramMap.containsKey(param)) {
                 requestMap.put(param, paramMap.get(param)[0]);
@@ -82,6 +95,16 @@ public class RequestHandlerUtil {
         HttpEntity<String> httpEntity = new HttpEntity<String>(responseObj.toString(), httpHeaders);
         String result = restTemplate.postForObject(response_url, httpEntity, String.class);
         return result;
+    }
+
+    private Map<String, String> getUserSearchSelection() {
+        Map<String, String> selection = new HashMap<>();
+
+        // TODO: Get user selection from Slack request & populate map
+        selection.put("user_id", "123");
+        selection.put("ingredient_1", "beef");
+
+        return selection;
     }
 
 }

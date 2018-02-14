@@ -27,6 +27,12 @@ public class BaseController {
         RequestHandlerUtil.getInstance().handleSlackRequest(request);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/slack-interactive")
+    public void slackInteractive(HttpServletRequest request) {
+        logger.info("Inside interactive method");
+        RequestHandlerUtil.getInstance().handleInteractiveSlackRequest(request);
+    }
+
 
 
 }
