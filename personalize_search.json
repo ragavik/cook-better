@@ -1,0 +1,62 @@
+{
+   "text":"Personalize your search by selecting the below options",
+   "response_type":"in_channel",
+   "attachments":[
+      {
+         "text":"Select your age group",
+         "color":"#3AA3E3",
+         "attachment_type":"default",
+         "callback_id":"age_callback",
+         "actions":[
+            {
+               "name":"agegroup_1",
+               "text":"Select Age group",
+               "type":"select",
+               "options":[
+                  {
+                     "text":"< 15 years",
+                     "value":"Less than 10"
+                  },
+                  {
+                     "text":"15-30 years",
+                     "value":"Teenage and early adults"
+                  },
+                  {
+                     "text":"30-45 years",
+                     "value":"Mid life"
+                  },
+                  {
+                     "text":"15-60 years",
+                     "value":"About to be old"
+                  },
+                  {
+                     "text":"> 60 years",
+                     "value":"Really Old"
+                  }
+
+               ]
+            },
+{
+         "text":"Do you have Allergies?",
+         "color":"#3AA3E3",
+         "attachment_type":"default",
+         "callback_id":"allergies_callback",
+         "actions":[
+            {
+               "name":"allergies",
+               "text":"Yes",
+               "type":"button",
+               "value":"yes"
+            },
+            {
+               "name":"Allergies",
+               "text":"No",
+               "type":"button",
+               "value":"no"
+            }
+         ]
+      }
+         ]
+      }
+   ]
+}
