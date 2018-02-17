@@ -1,6 +1,6 @@
 {
    "text":"Search for Recipes",
-   "response_type":"in_channel",
+   "response_type":"ephemeral",
    "attachments":[
       {
          "text":"Select Ingredients (at least 1):",
@@ -31,8 +31,8 @@
                ]
             },
             {
-               "name":"ingredient_2",
-               "text":"Ingredient 2",
+               "name":"ingredient_3",
+               "text":"Ingredient 3",
                "type":"select",
                "options":[
                   {
