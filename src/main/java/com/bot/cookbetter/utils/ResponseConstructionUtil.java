@@ -22,12 +22,11 @@ public class ResponseConstructionUtil {
         return responseConstructionUtil;
     }
 
-    public JSONObject invokeSearch() throws JSONException {
+    public JSONObject readJSONFile(String fileName) {
         JSONObject response;
         String result = "";
         try {
-            InputStream is = getClass().getResourceAsStream("/search_options.json");
-            //BufferedReader br = new BufferedReader(new FileReader("./resources/search_options.json"));
+            InputStream is = getClass().getResourceAsStream(fileName);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
@@ -42,6 +41,10 @@ public class ResponseConstructionUtil {
         }
         response = new JSONObject(result);
         return response;
+    }
+
+    public JSONObject invokeSearch() throws JSONException {
+        return readJSONFile("/search_options.json");
     }
 
     public JSONObject personalize() {
