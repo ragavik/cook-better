@@ -1,5 +1,6 @@
 package com.bot.cookbetter.utils;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,34 @@ public class RequestHandlerUtil {
             String paramName = params.nextElement();
             logger.info("Parameter Name - "+paramName+", Value - "+request.getParameter(paramName));
         }
+        String payload = request.getParameter("payload");
+        JSONObject payloadObject = new JSONObject(payload);
+        JSONArray actions = payloadObject.getJSONArray("actions");
+        JSONObject actionObject = actions.getJSONObject(0);
+        String selectedValue = "";
+        String type = actionObject.getString("type");
+        String name = actionObject.getString("name");
 
+        JSONObject userObject = payloadObject.getJSONObject("user");
+        String userID = userObject.getString("id");
+
+        if("button".equals(type)){
+            selectedValue = actionObject.getString("value");
+            logger.info("---------------- !!!!!!!!!!!! -------------------");
+            logger.info("Selected value is : "+selectedValue);
+            logger.info("---------------- !!!!!!!!!!!! -------------------");
+        }
+        else{
+            logger.info("---------------- !!!!!!!!!!!! -------------------");
+            logger.info("Selected name is : "+name);
+            logger.info("---------------- !!!!!!!!!!!! -------------------");
+
+            JSONArray selectedOptionsArray = actionObject.getJSONArray("selected_options");
+            selectedValue = selectedOptionsArray.getJSONObject(0).getString("value");
+            logger.info("---------------- !!!!!!!!!!!! -------------------");
+            logger.info("Selected value is : "+selectedValue);
+            logger.info("---------------- !!!!!!!!!!!! -------------------");
+        }
     }
 
     private Map<String, String> readSlackRequest(HttpServletRequest request) throws Exception {
