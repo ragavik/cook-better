@@ -17,6 +17,7 @@ public class RequestHandlerUtil {
 
     private static RequestHandlerUtil requestHandlerUtil;
     final Logger logger = LoggerFactory.getLogger(RequestHandlerUtil.class);
+    private static Map<String, UserOptions> searchSession = new HashMap<>();
 
     public static RequestHandlerUtil getInstance() {
         if(requestHandlerUtil == null) {
@@ -26,11 +27,11 @@ public class RequestHandlerUtil {
     }
 
     /*
-    * Method to handle incoming Slack request:
-    * 1) Read request & extract necessary parameters
-    * 2) Construct JSON object for slash command
-    * 3) Send POST response
-    */
+     * Method to handle incoming Slack request:
+     * 1) Read request & extract necessary parameters
+     * 2) Construct JSON object for slash command
+     * 3) Send POST response
+     */
     public void handleSlackRequest(HttpServletRequest request) {
         try {
             Map requestMap = readSlackRequest(request);
@@ -79,6 +80,50 @@ public class RequestHandlerUtil {
             logger.info("Selected value is : "+selectedValue);
             logger.info("---------------- !!!!!!!!!!!! -------------------");
         }
+
+        UserOptions user = searchSession.get(userID);
+        if(user == null){
+            user = new UserOptions(userID);
+        }
+
+        switch(name){
+            case "ingredient_1":
+                user.setIngredient(1,selectedValue);
+                break;
+
+            case "ingredient_2":
+                user.setIngredient(2,selectedValue);
+                break;
+
+            case "ingredient_3":
+                user.setIngredient(3,selectedValue);
+                break;
+
+            case "recipe_type":
+                user.setRecipeType(selectedValue);
+                break;
+
+            case "quick_meal":
+                user.setQuickMeal(selectedValue);
+                break;
+
+            case "special_occasions":
+                user.setSpecialOccasion(selectedValue);
+                break;
+
+            case "search_button":
+                user.startSearch();
+                break;
+
+        }
+
+        searchSession.put(userID,user);
+        logger.info("------- Map Contents --------");
+        int x = searchSession.size();
+        logger.info("Size of map is: "+x);
+        user.printDetails();
+
+
     }
 
     private Map<String, String> readSlackRequest(HttpServletRequest request) throws Exception {
@@ -91,6 +136,8 @@ public class RequestHandlerUtil {
         requiredParams.add("team_id");
         requiredParams.add("text");
         requiredParams.add("response_url");
+        requiredParams.add("channel");
+        requiredParams.add("token");
 
         Map<String, String[]> paramMap = request.getParameterMap();
         // TODO: Remove this code
@@ -123,16 +170,6 @@ public class RequestHandlerUtil {
         HttpEntity<String> httpEntity = new HttpEntity<String>(responseObj.toString(), httpHeaders);
         String result = restTemplate.postForObject(response_url, httpEntity, String.class);
         return result;
-    }
-
-    private Map<String, String> getUserSearchSelection() {
-        Map<String, String> selection = new HashMap<>();
-
-        // TODO: Get user selection from Slack request & populate map
-        selection.put("user_id", "123");
-        selection.put("ingredient_1", "beef");
-
-        return selection;
     }
 
 }

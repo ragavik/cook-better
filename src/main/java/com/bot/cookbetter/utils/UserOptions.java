@@ -1,4 +1,6 @@
 package com.bot.cookbetter.utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserOptions {
     private String userID;
@@ -6,6 +8,9 @@ public class UserOptions {
     private String recipeType;
     private String specialOccasion;
     private boolean quickMeal;
+
+
+    final Logger logger = LoggerFactory.getLogger(RequestHandlerUtil.class);
 
     public UserOptions(String userID){
         this.userID = userID;
@@ -38,5 +43,20 @@ public class UserOptions {
 
     public void setSpecialOccasion(String value){
         this.specialOccasion = value;
+    }
+
+    public void printDetails(){
+        logger.info(this.userID);
+        logger.info(this.ing1);
+        logger.info(this.ing2);
+        logger.info(this.ing3);
+        logger.info(""+this.quickMeal);
+        logger.info(this.recipeType);
+        logger.info(this.specialOccasion);
+
+    }
+
+    public void startSearch(){
+        logger.info("Search has started!!!");
     }
 }
