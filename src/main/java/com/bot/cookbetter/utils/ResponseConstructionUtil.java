@@ -48,7 +48,7 @@ public class ResponseConstructionUtil {
         JSONObject response;
         String result = "";
         try {
-            InputStream is = getClass().getResourceAsStream("/personalize_options.json");
+            InputStream is = getClass().getResourceAsStream("/personalize_search.json");
             //BufferedReader br = new BufferedReader(new FileReader("./resources/search_options.json"));
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             StringBuilder sb = new StringBuilder();
