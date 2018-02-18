@@ -21,6 +21,26 @@ public class ResponseConstructionUtil {
         }
         return responseConstructionUtil;
     }
+    public JSONObject readJSONFile(String fileName) {
+        JSONObject response;
+        String result = "";
+        try {
+            InputStream is = getClass().getResourceAsStream(fileName);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+            while (line != null) {
+                sb.append(line);
+                line = br.readLine();
+            }
+            result = sb.toString();
+            logger.info(result);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        response = new JSONObject(result);
+        return response;
+    }
 
     public JSONObject invokeSearch() throws JSONException {
         JSONObject response;
@@ -44,7 +64,7 @@ public class ResponseConstructionUtil {
         return response;
     }
 
-    public JSONObject personalize() {
+    public JSONObject personalize() throws JSONException {
         JSONObject response;
         String result = "";
         try {
