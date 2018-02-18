@@ -120,14 +120,30 @@
               "callback_id": "diet_rest_callback",
               "actions": [
                 {
-                  "name": "diet_rest",
+                  "name": "diet_rest_2",
                   "text": "Gluten free",
                   "type": "button",
                   "value": "glu_free"
             }
          ]
 
-      }
+      },
+     {
+       "text": "",
+       "color": "#3AA3E3",
+       "attachment_type": "default",
+       "callback_id": "diet_rest_callback",
+       "actions": [
+         {
+           "name": "diet_rest_3",
+           "text": "Alcohol free",
+           "type": "button",
+           "value": "alc_free"
+         }
+       ]
+
+     }
+
 
 
 
