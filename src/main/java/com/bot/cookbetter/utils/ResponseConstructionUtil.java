@@ -65,25 +65,7 @@ public class ResponseConstructionUtil {
     }
 
     public JSONObject personalize() throws JSONException {
-        JSONObject response;
-        String result = "";
-        try {
-            InputStream is = getClass().getResourceAsStream("/personalize_search.json");
-            //BufferedReader br = new BufferedReader(new FileReader("./resources/search_options.json"));
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-            while (line != null) {
-                sb.append(line);
-                line = br.readLine();
-            }
-            result = sb.toString();
-            logger.info(result);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        response = new JSONObject(result);
-        return response;
+        return readJSONFile("/personalize_search.json");
     }
 
 }
