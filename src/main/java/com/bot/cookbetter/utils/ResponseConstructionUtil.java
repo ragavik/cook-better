@@ -48,35 +48,7 @@ public class ResponseConstructionUtil {
     }
 
     public JSONObject personalize() {
-        JSONObject response = new JSONObject();
-        JSONArray attachments=new JSONArray();
-        response.put("text", "Please select the below preferences in order to Personalise your search");
-        response.put("response_type","in_channel");
-        JSONObject item_personalise=new JSONObject();
-        JSONArray actions = new JSONArray();
-        JSONObject actionsitem_age=new JSONObject();
-        actionsitem_age.put("name","age");
-        actionsitem_age.put("text","Plase enter your Age");
-        actionsitem_age.put("type","textbox");
-        actionsitem_age.put("Age_action",actionsitem_age);
-        JSONObject actionsitem_allergies=new JSONObject();
-        actionsitem_allergies.put("name","Allergies");
-        actionsitem_allergies.put("text","Please check the allergies you suffer from");
-        actionsitem_allergies.put("type","checkbox");
-        JSONArray options=new JSONArray();
-        JSONObject option1 = new JSONObject();
-        option1.put("text", "Lactose");
-        option1.put("value", "Lactose");
-        JSONObject option2 = new JSONObject();
-        option2.put("text", "kiwi");
-        option2.put("value", "kiwi");
-        JSONObject option3 = new JSONObject();
-        option3.put("text", "Peanut");
-        option3.put("value", "Peanut");
-        options.put(option1);
-        options.put(option2);
-        options.put(option3);
-        return response;
+        return readJSONFile("/personalize_search.json");
     }
 
 }

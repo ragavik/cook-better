@@ -157,6 +157,7 @@ public class RequestHandlerUtil {
             responseObj = ResponseConstructionUtil.getInstance().invokeSearch();
         }
         else if("/personalize".equals(command)) {
+
             responseObj = ResponseConstructionUtil.getInstance().personalize();
         }
         return responseObj;
