@@ -37,27 +37,7 @@
             }
          ]
       },
-            {
-               "text": "Do you have Allergies?",
-               "color": "#3AA3E3",
-               "attachment_type": "default",
-               "callback_id": "allergies_callback",
-               "actions": [
-                  {
-                     "name": "allergies",
-                     "text": "Yes",
-                     "type": "button",
-                     "value": "yes"
-                  },
-                  {
-                     "name": "allergies",
-                     "text": "No",
-                     "type": "button",
-                     "value": "no"
-                  }
-               ]
-            }
-      ,
+
       {
          "text": "Select Allergies if any",
          "color": "#3AA3E3",
@@ -142,7 +122,99 @@
          }
        ]
 
+     },
+     {
+       "text": "Please select if you are suffering from any ailmets shown below",
+       "color": "#3AA3E3",
+       "attachment_type": "default",
+       "callback_id": "ailments_callback",
+       "actions": [
+         {
+           "name": "ailment_1",
+           "text": "Cholestrol",
+           "type": "button",
+           "value": "fat"
+         }
+       ]
+     },
+     {
+       "text": "",
+       "color": "#3AA3E3",
+       "attachment_type": "default",
+       "callback_id": "ailments_callback",
+       "actions": [
+         {
+           "name": "ailment_2",
+           "text": "Diabetes",
+           "type": "button",
+           "value": "sugar"
+         }
+       ]
+
+     },
+     {
+       "text": "",
+       "color": "#3AA3E3",
+       "attachment_type": "default",
+       "callback_id": "ailments_callback",
+       "actions": [
+         {
+           "name": "ailment_3",
+           "text": "Weak Kidney",
+           "type": "button",
+           "value": "protein"
+         }
+       ]
+
+
+     },
+     {
+       "text": "Do you wish to be healthy? How?",
+       "color": "#3AA3E3",
+       "attachment_type": "default",
+       "callback_id": "diet_goals_callback",
+       "actions": [
+         {
+           "name": "diet_goal_1",
+           "text": "Lose weight",
+           "type": "button",
+           "value": "fat"
+         }
+       ]
+     },
+     {
+       "text": "",
+       "color": "#3AA3E3",
+       "attachment_type": "default",
+       "callback_id": "diet_goals_callback",
+       "actions": [
+         {
+           "name": "diet_goal_2",
+           "text": "Gain weight",
+           "type": "button",
+           "value": "thin"
+         }
+       ]
+
+     },
+     {
+       "text": "",
+       "color": "#3AA3E3",
+       "attachment_type": "default",
+       "callback_id": "diet_goal_callback",
+       "actions": [
+         {
+           "name": "diet_goal_3",
+           "text": "Gain muscle",
+           "type": "button",
+           "value": "muscle"
+         }
+       ]
+
+
      }
+
+
 
 
 
