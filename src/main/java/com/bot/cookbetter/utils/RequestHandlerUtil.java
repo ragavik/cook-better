@@ -18,6 +18,8 @@ public class RequestHandlerUtil {
     private static RequestHandlerUtil requestHandlerUtil;
     final Logger logger = LoggerFactory.getLogger(RequestHandlerUtil.class);
     private static Map<String, UserOptions> searchSession = new HashMap<>();
+    private static Map<String, PersonalizeOptions> personalizeSession=new HashMap<>();
+
 
     public static RequestHandlerUtil getInstance() {
         if(requestHandlerUtil == null) {
@@ -86,6 +88,11 @@ public class RequestHandlerUtil {
             user = new UserOptions(userID);
         }
 
+        PersonalizeOptions p_user = personalizeSession.get(userID);
+        if(p_user == null){
+            p_user = new PersonalizeOptions(userID);
+        }
+
         switch(name){
             case "ingredient_1":
                 user.setIngredient(1,selectedValue);
@@ -114,6 +121,64 @@ public class RequestHandlerUtil {
             case "search_button":
                 user.startSearch();
                 break;
+
+//personalize options start here:
+            case "agegroup_1":
+                p_user.setAge(selectedValue);
+                break;
+
+            case "allergy_1":
+                p_user.setAllegies(1,selectedValue);
+                break;
+
+            case "allergy_2":
+                p_user.setAllegies(2,selectedValue);
+                break;
+
+            case "allergy_3":
+                p_user.setAllegies(3,selectedValue);
+                break;
+
+            case "diet_rest_1":
+                p_user.setDietRestrictions(1,selectedValue);
+                break;
+
+            case "diet_rest_2":
+                p_user.setDietRestrictions(2,selectedValue);
+                break;
+
+            case "diet_rest_3":
+                p_user.setDietRestrictions(3,selectedValue);
+                break;
+
+            case "ailment_1":
+                p_user.setDisease(1,selectedValue);
+                break;
+
+            case "ailment_2":
+                p_user.setDisease(1,selectedValue);
+                break;
+
+            case "ailment_3":
+                p_user.setDisease(1,selectedValue);
+                break;
+
+            case "diet_goal_1":
+                p_user.setGoals(1,selectedValue);
+                break;
+
+            case "diet_goal_2":
+                p_user.setGoals(1,selectedValue);
+                break;
+
+            case "diet_goal_3":
+                p_user.setGoals(1,selectedValue);
+                break;
+
+            case "submit_button":
+                p_user.submitPreferences();
+                break;
+
 
         }
 
