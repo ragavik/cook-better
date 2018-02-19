@@ -212,10 +212,20 @@
       ]
 
 
+    },
+    {
+      "text": "",
+      "attachment_type": "default",
+      "callback_id": "search_button_callback",
+      "actions": [
+        {
+          "name": "submit_button",
+          "text": "Submit Preferences",
+          "type": "button",
+          "value": "pressed"
+        }
+      ]
     }
-
-
-
 
 
 
