@@ -92,6 +92,8 @@ public class RequestHandlerUtil {
         if(p_user == null){
             p_user = new PersonalizeOptions(userID);
         }
+        
+        DatabaseConnection dbcon=new DatabaseConnection();
 
         switch(name){
             case "ingredient_1":
@@ -177,6 +179,7 @@ public class RequestHandlerUtil {
 
             case "submit_button":
                 p_user.submitPreferences();
+                dbcon.insertPersonalizeData(p_user);
                 break;
 
 
