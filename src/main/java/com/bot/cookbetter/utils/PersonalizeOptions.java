@@ -5,12 +5,12 @@ import org.slf4j.LoggerFactory;
 
 public class PersonalizeOptions {
 
-    private String userID;
-    private String age;
-    private String all1,all2,all3;
-    private String res1,res2,res3;
-    private String dis1,dis2,dis3;
-    private String goal1,goal2,goal3;
+    public String userID;
+    public String age;
+    public String all1,all2,all3;
+    public String res1,res2,res3;
+    public String dis1,dis2,dis3;
+    public String goal1,goal2,goal3;
 
     final Logger logger = LoggerFactory.getLogger(RequestHandlerUtil.class);
 

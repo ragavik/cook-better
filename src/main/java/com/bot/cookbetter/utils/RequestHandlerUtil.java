@@ -38,7 +38,8 @@ public class RequestHandlerUtil {
         try {
             Map requestMap = readSlackRequest(request);
             JSONObject responseObj = handleSlashCommand(requestMap);
-            String result = sendSlackResponse(requestMap, responseObj);
+            String response_url = (String) requestMap.get("response_url");
+            String result = sendSlackResponse(response_url, responseObj);
             logger.debug(requestMap.get("command") + ": " + result);
         }
         catch (Exception e) {
@@ -47,151 +48,136 @@ public class RequestHandlerUtil {
     }
 
     public void handleInteractiveSlackRequest(HttpServletRequest request) {
-        logger.info("Inside actual interactive method");
-        Enumeration<String> headerNames = request.getHeaderNames();
-        Enumeration<String> params = request.getParameterNames();
-        while(params.hasMoreElements()){
-            String paramName = params.nextElement();
-            logger.info("Parameter Name - "+paramName+", Value - "+request.getParameter(paramName));
+        try {
+            String payload = request.getParameter("payload");
+            JSONObject payloadObject = new JSONObject(payload);
+            JSONArray actions = payloadObject.getJSONArray("actions");
+            JSONObject actionObject = actions.getJSONObject(0);
+            String selectedValue = "";
+            String type = actionObject.getString("type");
+            String name = actionObject.getString("name");
+            String response_url = payloadObject.getString("response_url");
+            JSONObject userObject = payloadObject.getJSONObject("user");
+            String userID = userObject.getString("id");
+
+            if ("button".equals(type)) {
+                selectedValue = actionObject.getString("value");
+            } else {
+                JSONArray selectedOptionsArray = actionObject.getJSONArray("selected_options");
+                selectedValue = selectedOptionsArray.getJSONObject(0).getString("value");
+            }
+
+            UserOptions user = searchSession.get(userID);
+            if (user == null) {
+                user = new UserOptions(userID);
+            }
+
+            PersonalizeOptions p_user = personalizeSession.get(userID);
+            if (p_user == null) {
+                p_user = new PersonalizeOptions(userID);
+            }
+
+            DatabaseConnection dbcon = new DatabaseConnection();
+
+            switch (name) {
+                // Handling selections for searchrecipes command
+                case "ingredient_1":
+                    user.setIngredient(1, selectedValue);
+                    break;
+
+                case "ingredient_2":
+                    user.setIngredient(2, selectedValue);
+                    break;
+
+                case "ingredient_3":
+                    user.setIngredient(3, selectedValue);
+                    break;
+
+                case "recipe_type":
+                    user.setRecipeType(selectedValue);
+                    break;
+
+                case "quick_meal":
+                    user.setQuickMeal(selectedValue);
+                    break;
+
+                case "special_occasions":
+                    user.setSpecialOccasion(selectedValue);
+                    break;
+
+                case "search_button":
+                    user.startSearch(response_url);
+                    user = null;
+                    break;
+
+                // Handling selections for personalize command
+                case "agegroup_1":
+                    p_user.setAge(selectedValue);
+                    break;
+
+                case "allergy_1":
+                    p_user.setAllegies(1, selectedValue);
+                    break;
+
+                case "allergy_2":
+                    p_user.setAllegies(2, selectedValue);
+                    break;
+
+                case "allergy_3":
+                    p_user.setAllegies(3, selectedValue);
+                    break;
+
+                case "diet_rest_1":
+                    p_user.setDietRestrictions(1, selectedValue);
+                    break;
+
+                case "diet_rest_2":
+                    p_user.setDietRestrictions(2, selectedValue);
+                    break;
+
+                case "diet_rest_3":
+                    p_user.setDietRestrictions(3, selectedValue);
+                    break;
+
+                case "ailment_1":
+                    p_user.setDisease(1, selectedValue);
+                    break;
+
+                case "ailment_2":
+                    p_user.setDisease(1, selectedValue);
+                    break;
+
+                case "ailment_3":
+                    p_user.setDisease(1, selectedValue);
+                    break;
+
+                case "diet_goal_1":
+                    p_user.setGoals(1, selectedValue);
+                    break;
+
+                case "diet_goal_2":
+                    p_user.setGoals(1, selectedValue);
+                    break;
+
+                case "diet_goal_3":
+                    p_user.setGoals(1, selectedValue);
+                    break;
+
+                case "submit_button":
+                    p_user.submitPreferences();
+                    dbcon.insertPersonalizeData(p_user);
+                    break;
+            }
+
+            searchSession.put(userID, user);
+            logger.info("------- Map Contents --------");
+            int x = searchSession.size();
+            logger.info("Size of map is: " + x);
+            user.printDetails();
         }
-        String payload = request.getParameter("payload");
-        JSONObject payloadObject = new JSONObject(payload);
-        JSONArray actions = payloadObject.getJSONArray("actions");
-        JSONObject actionObject = actions.getJSONObject(0);
-        String selectedValue = "";
-        String type = actionObject.getString("type");
-        String name = actionObject.getString("name");
-
-        JSONObject userObject = payloadObject.getJSONObject("user");
-        String userID = userObject.getString("id");
-
-        if("button".equals(type)){
-            selectedValue = actionObject.getString("value");
-            logger.info("---------------- !!!!!!!!!!!! -------------------");
-            logger.info("Selected value is : "+selectedValue);
-            logger.info("---------------- !!!!!!!!!!!! -------------------");
+        catch(Exception e) {
+            logger.info(e.getMessage());
         }
-        else{
-            logger.info("---------------- !!!!!!!!!!!! -------------------");
-            logger.info("Selected name is : "+name);
-            logger.info("---------------- !!!!!!!!!!!! -------------------");
-
-            JSONArray selectedOptionsArray = actionObject.getJSONArray("selected_options");
-            selectedValue = selectedOptionsArray.getJSONObject(0).getString("value");
-            logger.info("---------------- !!!!!!!!!!!! -------------------");
-            logger.info("Selected value is : "+selectedValue);
-            logger.info("---------------- !!!!!!!!!!!! -------------------");
-        }
-
-        UserOptions user = searchSession.get(userID);
-        if(user == null){
-            user = new UserOptions(userID);
-        }
-
-        PersonalizeOptions p_user = personalizeSession.get(userID);
-        if(p_user == null){
-            p_user = new PersonalizeOptions(userID);
-        }
-        
-        DatabaseConnection dbcon=new DatabaseConnection();
-
-        switch(name){
-            case "ingredient_1":
-                user.setIngredient(1,selectedValue);
-                break;
-
-            case "ingredient_2":
-                user.setIngredient(2,selectedValue);
-                break;
-
-            case "ingredient_3":
-                user.setIngredient(3,selectedValue);
-                break;
-
-            case "recipe_type":
-                user.setRecipeType(selectedValue);
-                break;
-
-            case "quick_meal":
-                user.setQuickMeal(selectedValue);
-                break;
-
-            case "special_occasions":
-                user.setSpecialOccasion(selectedValue);
-                break;
-
-            case "search_button":
-                user.startSearch();
-                break;
-
-//personalize options start here:
-            case "agegroup_1":
-                p_user.setAge(selectedValue);
-                break;
-
-            case "allergy_1":
-                p_user.setAllegies(1,selectedValue);
-                break;
-
-            case "allergy_2":
-                p_user.setAllegies(2,selectedValue);
-                break;
-
-            case "allergy_3":
-                p_user.setAllegies(3,selectedValue);
-                break;
-
-            case "diet_rest_1":
-                p_user.setDietRestrictions(1,selectedValue);
-                break;
-
-            case "diet_rest_2":
-                p_user.setDietRestrictions(2,selectedValue);
-                break;
-
-            case "diet_rest_3":
-                p_user.setDietRestrictions(3,selectedValue);
-                break;
-
-            case "ailment_1":
-                p_user.setDisease(1,selectedValue);
-                break;
-
-            case "ailment_2":
-                p_user.setDisease(1,selectedValue);
-                break;
-
-            case "ailment_3":
-                p_user.setDisease(1,selectedValue);
-                break;
-
-            case "diet_goal_1":
-                p_user.setGoals(1,selectedValue);
-                break;
-
-            case "diet_goal_2":
-                p_user.setGoals(1,selectedValue);
-                break;
-
-            case "diet_goal_3":
-                p_user.setGoals(1,selectedValue);
-                break;
-
-            case "submit_button":
-                p_user.submitPreferences();
-                dbcon.insertPersonalizeData(p_user);
-                break;
-
-
-        }
-
-        searchSession.put(userID,user);
-        logger.info("------- Map Contents --------");
-        int x = searchSession.size();
-        logger.info("Size of map is: "+x);
-        user.printDetails();
-
-
     }
 
     private Map<String, String> readSlackRequest(HttpServletRequest request) throws Exception {
@@ -231,8 +217,7 @@ public class RequestHandlerUtil {
         return responseObj;
     }
 
-    private String sendSlackResponse(Map<String, String> requestMap, JSONObject responseObj) throws Exception {
-        String response_url = requestMap.get("response_url");
+    public String sendSlackResponse(String response_url, JSONObject responseObj) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);

@@ -32,10 +32,13 @@ dependencies {
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.json:json:20180130')
-
+	compile('com.google.code.gson:gson:2.8.2')
+	// Use MySQL Connector-J
+	compile 'mysql:mysql-connector-java'
+	//compile 'org.hsqldb:hsqldb:2.3.3'
+	compile files('libs/ojdbc7.jar')
+	compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
 }
-
-// TODO: check for gradle build
 
 tasks.withType(Test) {
 	scanForTestClasses = false
