@@ -77,7 +77,7 @@ public class RequestHandlerUtil {
                 p_user = new PersonalizeOptions(userID);
             }
 
-            DatabaseConnection dbcon = new DatabaseConnection();
+            //DatabaseConnection dbcon = new DatabaseConnection();
 
             switch (name) {
                 // Handling selections for searchrecipes command
@@ -144,11 +144,11 @@ public class RequestHandlerUtil {
                     break;
 
                 case "ailment_2":
-                    p_user.setDisease(1, selectedValue);
+                    p_user.setDisease(2, selectedValue);
                     break;
 
                 case "ailment_3":
-                    p_user.setDisease(1, selectedValue);
+                    p_user.setDisease(3, selectedValue);
                     break;
 
                 case "diet_goal_1":
@@ -156,30 +156,31 @@ public class RequestHandlerUtil {
                     break;
 
                 case "diet_goal_2":
-                    p_user.setGoals(1, selectedValue);
+                    p_user.setGoals(2, selectedValue);
                     break;
 
                 case "diet_goal_3":
-                    p_user.setGoals(1, selectedValue);
+                    p_user.setGoals(3, selectedValue);
                     break;
 
                 case "submit_button":
-                    p_user.submitPreferences();
-                    dbcon.insertPersonalizeData(p_user);
+                    p_user.submitPreferences(response_url);
+                    //dbcon.insertPersonalizeData(p_user);
+                    p_user = null;
                     break;
             }
 
             searchSession.put(userID, user);
+            personalizeSession.put(userID, p_user);
             logger.info("------- Map Contents --------");
             int x = searchSession.size();
             logger.info("Size of map is: " + x);
-            user.printDetails();
+            p_user.printDetails();
         }
         catch(Exception e) {
             logger.info(e.getMessage());
         }
     }
-
     private Map<String, String> readSlackRequest(HttpServletRequest request) throws Exception {
         Map<String, String> requestMap = new HashMap<>();
 
