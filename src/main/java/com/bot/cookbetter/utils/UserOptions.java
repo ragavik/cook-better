@@ -1,4 +1,5 @@
 package com.bot.cookbetter.utils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,12 +60,23 @@ public class UserOptions {
         logger.info(this.specialOccasion);
     }
 
-    public void startSearch(String response_url) throws Exception{
+    public void startSearch(String response_url) throws Exception {
+
+        // Error message when user does not select any ingredient
+        if(ing1 == null && ing2 == null && ing3 == null) {
+            JSONObject response = new JSONObject();
+            JSONArray attachments = new JSONArray();
+            JSONObject item = new JSONObject();
+            item.put("color", "#FF0000");
+            item.put("text", "Oops! Looks like you have not selected any ingredients. Please select at least 1 ingredient & try again!");
+            attachments.put(item);
+            response.put("attachments", attachments);
+            RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
+        }
+
         Class.forName("com.mysql.jdbc.Driver");
         String connectionUrl = "jdbc:mysql://aa7kep36bdpng2.c9oonpekeh8v.us-east-1.rds.amazonaws.com:3306/recipes?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
         Connection conn = DriverManager.getConnection(connectionUrl);
-
-
 
         String query = "select * from samplerecipes where";
         if(ing1 != null)
@@ -150,7 +162,9 @@ public class UserOptions {
         ResultSet rs = conn.prepareStatement(query).executeQuery();
         JSONObject jsonObject = new JSONObject();
         String result = "";
+        int resultCount = 0;
         while(rs.next()){
+            resultCount++;
             String id = rs.getString(1);
             String title = rs.getString(2);
             //result += title+"\n";
@@ -160,6 +174,12 @@ public class UserOptions {
             link+=modTitle+"%20";
             result+= link + "|"+title+"> \n";
         }
+
+        // Error message when no recipes are found
+        if(resultCount == 0) {
+            result = "Sorry, we couldn't find any recipes based on your search criteria right now.:worried:\nWe are working on adding more recipes *very* soon!\nPlease try searching again with different ingredients!";
+        }
+
         logger.info("The results are :");
         logger.info(result);
         jsonObject.put("text",result);
