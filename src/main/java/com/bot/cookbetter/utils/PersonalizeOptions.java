@@ -149,6 +149,7 @@ public class PersonalizeOptions {
         }
         else{
             query += "insert into personalize values ('"+ this.userID + "'";
+            query += ", '-1'";
             query += ",'"+ (this.all1 == null ? "-1" : this.all1) + "'";
             query += ",'"+ (this.all2 == null ? "-1" : this.all2) + "'";
             query += ",'"+ (this.all3 == null ? "-1" : this.all3) + "'";

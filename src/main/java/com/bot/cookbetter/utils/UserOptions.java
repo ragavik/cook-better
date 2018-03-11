@@ -153,8 +153,15 @@ public class UserOptions {
         while(rs.next()){
             String id = rs.getString(1);
             String title = rs.getString(2);
-            result += title+"\n";
+            //result += title+"\n";
+            result+="<";
+            String link = "https://www.epicurious.com/search/";
+            String modTitle = title.replaceAll(" ", "%20");
+            link+=modTitle+"%20";
+            result+= link + "|"+title+"> \n";
         }
+        logger.info("The results are :");
+        logger.info(result);
         jsonObject.put("text",result);
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);
     }
