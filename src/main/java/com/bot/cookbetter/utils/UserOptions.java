@@ -81,7 +81,7 @@ public class UserOptions {
         String connectionUrl = "jdbc:mysql://aa7kep36bdpng2.c9oonpekeh8v.us-east-1.rds.amazonaws.com:3306/recipes?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
         Connection conn = DriverManager.getConnection(connectionUrl);
 
-        String query = "select * from samplerecipes where";
+        String query = "select * from data where";
         if(ing1 != null)
             query+= " "+ing1+" =1";
         if(ing2 != null)
