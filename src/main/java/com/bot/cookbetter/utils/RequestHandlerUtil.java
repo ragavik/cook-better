@@ -181,6 +181,7 @@ public class RequestHandlerUtil {
             logger.info(e.getMessage());
         }
     }
+
     private Map<String, String> readSlackRequest(HttpServletRequest request) throws Exception {
         Map<String, String> requestMap = new HashMap<>();
 

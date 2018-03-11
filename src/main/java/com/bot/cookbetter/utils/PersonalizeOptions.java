@@ -121,36 +121,46 @@ public class PersonalizeOptions {
             break;
         }
         if(count == 1){
-            query += "update personalize set age_group='"+ this.age + "'";
-            query += ", allergy_1='"+this.all1 + "'";
-            query += ", allergy_2='"+this.all2 + "'";
-            query += ", allergy_3='"+this.all3 + "'";
-            query += ", diet_res_1='"+this.res1 + "'";
-            query += ", diet_res_2='"+this.res2 + "'";
-            query += ", diet_res_3='"+this.res3 + "'";
-            query += ", dis_1='"+this.dis1 + "'";
-            query += ", dis_2='"+this.dis2 + "'";
-            query += ", dis_3='"+this.dis3 + "'";
-            query += ", goal_lose_wt='"+this.goal1 + "'";
-            query += ", goal_gain_wt='"+this.goal2 + "'";
-            query += ", goal_gain_muscle='"+this.goal3 + "'";
+            query += "update personalize set ";
+            query += " allergy_1='" + (this.all1 == null ? "-1" : this.all1) + "'";
+            //query += ", allergy_2='"+this.all2 + "'";
+            query += ", allergy_2='" + (this.all2 == null ? "-1" : this.all2) + "'";
+            //query += ", allergy_3='"+this.all3 + "'";
+            query += ", allergy_3='" + (this.all3 == null ? "-1" : this.all3) + "'";
+            //query += ", diet_res_1='"+this.res1 + "'";
+            query += ", diet_res_1='" + (this.res1 == null ? "-1" : this.res1) + "'";
+            //query += ", diet_res_2='"+this.res2 + "'";
+            query += ", diet_res_2='" + (this.res2 == null ? "-1" : this.res2) + "'";
+            //query += ", diet_res_3='"+this.res3 + "'";
+            query += ", diet_res_3='" + (this.res3 == null ? "-1" : this.res3) + "'";
+            //query += ", dis_1='"+this.dis1 + "'";
+            query += ", dis_1='" + (this.dis1 == null ? "-1" : this.dis1) + "'";
+            //query += ", dis_2='"+this.dis2 + "'";
+            query += ", dis_2='" + (this.dis2 == null ? "-1" : this.dis2) + "'";
+            //query += ", dis_3='"+this.dis3 + "'";
+            query += ", dis_3='" + (this.dis3 == null ? "-1" : this.dis3) + "'";
+            //query += ", goal_lose_wt='"+this.goal1 + "'";
+            query += ", goal_lose_wt='" + (this.goal1 == null ? "-1" : this.goal1) + "'";
+            //query += ", goal_gain_wt='"+this.goal2 + "'";
+            query += ", goal_gain_wt='" + (this.goal2 == null ? "-1" : this.goal2) + "'";
+            //query += ", goal_gain_muscle='"+this.goal3 + "'";
+            query += ", goal_gain_muscle='" + (this.goal3 == null ? "-1" : this.goal3) + "'";
             query += " where userid = '"+this.userID + "'";
         }
         else{
             query += "insert into personalize values ('"+ this.userID + "'";
-            query += ",'"+this.age + "'";
-            query += ",'"+this.all1 + "'";
-            query += ",'"+this.all2 + "'";
-            query += ",'"+this.all3 + "'";
-            query += ",'"+this.res1 + "'";
-            query += ",'"+this.res2 + "'";
-            query += ",'"+this.res3 + "'";
-            query += ",'"+this.dis1 + "'";
-            query += ",'"+this.dis2 + "'";
-            query += ",'"+this.dis3 + "'";
-            query += ",'"+this.goal1 + "'";
-            query += ",'"+this.goal2 + "'";
-            query += ",'"+this.goal3 + "'";
+            query += ",'"+ (this.all1 == null ? "-1" : this.all1) + "'";
+            query += ",'"+ (this.all2 == null ? "-1" : this.all2) + "'";
+            query += ",'"+ (this.all3 == null ? "-1" : this.all3) + "'";
+            query += ",'"+ (this.res1 == null ? "-1" : this.res1) + "'";
+            query += ",'"+ (this.res2 == null ? "-1" : this.res2) + "'";
+            query += ",'"+ (this.res3 == null ? "-1" : this.res3) + "'";
+            query += ",'"+ (this.dis1 == null ? "-1" : this.dis1) + "'";
+            query += ",'"+ (this.dis2 == null ? "-1" : this.dis2) + "'";
+            query += ",'"+ (this.dis3 == null ? "-1" : this.dis3) + "'";
+            query += ",'"+ (this.goal1 == null ? "-1" : this.goal1) + "'";
+            query += ",'"+ (this.goal2 == null ? "-1" : this.goal2) + "'";
+            query += ",'"+ (this.goal3 == null ? "-1" : this.goal3) + "'";
             query += ");";
         }
 

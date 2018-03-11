@@ -1,9 +1,9 @@
 {
-  "text": "Personalize your search by selecting the below options",
+  "text": "Personalize your search by selecting any dietary or health restrictions.",
   "response_type": "ephemeral",
   "attachments": [
     {
-      "text": "Select Allergies if any",
+      "text": "Food Allergies",
       "color": "#3AA3E3",
       "attachment_type": "default",
       "callback_id": "allergies_callback",
@@ -35,7 +35,7 @@
             },
             {
               "text": "Milk",
-              "value": "milk_cream"
+              "value": "milk/cream"
             },
             {
               "text": "Coconut",
@@ -133,10 +133,6 @@
               "value": "milk_cream"
             },
             {
-              "text": "Coconut",
-              "value": "coconut"
-            },
-            {
               "text": "Peanuts",
               "value": "peanut"
             },
@@ -153,14 +149,14 @@
       ]
     },
     {
-      "text": "Please select any dietary restrictions from below",
+      "text": "Deitary Restrictions",
       "color": "#601a39",
       "attachment_type": "default",
       "callback_id": "diet_rest_callback",
       "actions": [
         {
           "name": "diet_rest_1",
-          "text": "Vegetarian/Vegan",
+          "text": "Vegan",
           "type": "button",
           "value": "vegan"
         },
@@ -179,7 +175,7 @@
       ]
     },
     {
-      "text": "Please select if you are suffering from any ailments shown below",
+      "text": "Health Conditions",
       "color": "#151d84",
       "attachment_type": "default",
       "callback_id": "ailments_callback",
@@ -205,7 +201,7 @@
       ]
     },
     {
-      "text": "What are your health goals?",
+      "text": "What are your weight goals?",
       "color": "#847f16",
       "attachment_type": "default",
       "callback_id": "diet_goals_callback",
@@ -238,7 +234,7 @@
       "actions": [
         {
           "name": "submit_button",
-          "text": "Submit Preferences",
+          "text": "Save Preferences",
           "type": "button",
           "value": "pressed"
         }

@@ -64,6 +64,8 @@ public class UserOptions {
         String connectionUrl = "jdbc:mysql://aa7kep36bdpng2.c9oonpekeh8v.us-east-1.rds.amazonaws.com:3306/recipes?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
         Connection conn = DriverManager.getConnection(connectionUrl);
 
+
+
         String query = "select * from samplerecipes where";
         if(ing1 != null)
             query+= " "+ing1+" =1";
@@ -78,6 +80,73 @@ public class UserOptions {
         if(specialOccasion != null)
             query += " and "+specialOccasion+" =1";
 
+        String personalQuery = "select * from personalize where userid = '"+this.userID+"';";
+        ResultSet ps = conn.prepareStatement(personalQuery).executeQuery();
+        //boolean isEmpty = true;
+        while(ps.next()){
+
+            String allergy_1 = ps.getString("allergy_1");
+            if(!"-1".equals(allergy_1))
+                query+= " and "+allergy_1+" !=1";
+
+
+            String allergy_2 = ps.getString("allergy_2");
+            if(!"-1".equals(allergy_2))
+                query+= " and "+allergy_2+" !=1";
+
+            String allergy_3 = ps.getString("allergy_3");
+            if(!"-1".equals(allergy_3))
+                query+= " and "+allergy_3+" !=1";
+
+            // Veg/vegan
+            String diet_res_1 = ps.getString("diet_res_1");
+            if(!"-1".equals(diet_res_1))
+                query+= " and "+diet_res_1+" =1";
+
+            // Gluten free
+            String diet_res_2 = ps.getString("diet_res_2");
+            if(!"-1".equals(diet_res_2))
+                query+= " and "+diet_res_2 +" =1";
+
+            //Alcohol-free
+            String diet_res_3 = ps.getString("diet_res_3");
+            if(!"-1".equals(diet_res_3))
+                query+= " and "+diet_res_3 +" =0";
+
+            //Cholestrol
+            String dis_1 = ps.getString("dis_1");
+            if(!"-1".equals(dis_1))
+                query+= " and "+dis_1 +" <= 20";
+
+            //Diabetes
+            Object dis_2 = ps.getString("dis_2");
+            if(!"-1".equals(dis_2))
+                query+= " and "+dis_2 +" = 1";
+
+            //Weak Kidney - check for protein content
+            Object dis_3 = ps.getString("dis_3");
+            if(!"-1".equals(dis_3))
+                query+= " and "+dis_3 +" <= 7";
+
+            // Lose weight - foods less than 500 calories
+            Object goal_lose_wt = ps.getString("goal_lose_wt");
+            if(!"-1".equals(goal_lose_wt))
+                query+= " and "+goal_lose_wt +" <= 500";
+
+            // Gain weight
+            Object goal_gain_wt = ps.getString("goal_gain_wt");
+            if(!"-1".equals(goal_gain_wt))
+                query+= " and "+goal_gain_wt +" >=  700";
+
+            // Gain Muscle
+            Object goal_gain_muscle = ps.getString("goal_gain_muscle");
+            if(!"-1".equals(goal_gain_muscle))
+                query+= " and "+goal_gain_muscle +" >= 20";
+            break;
+        }
+
+        logger.info("Look here:");
+        logger.info(query);
         ResultSet rs = conn.prepareStatement(query).executeQuery();
         JSONObject jsonObject = new JSONObject();
         String result = "";
