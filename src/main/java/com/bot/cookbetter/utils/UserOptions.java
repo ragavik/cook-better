@@ -50,6 +50,8 @@ public class UserOptions {
         this.specialOccasion = value;
     }
 
+    /*
+    // For testing
     public void printDetails() {
         logger.info(this.userID);
         logger.info(this.ing1);
@@ -58,7 +60,7 @@ public class UserOptions {
         logger.info("" + this.quickMeal);
         logger.info(this.recipeType);
         logger.info(this.specialOccasion);
-    }
+    }*/
 
     public void startSearch(String response_url) throws Exception {
 
@@ -95,13 +97,12 @@ public class UserOptions {
 
         String personalQuery = "select * from personalize where userid = '"+this.userID+"';";
         ResultSet ps = conn.prepareStatement(personalQuery).executeQuery();
-        //boolean isEmpty = true;
+
         while(ps.next()){
 
             String allergy_1 = ps.getString("allergy_1");
             if(!"-1".equals(allergy_1))
                 query+= " and "+allergy_1+" !=1";
-
 
             String allergy_2 = ps.getString("allergy_2");
             if(!"-1".equals(allergy_2))
@@ -111,10 +112,12 @@ public class UserOptions {
             if(!"-1".equals(allergy_3))
                 query+= " and "+allergy_3+" !=1";
 
-            // Veg/vegan
+            // Vegan
             String diet_res_1 = ps.getString("diet_res_1");
             if(!"-1".equals(diet_res_1))
                 query+= " and "+diet_res_1+" =1";
+
+            // TODO: add vegetarian option
 
             // Gluten free
             String diet_res_2 = ps.getString("diet_res_2");
@@ -155,20 +158,19 @@ public class UserOptions {
             Object goal_gain_muscle = ps.getString("goal_gain_muscle");
             if(!"-1".equals(goal_gain_muscle))
                 query+= " and "+goal_gain_muscle +" >= 20";
+
             break;
         }
 
-        logger.info("Look here:");
-        logger.info(query);
         ResultSet rs = conn.prepareStatement(query).executeQuery();
         JSONObject jsonObject = new JSONObject();
         String result = "";
         int resultCount = 0;
         while(rs.next()){
             resultCount++;
-            String id = rs.getString(1);
+            String id = rs.getString(1); // Unused for now
             String title = rs.getString(2);
-            //result += title+"\n";
+
             result+="<";
             String link = "https://www.epicurious.com/search/";
             String modTitle = title.replaceAll(" ", "%20");
@@ -181,7 +183,6 @@ public class UserOptions {
             result = "Sorry, we couldn't find any recipes based on your search criteria right now.:worried:\nWe are working on adding more recipes *very* soon!\nPlease try searching again with different ingredients!";
         }
 
-        logger.info("The results are :");
         logger.info(result);
         jsonObject.put("text",result);
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);

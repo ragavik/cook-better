@@ -1,6 +1,5 @@
 package com.bot.cookbetter.utils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;

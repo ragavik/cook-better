@@ -17,6 +17,8 @@ public class PersonalizeOptions {
     public String dis1,dis2,dis3;
     public String goal1,goal2,goal3;
 
+    // TODO: remove age (unused)
+
     final Logger logger = LoggerFactory.getLogger(RequestHandlerUtil.class);
 
     public PersonalizeOptions(String userID) {
@@ -88,6 +90,8 @@ public class PersonalizeOptions {
 
     }
 
+    /*
+    // For testing
     public void printDetails() {
         logger.info(this.userID);
         logger.info(this.age);
@@ -103,8 +107,7 @@ public class PersonalizeOptions {
         logger.info(this.goal1);
         logger.info(this.goal2);
         logger.info(this.goal3);
-
-    }
+    }*/
 
     public void submitPreferences(String response_url) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
@@ -112,8 +115,6 @@ public class PersonalizeOptions {
         Connection conn = DriverManager.getConnection(connectionUrl);
         String query = "";
         String selectQuery = "select * from recipes.personalize where userid = '"+this.userID + "'";
-        logger.info("Selectquery is ----------");
-        logger.info(selectQuery);
         ResultSet rs = conn.prepareStatement(selectQuery).executeQuery();
         int count=0;
         while(rs.next()){
@@ -123,33 +124,22 @@ public class PersonalizeOptions {
         if(count == 1){
             query += "update personalize set ";
             query += " allergy_1='" + (this.all1 == null ? "-1" : this.all1) + "'";
-            //query += ", allergy_2='"+this.all2 + "'";
             query += ", allergy_2='" + (this.all2 == null ? "-1" : this.all2) + "'";
-            //query += ", allergy_3='"+this.all3 + "'";
             query += ", allergy_3='" + (this.all3 == null ? "-1" : this.all3) + "'";
-            //query += ", diet_res_1='"+this.res1 + "'";
             query += ", diet_res_1='" + (this.res1 == null ? "-1" : this.res1) + "'";
-            //query += ", diet_res_2='"+this.res2 + "'";
             query += ", diet_res_2='" + (this.res2 == null ? "-1" : this.res2) + "'";
-            //query += ", diet_res_3='"+this.res3 + "'";
             query += ", diet_res_3='" + (this.res3 == null ? "-1" : this.res3) + "'";
-            //query += ", dis_1='"+this.dis1 + "'";
             query += ", dis_1='" + (this.dis1 == null ? "-1" : this.dis1) + "'";
-            //query += ", dis_2='"+this.dis2 + "'";
             query += ", dis_2='" + (this.dis2 == null ? "-1" : this.dis2) + "'";
-            //query += ", dis_3='"+this.dis3 + "'";
             query += ", dis_3='" + (this.dis3 == null ? "-1" : this.dis3) + "'";
-            //query += ", goal_lose_wt='"+this.goal1 + "'";
             query += ", goal_lose_wt='" + (this.goal1 == null ? "-1" : this.goal1) + "'";
-            //query += ", goal_gain_wt='"+this.goal2 + "'";
             query += ", goal_gain_wt='" + (this.goal2 == null ? "-1" : this.goal2) + "'";
-            //query += ", goal_gain_muscle='"+this.goal3 + "'";
             query += ", goal_gain_muscle='" + (this.goal3 == null ? "-1" : this.goal3) + "'";
             query += " where userid = '"+this.userID + "'";
         }
         else{
             query += "insert into personalize values ('"+ this.userID + "'";
-            query += ", '-1'";
+            query += ", '-1'"; // Temporary - for unused agegroup column
             query += ",'"+ (this.all1 == null ? "-1" : this.all1) + "'";
             query += ",'"+ (this.all2 == null ? "-1" : this.all2) + "'";
             query += ",'"+ (this.all3 == null ? "-1" : this.all3) + "'";
@@ -165,9 +155,7 @@ public class PersonalizeOptions {
             query += ");";
         }
 
-        logger.info("TEST: update query = " + query);
         conn.prepareStatement(query).executeUpdate();
-        logger.info(this.userID+"has submitted the preferences");
 
         JSONObject response = new JSONObject();
         JSONArray attachments = new JSONArray();

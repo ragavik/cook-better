@@ -8,9 +8,7 @@ import org.springframework.http.*;
 
 import org.springframework.web.client.RestTemplate;
 
-
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.util.*;
 
 public class RequestHandlerUtil {
@@ -77,10 +75,8 @@ public class RequestHandlerUtil {
                 p_user = new PersonalizeOptions(userID);
             }
 
-            //DatabaseConnection dbcon = new DatabaseConnection();
-
             switch (name) {
-                // Handling selections for searchrecipes command
+                // Handling user selections for /searchrecipes command
                 case "ingredient_1":
                     user.setIngredient(1, selectedValue);
                     break;
@@ -110,7 +106,7 @@ public class RequestHandlerUtil {
                     user = null;
                     break;
 
-                // Handling selections for personalize command
+                // Handling user selections for /personalize command
                 case "agegroup_1":
                     p_user.setAge(selectedValue);
                     break;
@@ -165,17 +161,12 @@ public class RequestHandlerUtil {
 
                 case "submit_button":
                     p_user.submitPreferences(response_url);
-                    //dbcon.insertPersonalizeData(p_user);
                     p_user = null;
                     break;
             }
 
             searchSession.put(userID, user);
             personalizeSession.put(userID, p_user);
-            logger.info("------- Map Contents --------");
-            int x = searchSession.size();
-            logger.info("Size of map is: " + x);
-            p_user.printDetails();
         }
         catch(Exception e) {
             logger.info(e.getMessage());
