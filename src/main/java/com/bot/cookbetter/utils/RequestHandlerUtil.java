@@ -216,6 +216,9 @@ public class RequestHandlerUtil {
 
             responseObj = ResponseConstructionUtil.getInstance().personalize();
         }
+        else if("/cookbetterhelp".equals(command)) {
+            responseObj = ResponseConstructionUtil.getInstance().help();
+        }
         return responseObj;
     }
 

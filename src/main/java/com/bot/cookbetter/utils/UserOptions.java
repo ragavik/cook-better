@@ -72,6 +72,7 @@ public class UserOptions {
             attachments.put(item);
             response.put("attachments", attachments);
             RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
+            return;
         }
 
         Class.forName("com.mysql.jdbc.Driver");

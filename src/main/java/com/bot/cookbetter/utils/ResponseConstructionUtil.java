@@ -51,4 +51,8 @@ public class ResponseConstructionUtil {
         return readJSONFile("/personalize_search.json");
     }
 
+    public JSONObject help() {
+        return readJSONFile("/helpdoc.json");
+    }
+
 }
