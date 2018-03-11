@@ -51,7 +51,7 @@
             },
             {
               "text": "Jam",
-              "value": "jam or jelly"
+              "value": "jam_or_jelly"
             }
           ]
         },
@@ -82,7 +82,7 @@
             },
             {
               "text": "Milk",
-              "value": "milk/cream"
+              "value": "milk_cream"
             },
             {
               "text": "Coconut",
@@ -98,7 +98,7 @@
             },
             {
               "text": "Jam",
-              "value": "jam or jelly"
+              "value": "jam_or_jelly"
             }
 
           ]
@@ -130,7 +130,7 @@
             },
             {
               "text": "Milk",
-              "value": "milk/cream"
+              "value": "milk_cream"
             },
             {
               "text": "Coconut",
@@ -146,7 +146,7 @@
             },
             {
               "text": "Jam",
-              "value": "jam or jelly"
+              "value": "jam_or_jelly"
             }
           ]
         }
@@ -166,13 +166,13 @@
         },
         {
           "name": "diet_rest_2",
-          "text": "Dairy free",
+          "text": "Gluten Free",
           "type": "button",
-          "value": "dairy"
+          "value": "wheat_gluten_free"
         },
         {
           "name": "diet_rest_3",
-          "text": "Alcohol free",
+          "text": "Alcohol Free",
           "type": "button",
           "value": "alcoholic"
         }
@@ -188,19 +188,19 @@
           "name": "ailment_1",
           "text": "Cholestrol",
           "type": "button",
-          "value": "fat free"
+          "value": "fat"
         },
         {
           "name": "ailment_2",
           "text": "Diabetes",
           "type": "button",
-          "value": "sugar conscious"
+          "value": "sugar_conscious"
         },
         {
           "name": "ailment_3",
           "text": "Weak Kidney",
           "type": "button",
-          "value": "chickpea"
+          "value": "protein"
         }
       ]
     },
@@ -212,19 +212,19 @@
       "actions": [
         {
           "name": "diet_goal_1",
-          "text": "Lose weight",
+          "text": "Lose Weight",
           "type": "button",
           "value": "calories"
         },
         {
           "name": "diet_goal_2",
-          "text": "Gain weight",
+          "text": "Gain Weight",
           "type": "button",
-          "value": "fat"
+          "value": "calories"
         },
         {
           "name": "diet_goal_3",
-          "text": "Gain muscle",
+          "text": "Gain Muscle",
           "type": "button",
           "value": "protein"
         }
