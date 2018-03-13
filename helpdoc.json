@@ -26,6 +26,16 @@
                 }
             ]
 		},
+      {
+        "color": "#FF6347",
+        "fields": [
+          {
+            "title": "/surpriseme",
+            "value": "This command suggests a random recipe every time (while keeping in mind your personalization criteria)!",
+            "short": false
+          }
+        ]
+      },
 		{
 			"color": "#FF6347",
 			"fields": [

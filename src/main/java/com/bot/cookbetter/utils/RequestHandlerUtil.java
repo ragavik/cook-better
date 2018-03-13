@@ -210,6 +210,10 @@ public class RequestHandlerUtil {
         else if("/cookbetterhelp".equals(command)) {
             responseObj = ResponseConstructionUtil.getInstance().help();
         }
+        else if("/surpriseme".equals(command)) {
+            String userID = requestMap.get("user_id");
+            responseObj = ResponseConstructionUtil.getInstance().surpriseMe(userID);
+        }
         return responseObj;
     }
 
