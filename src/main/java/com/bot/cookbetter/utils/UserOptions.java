@@ -81,13 +81,31 @@ public class UserOptions {
         String connectionUrl = "jdbc:mysql://aa7kep36bdpng2.c9oonpekeh8v.us-east-1.rds.amazonaws.com:3306/recipes?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
         Connection conn = DriverManager.getConnection(connectionUrl);
 
+        boolean firstConditionSet = false;
+
         String query = "select * from data where";
-        if(ing1 != null)
-            query+= " "+ing1+" =1";
-        if(ing2 != null)
-            query+= " and "+ing2+" =1";
-        if(ing3 != null)
-            query+= " and "+ing3+" =1";
+        if(ing1 != null) {
+            firstConditionSet = true;
+            query += " " + ing1 + " =1";
+        }
+        if(ing2 != null) {
+            if(firstConditionSet) {
+                query += " and " + ing2 + " =1";
+            }
+            else {
+                firstConditionSet = true;
+                query += " " + ing2 + " =1";
+            }
+        }
+        if(ing3 != null) {
+            if(firstConditionSet) {
+                query += " and " + ing3 + " =1";
+            }
+            else {
+                firstConditionSet = true;
+                query += " " + ing3 + " =1";
+            }
+        }
         if(quickMeal)
             query+= " and col_22_minute_meals = 1";
         if(recipeType != null)
