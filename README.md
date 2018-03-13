@@ -27,4 +27,7 @@ Cook Better is a Slack chat bot that recommends recipes based on available ingre
 </ul>
 
 ### Note
-<a href = "https://docs.google.com/spreadsheets/d/1fQGg2BpN0p5x_VaZ33qUwYhCCYA8SKHLrHzOEIC_n4E/edit#gid=1590162455">Evaluation Results</a>
+<ul>
+<li>To test the chat bot join this <a href = "https://join.slack.com/t/cookbetter/shared_invite/enQtMzI3ODczNDA0Mjc1LTE3ZTdjZmNkZGYzMGQzMTM3ZjFlNGRjZDc5ZmYwMjkwOTRjNzZhOWFjZjJlMDYyMzNiZTQ1MmQ1NzE1ZDdmNzU">workspace</a>.
+<li>Evaluation results conducted for CSC 510 (Spring 2018) can be found <a href = "https://docs.google.com/spreadsheets/d/1fQGg2BpN0p5x_VaZ33qUwYhCCYA8SKHLrHzOEIC_n4E/edit#gid=1590162455">here</a>.
+ </ul>
