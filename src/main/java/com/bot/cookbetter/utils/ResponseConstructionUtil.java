@@ -1,5 +1,6 @@
 package com.bot.cookbetter.utils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -161,6 +162,21 @@ public class ResponseConstructionUtil {
         jsonObject.put("text",result);
 
         return jsonObject;
+    }
+
+    public static void noRecipesFoundResponse() {
+
+    }
+
+    public void noIngredientsSelectedResponse(String response_url) throws Exception {
+        JSONObject response = new JSONObject();
+        JSONArray attachments = new JSONArray();
+        JSONObject item = new JSONObject();
+        item.put("color", "#FF0000");
+        item.put("text", "Oops! Looks like you have not selected any ingredients. Please select at least 1 ingredient & try again!");
+        attachments.put(item);
+        response.put("attachments", attachments);
+        RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
     }
 
 }

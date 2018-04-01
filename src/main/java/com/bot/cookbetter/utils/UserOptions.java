@@ -1,4 +1,5 @@
 package com.bot.cookbetter.utils;
+import com.bot.cookbetter.version2.Ingredient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -7,10 +8,13 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.HashSet;
+import java.util.Set;
 
 public class UserOptions {
     private String userID;
-    private String ing1, ing2, ing3;
+    private Set<Ingredient> ingredients;
+    //private String ing1, ing2, ing3;
     private String recipeType;
     private String specialOccasion;
     private boolean quickMeal;
@@ -19,9 +23,14 @@ public class UserOptions {
 
     public UserOptions(String userID) {
         this.userID = userID;
+        ingredients = new HashSet<>();
     }
 
-    public void setIngredient(int num, String value) {
+    public void setIngredients(String ingredient) {
+        this.ingredients.add(new Ingredient(ingredient));
+    }
+
+    /*public void setIngredient(int num, String value) {
         switch (num) {
             case 1:
                 this.ing1 = value;
@@ -33,7 +42,7 @@ public class UserOptions {
                 this.ing3 = value;
                 break;
         }
-    }
+    }*/
 
     public void setRecipeType(String value) {
         this.recipeType = value;
@@ -65,15 +74,8 @@ public class UserOptions {
     public void startSearch(String response_url) throws Exception {
 
         // Error message when user does not select any ingredient
-        if(ing1 == null && ing2 == null && ing3 == null) {
-            JSONObject response = new JSONObject();
-            JSONArray attachments = new JSONArray();
-            JSONObject item = new JSONObject();
-            item.put("color", "#FF0000");
-            item.put("text", "Oops! Looks like you have not selected any ingredients. Please select at least 1 ingredient & try again!");
-            attachments.put(item);
-            response.put("attachments", attachments);
-            RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
+        if(this.ingredients.isEmpty()) {
+            ResponseConstructionUtil.getInstance().noIngredientsSelectedResponse(response_url);
             return;
         }
 
@@ -84,28 +86,17 @@ public class UserOptions {
         boolean firstConditionSet = false;
 
         String query = "select * from data where";
-        if(ing1 != null) {
-            firstConditionSet = true;
-            query += " " + ing1 + " =1";
-        }
-        if(ing2 != null) {
-            if(firstConditionSet) {
-                query += " and " + ing2 + " =1";
+
+        for(Ingredient ingredient : ingredients) {
+            if(!firstConditionSet) {
+                firstConditionSet = true;
+                query += " " + ingredient.getName() + " = 1";
             }
             else {
-                firstConditionSet = true;
-                query += " " + ing2 + " =1";
+                query += " and " + ingredient.getName() + " = 1";
             }
         }
-        if(ing3 != null) {
-            if(firstConditionSet) {
-                query += " and " + ing3 + " =1";
-            }
-            else {
-                firstConditionSet = true;
-                query += " " + ing3 + " =1";
-            }
-        }
+
         if(quickMeal)
             query+= " and col_22_minute_meals = 1";
         if(recipeType != null)
