@@ -2,6 +2,11 @@
 
 Cook Better is a Slack chat bot that recommends recipes based on available ingredients, and user's dietary and health restrictions.
 
+## Demo
+
+![cookbetter-1](https://user-images.githubusercontent.com/18286278/38170174-fd828e36-354b-11e8-8635-256bd4c3bd20.gif)
+![cookbetter-2](https://user-images.githubusercontent.com/18286278/38170175-fd923232-354b-11e8-9847-fd213625ac31.gif)
+
 ## Slash Commands
 
 ### /personalize
