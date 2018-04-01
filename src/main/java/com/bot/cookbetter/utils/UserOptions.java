@@ -1,5 +1,6 @@
 package com.bot.cookbetter.utils;
 import com.bot.cookbetter.version2.Ingredient;
+import com.bot.cookbetter.version2.Recipe;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -8,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class UserOptions {
@@ -174,21 +177,26 @@ public class UserOptions {
         ResultSet rs = conn.prepareStatement(query).executeQuery();
         JSONObject jsonObject = new JSONObject();
         String result = "";
-        int resultCount = 0;
+
+        List<Recipe> recipes = new ArrayList<>();
         while(rs.next()){
-            resultCount++;
-            String id = rs.getString(1); // Unused for now
-            String title = rs.getString(2);
+
+            Recipe recipe = new Recipe();
+            int ID = rs.getInt(1); // Unused for now
+            String name = rs.getString(2);
+            recipe.setID(ID);
+            recipe.setName(name);
+            recipes.add(recipe);
 
             result+="<";
             String link = "https://www.epicurious.com/search/";
-            String modTitle = title.replaceAll(" ", "%20");
+            String modTitle = name.replaceAll(" ", "%20");
             link+=modTitle+"%20";
-            result+= link + "|"+title+"> \n";
+            result+= link + "|"+name+"> \n";
         }
 
         // Error message when no recipes are found
-        if(resultCount == 0) {
+        if(recipes.isEmpty()) {
             result = "Sorry, we couldn't find any recipes based on your search criteria right now.:worried:\nWe are working on adding more recipes *very* soon!\nPlease try searching again with different ingredients!";
         }
 
