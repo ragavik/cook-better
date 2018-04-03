@@ -7,23 +7,33 @@ import java.util.Set;
  */
 public class Util {
 
-    //Charan
-    public static Set<Ingredient> convert(String csvString){
 
+
+    //@kashyap
+    public static String extractIngredients(String naturalQuery){
+
+        // return csv : apple,milk,orange
         return null;
     }
 
-    //Kashyap
-    public static String  toCSV(String naturalQuery){
-
+    //@kashyap
+    public  static Set<Ingredient> constructIngredients(String csvIngredients){
         return null;
     }
 
-    //shrikanth
-    public static void image(){
 
+    //@charan
+    public static Recipe getRecipe(int recipeID) {
+        return  null;
     }
 
+    //@karthik
+    public static Set<Ingredient> getIngredients(int recipeID){
+        return null;
+    }
 
-
+    //@karthik
+    public static Set<Ingredient> getAllIngredients(){
+        return  null;
+    }
 }

@@ -17,7 +17,7 @@ public class RecommenderSystem {
 
         for (int recipeID = 0; recipeID < 30000; recipeID++) {
 
-            Recipe recipe = DBUtil.getRecipe(recipeID);
+            Recipe recipe = Util.getRecipe(recipeID);
 
             if (recipe != null) {
 
