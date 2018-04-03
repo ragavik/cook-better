@@ -2,6 +2,9 @@ package com.bot.cookbetter.version2;
 
 import java.util.List;
 
+/**
+ * @author snaraya7 Shrikanth N C
+ */
 public class DBUtil {
 
     //ragavi
@@ -31,4 +34,9 @@ public class DBUtil {
     }
 
 
+    //@charan
+    public static Recipe getRecipe(int recipeID) {
+
+        return null;
+    }
 }
