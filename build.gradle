@@ -29,7 +29,7 @@ configurations {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
-	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+	//providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.json:json:20180130')
 	compile('com.google.code.gson:gson:2.8.2')
@@ -38,6 +38,8 @@ dependencies {
 	//compile 'org.hsqldb:hsqldb:2.3.3'
 	compile files('libs/ojdbc7.jar')
 	compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+	// https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+	//providedRuntime group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
 }
 
 tasks.withType(Test) {

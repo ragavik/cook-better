@@ -78,7 +78,7 @@ public class UserOptions {
         }
 
         Class.forName("com.mysql.jdbc.Driver");
-        String connectionUrl = "jdbc:mysql://aa7kep36bdpng2.c9oonpekeh8v.us-east-1.rds.amazonaws.com:3306/recipes?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+        String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
         Connection conn = DriverManager.getConnection(connectionUrl);
 
         boolean firstConditionSet = false;
