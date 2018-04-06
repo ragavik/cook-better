@@ -7,8 +7,6 @@ import java.util.Set;
  */
 public class Util {
 
-
-
     //@kashyap
     public static String extractIngredients(String naturalQuery){
 
@@ -21,6 +19,15 @@ public class Util {
         return null;
     }
 
+
+    //@kashyap
+    public static boolean ingredientExist(String ingredient){
+
+        //return true if 'ingredient' is a valid ingredient in database columnn.
+        // Handle plurality!
+
+        return false;
+    }
 
     //@charan
     public static Recipe getRecipe(int recipeID) {
