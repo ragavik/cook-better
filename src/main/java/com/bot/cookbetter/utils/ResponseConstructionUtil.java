@@ -1,5 +1,7 @@
 package com.bot.cookbetter.utils;
 
+import com.bot.cookbetter.version2.Recipe;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -11,6 +13,8 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResponseConstructionUtil {
 
@@ -61,7 +65,7 @@ public class ResponseConstructionUtil {
 
         // Database connection
         Class.forName("com.mysql.jdbc.Driver");
-        String connectionUrl = "jdbc:mysql://aa7kep36bdpng2.c9oonpekeh8v.us-east-1.rds.amazonaws.com:3306/recipes?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+        String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
         Connection conn = DriverManager.getConnection(connectionUrl);
 
         String query = "select * from data where title is not null";
@@ -140,27 +144,43 @@ public class ResponseConstructionUtil {
         ResultSet rs = conn.prepareStatement(query).executeQuery();
         JSONObject jsonObject = new JSONObject();
         String result = "";
-        int resultCount = 0;
+
+        List<Recipe> recipes = new ArrayList<>();
         while(rs.next()){
-            resultCount++;
-            String id = rs.getString(1); // Unused for now
-            String title = rs.getString(2);
+
+            Recipe recipe = new Recipe();
+            int ID = rs.getInt(1); // Unused for now
+            String name = rs.getString(2);
+            recipe.setID(ID);
+            recipe.setName(name);
+            recipes.add(recipe);
 
             result+="<";
             String link = "https://www.epicurious.com/search/";
-            String modTitle = title.replaceAll(" ", "%20");
+            String modTitle = name.replaceAll(" ", "%20");
             link+=modTitle+"%20";
-            result+= link + "|"+title+"> \n";
+            result+= link + "|"+name+"> \n";
         }
 
         // Error message when no recipes are found
-        if(resultCount == 0) {
+        if(recipes.isEmpty()) {
             result = "Sorry, we couldn't find any recipes based on your search criteria right now.:worried:\nWe are working on adding more recipes *very* soon!\nPlease try searching again with different ingredients!";
         }
 
         jsonObject.put("text",result);
 
         return jsonObject;
+    }
+
+    public void noIngredientsSelectedResponse(String response_url) throws Exception {
+        JSONObject response = new JSONObject();
+        JSONArray attachments = new JSONArray();
+        JSONObject item = new JSONObject();
+        item.put("color", "#FF0000");
+        item.put("text", "Oops! Looks like you have not selected any ingredients. Please select at least 1 ingredient & try again!");
+        attachments.put(item);
+        response.put("attachments", attachments);
+        RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
     }
 
 }

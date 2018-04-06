@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * Handles post request from slack to respective business class
+ * Handles post request from slack to respective business class.
  */
 
 @RestController
