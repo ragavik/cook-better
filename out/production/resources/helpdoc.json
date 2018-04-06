@@ -1,0 +1,58 @@
+{
+    "attachments": [
+        {
+            "color": "#FFD700",
+            "pretext": "Welcome to Cook Better! :smile:",
+            "text": "Get personalized recipe recommendations based on your dietary & health restrictions using Cook Better."
+
+        },
+		{
+			"color": "#FF8C00",
+			"fields": [
+                {
+                    "title": "/personalize",
+                    "value": "Use this command to configure any food allergies, dietary restrictions, your health conditions and weight goals.\nYou only have to do this once and we'll keep your selections in mind whenever you search for recipes!\nAnd remember, you can use this command and change these settings anytime.",
+                    "short": false
+                }
+            ]
+		},
+		{
+			"color": "#FF7F50",
+			"fields": [
+                {
+                    "title": "/searchrecipes",
+                    "value": "Use this command to search for recipes based on the ingredients you have!\nYou can also search recipes by recipe type, cooking time and recipes for special occasions.",
+                    "short": false
+                }
+            ]
+		},
+      {
+        "color": "#FF6347",
+        "fields": [
+          {
+            "title": "/surpriseme",
+            "value": "This command suggests a random recipe every time (while keeping in mind your personalization criteria)!",
+            "short": false
+          }
+        ]
+      },
+		{
+			"color": "#FF6347",
+			"fields": [
+                {
+                    "title": "/cookbetterhelp",
+                    "value": "Come back to this space in case you get stuck and to watch out for any cool new features we might add!",
+                    "short": false
+                }
+            ]
+		},
+		{
+			"color": "#B22222",
+			"fields": [
+                {
+                    "title": "Happy cooking! :hamburger:"
+                }
+            ]
+		}
+    ]
+}
