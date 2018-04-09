@@ -9,7 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
-//Kashyap Comment
+
+/**
+ * Handles post request from slack to respective business class.
+ */
+
 @RestController
 public class BaseController {
 

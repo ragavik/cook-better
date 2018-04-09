@@ -1,0 +1,257 @@
+{
+  "text": "Personalize your search by selecting any dietary or health restrictions.",
+  "response_type": "ephemeral",
+  "attachments": [
+    {
+      "text": "Food Allergies",
+      "color": "#3AA3E3",
+      "attachment_type": "default",
+      "callback_id": "allergies_callback",
+      "actions": [
+        {
+          "name": "allergy_1",
+          "text": "Allergy 1",
+          "type": "select",
+          "options": [
+            {
+              "text": "Basil",
+              "value": "basil"
+            },
+            {
+              "text": "Beef",
+              "value": "beef"
+            },
+            {
+              "text": "Butter",
+              "value": "butter"
+            },
+            {
+              "text": "Cheese",
+              "value": "cheese"
+            },
+            {
+              "text": "Coconut",
+              "value": "coconut"
+            },
+            {
+              "text": "Milk",
+              "value": "milk/cream"
+            },
+            {
+              "text": "Coconut",
+              "value": "coconut"
+            },
+            {
+              "text": "Peanuts",
+              "value": "peanut"
+            },
+            {
+              "text": "Kiwi",
+              "value": "kiwi"
+            },
+            {
+              "text": "Jam",
+              "value": "jam_or_jelly"
+            }
+          ]
+        },
+        {
+          "name": "allergy_2",
+          "text": "Allergy 2",
+          "type": "select",
+          "options": [
+            {
+              "text": "Basil",
+              "value": "basil"
+            },
+            {
+              "text": "Beef",
+              "value": "beef"
+            },
+            {
+              "text": "Butter",
+              "value": "butter"
+            },
+            {
+              "text": "Cheese",
+              "value": "cheese"
+            },
+            {
+              "text": "Coconut",
+              "value": "coconut"
+            },
+            {
+              "text": "Milk",
+              "value": "milk_cream"
+            },
+            {
+              "text": "Coconut",
+              "value": "coconut"
+            },
+            {
+              "text": "Peanuts",
+              "value": "peanut"
+            },
+            {
+              "text": "Kiwi",
+              "value": "kiwi"
+            },
+            {
+              "text": "Jam",
+              "value": "jam_or_jelly"
+            }
+
+          ]
+        },
+        {
+          "name": "allergy_3",
+          "text": "Allergy 3",
+          "type": "select",
+          "options": [
+            {
+              "text": "Basil",
+              "value": "basil"
+            },
+            {
+              "text": "Beef",
+              "value": "beef"
+            },
+            {
+              "text": "Butter",
+              "value": "butter"
+            },
+            {
+              "text": "Cheese",
+              "value": "cheese"
+            },
+            {
+              "text": "Coconut",
+              "value": "coconut"
+            },
+            {
+              "text": "Milk",
+              "value": "milk_cream"
+            },
+            {
+              "text": "Peanuts",
+              "value": "peanut"
+            },
+            {
+              "text": "Kiwi",
+              "value": "kiwi"
+            },
+            {
+              "text": "Jam",
+              "value": "jam_or_jelly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "Deitary Restrictions",
+      "color": "#601a39",
+      "attachment_type": "default",
+      "callback_id": "diet_rest_callback",
+      "actions": [
+        {
+          "name": "diet_rest_1",
+          "text": "Vegan",
+          "type": "button",
+          "value": "vegan"
+        },
+        {
+          "name": "diet_rest_2",
+          "text": "Gluten Free",
+          "type": "button",
+          "value": "wheat_gluten_free"
+        },
+        {
+          "name": "diet_rest_3",
+          "text": "Alcohol Free",
+          "type": "button",
+          "value": "alcoholic"
+        }
+      ]
+    },
+    {
+      "text": "Health Conditions",
+      "color": "#151d84",
+      "attachment_type": "default",
+      "callback_id": "ailments_callback",
+      "actions": [
+        {
+          "name": "ailment_1",
+          "text": "Cholestrol",
+          "type": "button",
+          "value": "fat"
+        },
+        {
+          "name": "ailment_2",
+          "text": "Diabetes",
+          "type": "button",
+          "value": "sugar_conscious"
+        },
+        {
+          "name": "ailment_3",
+          "text": "Weak Kidney",
+          "type": "button",
+          "value": "protein"
+        }
+      ]
+    },
+    {
+      "text": "What are your weight goals?",
+      "color": "#847f16",
+      "attachment_type": "default",
+      "callback_id": "diet_goals_callback",
+      "actions": [
+        {
+          "name": "diet_goal_1",
+          "text": "Lose Weight",
+          "type": "button",
+          "value": "calories"
+        },
+        {
+          "name": "diet_goal_2",
+          "text": "Gain Weight",
+          "type": "button",
+          "value": "calories"
+        },
+        {
+          "name": "diet_goal_3",
+          "text": "Gain Muscle",
+          "type": "button",
+          "value": "protein"
+        }
+      ]
+    },
+    {
+      "text": "",
+      "color": "#3ae3d2",
+      "attachment_type": "default",
+      "callback_id": "submit_button_callback",
+      "actions": [
+        {
+          "name": "submit_button",
+          "text": "Save Preferences",
+          "type": "button",
+          "value": "pressed"
+        }
+      ]
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

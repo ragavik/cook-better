@@ -11,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+
+/* To hanlde Requests*/
 public class RequestHandlerUtil {
 
     private static RequestHandlerUtil requestHandlerUtil;
@@ -78,15 +80,15 @@ public class RequestHandlerUtil {
             switch (name) {
                 // Handling user selections for /searchrecipes command
                 case "ingredient_1":
-                    user.setIngredient(1, selectedValue);
+                    user.setIngredients(selectedValue);
                     break;
 
                 case "ingredient_2":
-                    user.setIngredient(2, selectedValue);
+                    user.setIngredients(selectedValue);
                     break;
 
                 case "ingredient_3":
-                    user.setIngredient(3, selectedValue);
+                    user.setIngredients(selectedValue);
                     break;
 
                 case "recipe_type":
