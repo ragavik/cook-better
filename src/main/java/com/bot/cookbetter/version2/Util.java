@@ -8,7 +8,8 @@ import java.sql.ResultSetMetaData;
 import java.util.HashSet;
 
 /**
- * @author snaraya7 Shrikanth N C
+ * @author snaraya7
+ * Shrikanth N C
  */
 public class Util {
 
@@ -115,6 +116,8 @@ public class Util {
         return Rec.getIngredients();
     }
 
+
+
     //@karthik
     public static Set<Ingredient> getAllIngredients(){
         // Database connection
@@ -129,13 +132,20 @@ public class Util {
             column_names = conn.prepareStatement(query).executeQuery();
 
             while(column_names.next()){
-                ing.add(new Ingredient(column_names.getString(1)));
+
+                Ingredient ingredient  = new Ingredient(column_names.getString(1));
+                ingredient.setExisits(true);
+                ing.add(ingredient);
+
             }
 
+
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println(e);
         }
 
         return ing;
+        
     }
 }

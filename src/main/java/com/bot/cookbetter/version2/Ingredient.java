@@ -17,7 +17,6 @@ public class Ingredient {
         return name;
     }
 
-
     public boolean isExisits() {
         return exisits;
     }
