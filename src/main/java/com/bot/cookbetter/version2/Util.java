@@ -3,7 +3,8 @@ package com.bot.cookbetter.version2;
 import java.util.Set;
 
 /**
- * @author snaraya7 Shrikanth N C
+ * @author snaraya7
+ * Shrikanth N C
  */
 public class Util {
 
