@@ -45,6 +45,15 @@ public class Util {
         return Rec.getIngredients();
     }
 
+    public static void main(String[] args){
+
+        for(Ingredient a : getAllIngredients())
+        {
+            System.out.println(a);
+        }
+
+    }
+
     //@karthik
     public static Set<Ingredient> getAllIngredients(){
         // Database connection
@@ -58,17 +67,28 @@ public class Util {
             String query = "select column_name from information_schema.columns where table_name = 'data'";
             column_names = conn.prepareStatement(query).executeQuery();
 
-            int size = 14;
-            while(column_names.next()){
-                size++;
+            int skip = 0;
+
+            while (column_names.next())
+            {
+
+
+                if (skip++ > 0)
+                {
+                    String ing_name = column_names.getString(1);
+
+                    Ingredient i = new Ingredient(ing_name);
+                    i.setExisits(true);
+                    ing.add(i);
+                }
+
+
+
+
             }
 
-            for(int num = 14; num<size+1; num++){
-                String ing_name = column_names.getString(num);
-                Ingredient i = new Ingredient(ing_name);
-                ing.add(i);
-            }
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println(e);
         }
 

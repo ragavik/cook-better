@@ -17,12 +17,19 @@ public class Ingredient {
         return name;
     }
 
-
     public boolean isExisits() {
         return exisits;
     }
 
     public void setExisits(boolean exisits) {
         this.exisits = exisits;
+    }
+
+    @Override
+    public String toString() {
+        return "Ingredient{" +
+                "name='" + name + '\'' +
+                ", exisits=" + exisits +
+                '}';
     }
 }
