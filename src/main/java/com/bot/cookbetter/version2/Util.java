@@ -89,7 +89,14 @@ public class Util {
     }
 
 
+    //@kashyap
+    public static boolean ingredientExist(String ingredient){
 
+        //return true if 'ingredient' is a valid ingredient in database columnn.
+        // Handle plurality!
+
+        return false;
+    }
 
     //@charan
     public static Recipe getRecipe(int recipeID) {
@@ -154,12 +161,13 @@ public class Util {
         return validIngredients;
     }
 
+
+
     //@karthik
     public static Set<String> getAllIngredientNames(){
         // Database connection
         ResultSet column_names = null;
         Set<String> ing = new HashSet<>();
-
         try {
             Class.forName("com.mysql.jdbc.Driver");
             String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
@@ -168,9 +176,7 @@ public class Util {
             column_names = conn.prepareStatement(query).executeQuery();
 
             while(column_names.next()){
-
                 ing.add(column_names.getString(1));
-
             }
 
 
@@ -180,6 +186,5 @@ public class Util {
         }
 
         return ing;
-
     }
 }

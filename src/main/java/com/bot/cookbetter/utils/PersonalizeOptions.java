@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 
-public class PersonalizeOptions {
+public class  PersonalizeOptions {
 
     public String userID;
     public String age;

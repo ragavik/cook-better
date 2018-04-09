@@ -11,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+
+/* To hanlde Requests*/
 public class RequestHandlerUtil {
 
     private static RequestHandlerUtil requestHandlerUtil;
