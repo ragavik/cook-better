@@ -7,6 +7,8 @@ public class Ingredient {
 
     private String name;
 
+    private boolean exisits;
+
     public Ingredient(String name) {
         this.name = name;
     }
@@ -15,4 +17,12 @@ public class Ingredient {
         return name;
     }
 
+
+    public boolean isExisits() {
+        return exisits;
+    }
+
+    public void setExisits(boolean exisits) {
+        this.exisits = exisits;
+    }
 }
