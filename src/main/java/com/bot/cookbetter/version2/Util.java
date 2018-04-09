@@ -15,6 +15,8 @@ public class Util {
 
     public static void main(String[] args) {
         Recipe rec;
+        Set<Ingredient> ing = getAllIngredients();
+        Set<Ingredient> ing1 = getIngredients(2);
         rec = getRecipe(2);
 
         //Get Recipe ID
@@ -25,6 +27,14 @@ public class Util {
         for (Ingredient in : rec.getIngredients()) {
             System.out.print(in.getName());
             System.out.print("\t");
+        }
+        System.out.println("\n******************************************************\n");
+        for (Ingredient in1 : ing1){
+            System.out.println(in1.getName());
+        }
+        System.out.println("\n******************************************************\n");
+        for (Ingredient in1 : ing){
+            System.out.println(in1.getName());
         }
     }
 
@@ -118,16 +128,10 @@ public class Util {
             String query = "select column_name from information_schema.columns where table_name = 'data'";
             column_names = conn.prepareStatement(query).executeQuery();
 
-            int size = 14;
             while(column_names.next()){
-                size++;
+                ing.add(new Ingredient(column_names.getString(1)));
             }
 
-            for(int num = 14; num<size+1; num++){
-                String ing_name = column_names.getString(num);
-                Ingredient i = new Ingredient(ing_name);
-                ing.add(i);
-            }
         } catch (Exception e) {
             System.err.println(e);
         }
