@@ -46,5 +46,15 @@ public class Recipe {
                 ", ingredients=" + ingredients +
                 '}';
     }
+
+    /*
+    * Method to get recipe ID from given recipe title
+    * Returns 0 if recipe title is invalid
+    */
+    public static int getRecipeIdFromTitle(String title) {
+
+        return 0;
+    }
+
 }
 

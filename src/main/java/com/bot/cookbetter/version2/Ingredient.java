@@ -25,7 +25,7 @@ public class Ingredient {
     }
 
     public void setExisits(boolean exisits) {
-        this.exisits = exisits;
+        this.exists = exisits;
     }
 
     @Override

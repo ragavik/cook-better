@@ -1,5 +1,6 @@
 package com.bot.cookbetter.utils;
 
+import com.bot.cookbetter.version2.FeedbackUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -206,7 +207,6 @@ public class RequestHandlerUtil {
             responseObj = ResponseConstructionUtil.getInstance().invokeSearch();
         }
         else if("/personalize".equals(command)) {
-
             responseObj = ResponseConstructionUtil.getInstance().personalize();
         }
         else if("/cookbetterhelp".equals(command)) {
@@ -215,6 +215,11 @@ public class RequestHandlerUtil {
         else if("/surpriseme".equals(command)) {
             String userID = requestMap.get("user_id");
             responseObj = ResponseConstructionUtil.getInstance().surpriseMe(userID);
+        }
+        else if("/addcomment".equals(command)) {
+            String userID = requestMap.get("user_id");
+            String text = requestMap.get("text");
+            responseObj = FeedbackUtil.getInstance().addFeedback(userID, text);
         }
         return responseObj;
     }
