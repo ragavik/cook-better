@@ -1,5 +1,6 @@
 package com.bot.cookbetter.utils;
 
+import com.bot.cookbetter.version2.FeedbackUtil;
 import com.bot.cookbetter.version2.Recipe;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -181,6 +182,69 @@ public class ResponseConstructionUtil {
         attachments.put(item);
         response.put("attachments", attachments);
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
+    }
+
+    public JSONObject constructRecipeResponse(Recipe recipe) {
+        JSONObject response = new JSONObject();
+        int recipeID = recipe.getID();
+        String title = recipe.getName();
+
+        // Displaying title & link
+        response.put("title", title);
+        String link = "https://www.epicurious.com/search/";
+        String modTitle = title.replaceAll(" ", "%20");
+        link += modTitle + "%20";
+        response.put("title_link", link);
+
+        // General configuration
+        response.put("color","#36a64f");
+        response.put("attachment_type", "default");
+        response.put("callback_id", "recipe_" + recipeID + "_callback");
+
+        // Displaying rating & likes data
+        JSONArray fields = new JSONArray();
+        JSONObject ratingData = new JSONObject();
+        ratingData.put("title", "Rating: " + recipe.getRating());
+        ratingData.put("short", false);
+        int[] likesData = FeedbackUtil.getInstance().getLikesData(recipeID);
+        if(likesData != null) {
+            int likes = likesData[0];
+            int dislikes = likesData[1];
+            int people = likes + dislikes;
+            ratingData.put("value", people + " people have tried this recipe. " + likes + " liked it & " + dislikes + " didn't like it!");
+        }
+        fields.put(ratingData);
+        response.put("fields", fields);
+
+        // Displaying buttons
+        JSONArray actions = new JSONArray();
+        JSONObject likeButton = new JSONObject();
+        likeButton.put("name", "likeButton_" + recipeID);
+        likeButton.put("text", "Like");
+        likeButton.put("type", "button");
+        likeButton.put("value", "like");
+        actions.put(likeButton);
+        JSONObject dislikeButton = new JSONObject();
+        dislikeButton.put("name", "dislikeButton_" + recipeID);
+        dislikeButton.put("text", "Dislike");
+        dislikeButton.put("type", "button");
+        dislikeButton.put("value", "dislike");
+        actions.put(dislikeButton);
+        JSONObject viewComments = new JSONObject();
+        viewComments.put("name", "viewComments_" + recipeID);
+        viewComments.put("text", "View Comments");
+        viewComments.put("type", "button");
+        viewComments.put("value", "view_comments");
+        actions.put(viewComments);
+        JSONObject addComment = new JSONObject();
+        addComment.put("name", "addComment_" + recipeID);
+        addComment.put("text", "Add Comment");
+        addComment.put("type", "button");
+        addComment.put("value", "add_comment");
+        actions.put(addComment);
+        response.put("actions", actions);
+
+        return response;
     }
 
 }

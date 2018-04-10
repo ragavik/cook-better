@@ -61,4 +61,29 @@ public class FeedbackUtil {
         return null;
     }
 
+    /*
+    * Method returns data about likes for given recipe ID
+    * Returns an integer array result
+    * result[0] = no. of likes
+    * result[1] = no. of dislikes
+    */
+    public static int[] getLikesData(int recipeID) {
+        int[] result = new int[2];
+
+        // TODO: Query database & get no. of likes & dislikes
+
+        //return result;
+        return null;
+    }
+
+    public static void addLikeDislike(int recipeID, boolean like) {
+        /*
+         TODO:
+         Query database & get no. of likes & dislikes for recipe ID
+         Increment likes/dislikes based on parameter 'like'
+         Update row or create new row if it didn't exist before
+        */
+
+    }
+
 }

@@ -11,6 +11,8 @@ public class Recipe {
 
     private String name;
 
+    private double rating;
+
     private Set<Ingredient> ingredients;
 
 
@@ -37,6 +39,10 @@ public class Recipe {
     public void setIngredients(Set<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
+
+    public void setRating(double rating) { this.rating = rating; }
+
+    public double getRating() { return rating; }
 
     @Override
     public String toString() {
