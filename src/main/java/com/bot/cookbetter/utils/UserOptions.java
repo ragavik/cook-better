@@ -196,22 +196,26 @@ public class UserOptions {
             result+= link + "|"+name+"> \n";*/
         }
 
+        jsonObject.put("text", ":pushpin: Here are your search results!");
+        JSONArray attachments = new JSONArray();
         // Error message when no recipes are found
         if(recipes.isEmpty()) {
-            String result = "Sorry, we couldn't find any recipes based on your search criteria right now.:worried:\nWe are working on adding more recipes *very* soon!\nPlease try searching again with different ingredients!";
-            jsonObject.put("text",result);
+
+            JSONObject item = new JSONObject();
+            item.put("color", "#FF0000");
+            item.put("text", "Sorry, we couldn't find any recipes based on your search criteria right now.:worried:\nWe are working on adding more recipes *very* soon!\nPlease try searching again with different ingredients!");
+            attachments.put(item);
         }
 
         else {
-            JSONArray attachments = new JSONArray();
 
             for(Recipe recipe : recipes) {
                 JSONObject recipeResponse = ResponseConstructionUtil.getInstance().constructRecipeResponse(recipe);
                 attachments.put(recipeResponse);
             }
 
-            jsonObject.put("attachments", attachments);
         }
+        jsonObject.put("attachments", attachments);
 
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);
     }

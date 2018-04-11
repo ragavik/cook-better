@@ -175,6 +175,7 @@ public class ResponseConstructionUtil {
 
     public void noIngredientsSelectedResponse(String response_url) throws Exception {
         JSONObject response = new JSONObject();
+        response.put("text", ":pushpin: *Warning!*");
         JSONArray attachments = new JSONArray();
         JSONObject item = new JSONObject();
         item.put("color", "#FF0000");
@@ -256,7 +257,7 @@ public class ResponseConstructionUtil {
         String recipeIDStr = buttonValue.split("_")[1];
         int recipeID = Integer.parseInt(recipeIDStr);
         String recipeTitle = Recipe.getRecipeTitleFromID(recipeID);
-        response.put("text", "Comments for *" + recipeTitle + "*:");
+        response.put("text", ":pushpin: *Comments for `" + recipeTitle + "`:*");
         response.put("attachment_type", "default");
         response.put("replace_original", false);
 
@@ -291,7 +292,7 @@ public class ResponseConstructionUtil {
         String recipeTitle = Recipe.getRecipeTitleFromID(recipeID);
 
         JSONObject response = new JSONObject();
-        response.put("text", ":arrow_right: Type */addcomment `{" + recipeTitle + "}`* followed by your comment.");
+        response.put("text", ":pushpin: Type */addcomment `{" + recipeTitle + "}`* followed by your comment.");
         response.put("replace_original", false);
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
     }

@@ -21,7 +21,7 @@ public class BaseController {
 
     @RequestMapping("/")
     public ResponseEntity<String> index() {
-        return ResponseEntity.ok("Welcome to CookBetter!");
+        return ResponseEntity.ok(":pushpin: Welcome to CookBetter!");
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/slack", consumes = "application/x-www-form-urlencoded")
