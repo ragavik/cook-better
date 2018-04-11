@@ -211,7 +211,7 @@ public class ResponseConstructionUtil {
             int likes = likesData[0];
             int dislikes = likesData[1];
             int people = likes + dislikes;
-            ratingData.put("value", people + " people have tried this recipe. " + likes + " liked it & " + dislikes + " didn't like it!");
+            ratingData.put("value", people + " people have tried this recipe. " + likes + " liked it :thumbsup: & " + dislikes + " disliked it :thumbsdown:!");
         }
         fields.put(ratingData);
         response.put("fields", fields);
@@ -219,32 +219,81 @@ public class ResponseConstructionUtil {
         // Displaying buttons
         JSONArray actions = new JSONArray();
         JSONObject likeButton = new JSONObject();
-        likeButton.put("name", "likeButton_" + recipeID);
-        likeButton.put("text", "Like");
+        likeButton.put("name", "like_button");
+        likeButton.put("text", ":thumbsup:");
         likeButton.put("type", "button");
-        likeButton.put("value", "like");
+        likeButton.put("value", "likeButton_" + recipeID);
         actions.put(likeButton);
         JSONObject dislikeButton = new JSONObject();
-        dislikeButton.put("name", "dislikeButton_" + recipeID);
-        dislikeButton.put("text", "Dislike");
+        dislikeButton.put("name", "dislike_button");
+        dislikeButton.put("text", ":thumbsdown:");
         dislikeButton.put("type", "button");
-        dislikeButton.put("value", "dislike");
+        dislikeButton.put("value", "dislikeButton_" + recipeID);
         actions.put(dislikeButton);
         JSONObject viewComments = new JSONObject();
-        viewComments.put("name", "viewComments_" + recipeID);
+        viewComments.put("name", "view_comments");
         viewComments.put("text", "View Comments");
         viewComments.put("type", "button");
-        viewComments.put("value", "view_comments");
+        viewComments.put("value", "viewComments_" + recipeID);
         actions.put(viewComments);
         JSONObject addComment = new JSONObject();
-        addComment.put("name", "addComment_" + recipeID);
+        addComment.put("name", "add_comment");
         addComment.put("text", "Add Comment");
         addComment.put("type", "button");
-        addComment.put("value", "add_comment");
+        addComment.put("value", "addComment_" + recipeID);
         actions.put(addComment);
         response.put("actions", actions);
 
         return response;
+    }
+
+    /*
+    * Method to construct a JSON object of comments for a recipe
+    */
+    public static void viewComments(String buttonValue, String response_url) throws Exception {
+        JSONObject response = new JSONObject();
+
+        String recipeIDStr = buttonValue.split("_")[1];
+        int recipeID = Integer.parseInt(recipeIDStr);
+        String recipeTitle = Recipe.getRecipeTitleFromID(recipeID);
+        response.put("text", "Comments for *" + recipeTitle + "*:");
+        response.put("attachment_type", "default");
+        response.put("replace_original", false);
+
+        JSONArray attachments = new JSONArray();
+
+        List<String> comments = FeedbackUtil.getInstance().getFeedback(recipeID);
+        if (comments.isEmpty()) {
+            JSONObject commentObj = new JSONObject();
+            commentObj.put("color", "#ff0000");
+            commentObj.put("text", "This recipe does not have any comments yet! :worried:");
+            attachments.put(commentObj);
+        }
+        else {
+            for(String comment : comments) {
+                JSONObject commentObj = new JSONObject();
+                commentObj.put("color", "#ffc299");
+                commentObj.put("text", comment);
+                attachments.put(commentObj);
+            }
+        }
+
+        response.put("attachments", attachments);
+
+        RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
+    }
+
+    // Method that shows instruction on how to add comment
+    public void promptForAddComment(String buttonValue, String response_url) throws Exception {
+
+        String recipeIDStr = buttonValue.split("_")[1];
+        int recipeID = Integer.parseInt(recipeIDStr);
+        String recipeTitle = Recipe.getRecipeTitleFromID(recipeID);
+
+        JSONObject response = new JSONObject();
+        response.put("text", ":arrow_right: Type */addcomment `{" + recipeTitle + "}`* followed by your comment.");
+        response.put("replace_original", false);
+        RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
     }
 
 }

@@ -50,6 +50,7 @@ public class RequestHandlerUtil {
 
     public void handleInteractiveSlackRequest(HttpServletRequest request) {
         try {
+
             String payload = request.getParameter("payload");
             JSONObject payloadObject = new JSONObject(payload);
             JSONArray actions = payloadObject.getJSONArray("actions");
@@ -165,6 +166,26 @@ public class RequestHandlerUtil {
                 case "submit_button":
                     p_user.submitPreferences(response_url);
                     p_user = null;
+                    break;
+
+
+                // Handling feedback buttons
+                case "like_button":
+                    logger.info("like button pressed");
+                    FeedbackUtil.getInstance().userLikeDislike(selectedValue, true);
+                    break;
+
+                case "dislike_button":
+                    logger.info("dislike button pressed");
+                    FeedbackUtil.getInstance().userLikeDislike(selectedValue, false);
+                    break;
+
+                case "view_comments":
+                    logger.info("view comments button pressed");
+                    ResponseConstructionUtil.getInstance().viewComments(selectedValue, response_url);
+                    break;
+                case "add_comment":
+                    ResponseConstructionUtil.getInstance().promptForAddComment(selectedValue, response_url);
                     break;
             }
 

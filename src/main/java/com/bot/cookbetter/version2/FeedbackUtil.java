@@ -4,6 +4,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FeedbackUtil {
@@ -57,8 +58,16 @@ public class FeedbackUtil {
     }
 
     public static List<String> getFeedback(int recipeID) {
+        List<String> comments = new ArrayList<>();
+        // TODO: Query database and get comments for given recipe ID (assuming it is valid)
 
-        return null;
+        // Hardcoding for testing
+        //comments.add("Great recipe! Loved it.");
+        //comments.add("Took too long to make..");
+        //comments.add("Will definitely try again");
+
+        return comments;
+
     }
 
     /*
@@ -74,6 +83,10 @@ public class FeedbackUtil {
 
         //return result;
         return null;
+    }
+
+    public static  void userLikeDislike(String buttonValue, boolean like) {
+
     }
 
     public static void addLikeDislike(int recipeID, boolean like) {
