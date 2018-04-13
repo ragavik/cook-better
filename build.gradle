@@ -38,6 +38,8 @@ dependencies {
 	//compile 'org.hsqldb:hsqldb:2.3.3'
 	compile files('libs/ojdbc7.jar')
 	compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+	// jsoup HTML parser library @ https://jsoup.org/
+	compile 'org.jsoup:jsoup:1.11.2'
 }
 
 tasks.withType(Test) {

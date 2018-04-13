@@ -42,24 +42,55 @@ public class Util {
     //@kashyap
     public static String extractIngredients(String naturalQuery){
 
+        String ingredients[] = naturalQuery.split(" ");
+
+        StringBuffer ingredientsBuffer = new StringBuffer( );
+
+        Set<Ingredient> validIngredients = getAllIngredients();
+
+        for(Ingredient vIngredient : validIngredients){
+
+            for (String userIngredient : ingredients){
+
+                if (userIngredient.equalsIgnoreCase(vIngredient.getName())){
+                    ingredientsBuffer.append(vIngredient.getName()+",");
+                }
+
+            }
+
+        }
+
         // return csv : apple,milk,orange
-        return null;
+        return ingredientsBuffer.toString().substring(0, ingredientsBuffer.toString().length() - 1);
     }
+
+    public static Set<Ingredient> getAllIngredients(){
+
+        Set<Ingredient> ingredients = new HashSet<>();
+        for(String ingredientName : getAllIngredientNames()){
+
+            ingredients.add(new Ingredient(ingredientName));
+        }
+
+        return  ingredients;
+    }
+
 
     //@kashyap
     public  static Set<Ingredient> constructIngredients(String csvIngredients){
-        return null;
+
+        Set<Ingredient> ingredients = new HashSet<Ingredient>();
+
+        for(String csvIngredient : csvIngredients.split(",")){
+
+            ingredients.add(new Ingredient(csvIngredient.trim()));
+        }
+
+        return ingredients;
     }
 
 
-    //@kashyap
-    public static boolean ingredientExist(String ingredient){
 
-        //return true if 'ingredient' is a valid ingredient in database columnn.
-        // Handle plurality!
-
-        return false;
-    }
 
     //@charan
     public static Recipe getRecipe(int recipeID) {
@@ -117,12 +148,18 @@ public class Util {
     }
 
 
+    private static Set<String> validIngredients = getAllIngredientNames();
+
+
+    public static Set<String> getValidIngredients() {
+        return validIngredients;
+    }
 
     //@karthik
-    public static Set<Ingredient> getAllIngredients(){
+    public static Set<String> getAllIngredientNames(){
         // Database connection
         ResultSet column_names = null;
-        Set<Ingredient> ing = new HashSet<>();
+        Set<String> ing = new HashSet<>();
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -133,9 +170,7 @@ public class Util {
 
             while(column_names.next()){
 
-                Ingredient ingredient  = new Ingredient(column_names.getString(1));
-                ingredient.setExisits(true);
-                ing.add(ingredient);
+                ing.add(column_names.getString(1));
 
             }
 
