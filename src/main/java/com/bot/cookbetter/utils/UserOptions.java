@@ -1,4 +1,5 @@
 package com.bot.cookbetter.utils;
+import com.bot.cookbetter.version2.DatabaseUtil;
 import com.bot.cookbetter.version2.Ingredient;
 import com.bot.cookbetter.version2.Recipe;
 import org.json.JSONArray;
@@ -82,9 +83,7 @@ public class UserOptions {
             return;
         }
 
-        Class.forName("com.mysql.jdbc.Driver");
-        String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-        Connection conn = DriverManager.getConnection(connectionUrl);
+        Connection conn = DatabaseUtil.getConnection();
 
         boolean firstConditionSet = false;
 

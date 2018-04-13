@@ -1,5 +1,6 @@
 package com.bot.cookbetter.utils;
 
+import com.bot.cookbetter.version2.DatabaseUtil;
 import com.bot.cookbetter.version2.FeedbackUtil;
 import com.bot.cookbetter.version2.Recipe;
 import org.json.JSONArray;
@@ -64,11 +65,7 @@ public class ResponseConstructionUtil {
 
     public JSONObject surpriseMe(String userID) throws Exception {
 
-        // Database connection
-        Class.forName("com.mysql.jdbc.Driver");
-        String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-        Connection conn = DriverManager.getConnection(connectionUrl);
-
+        Connection conn = DatabaseUtil.getConnection();
         String query = "select * from data where title is not null";
 
         // Getting user's personalization conditions
