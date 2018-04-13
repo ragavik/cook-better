@@ -1,4 +1,5 @@
 package com.bot.cookbetter.utils;
+import com.bot.cookbetter.version2.DatabaseUtil;
 import com.bot.cookbetter.version2.Ingredient;
 import com.bot.cookbetter.version2.Recipe;
 import org.json.JSONArray;
@@ -82,9 +83,7 @@ public class UserOptions {
             return;
         }
 
-        Class.forName("com.mysql.jdbc.Driver");
-        String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-        Connection conn = DriverManager.getConnection(connectionUrl);
+        Connection conn = DatabaseUtil.getConnection();
 
         boolean firstConditionSet = false;
 
@@ -176,7 +175,6 @@ public class UserOptions {
 
         ResultSet rs = conn.prepareStatement(query).executeQuery();
         JSONObject jsonObject = new JSONObject();
-        String result = "";
 
         List<Recipe> recipes = new ArrayList<>();
         while(rs.next()){
@@ -184,24 +182,40 @@ public class UserOptions {
             Recipe recipe = new Recipe();
             int ID = rs.getInt(1); // Unused for now
             String name = rs.getString(2);
+            double rating = rs.getDouble("rating");
             recipe.setID(ID);
             recipe.setName(name);
+            recipe.setRating(rating);
             recipes.add(recipe);
 
-            result+="<";
+            /*result+="<";
             String link = "https://www.epicurious.com/search/";
             String modTitle = name.replaceAll(" ", "%20");
             link+=modTitle+"%20";
-            result+= link + "|"+name+"> \n";
+            result+= link + "|"+name+"> \n";*/
         }
 
+        jsonObject.put("text", ":pushpin: Here are your search results!");
+        JSONArray attachments = new JSONArray();
         // Error message when no recipes are found
         if(recipes.isEmpty()) {
-            result = "Sorry, we couldn't find any recipes based on your search criteria right now.:worried:\nWe are working on adding more recipes *very* soon!\nPlease try searching again with different ingredients!";
+
+            JSONObject item = new JSONObject();
+            item.put("color", "#FF0000");
+            item.put("text", "Sorry, we couldn't find any recipes based on your search criteria right now.:worried:\nWe are working on adding more recipes *very* soon!\nPlease try searching again with different ingredients!");
+            attachments.put(item);
         }
 
-        logger.info(result);
-        jsonObject.put("text",result);
+        else {
+
+            for(Recipe recipe : recipes) {
+                JSONObject recipeResponse = ResponseConstructionUtil.getInstance().constructRecipeResponse(recipe);
+                attachments.put(recipeResponse);
+            }
+
+        }
+        jsonObject.put("attachments", attachments);
+
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);
     }
 

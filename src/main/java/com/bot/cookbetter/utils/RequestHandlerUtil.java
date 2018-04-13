@@ -1,5 +1,6 @@
 package com.bot.cookbetter.utils;
 
+import com.bot.cookbetter.version2.FeedbackUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ public class RequestHandlerUtil {
 
     public void handleInteractiveSlackRequest(HttpServletRequest request) {
         try {
+
             String payload = request.getParameter("payload");
             JSONObject payloadObject = new JSONObject(payload);
             JSONArray actions = payloadObject.getJSONArray("actions");
@@ -165,6 +167,26 @@ public class RequestHandlerUtil {
                     p_user.submitPreferences(response_url);
                     p_user = null;
                     break;
+
+
+                // Handling feedback buttons
+                case "like_button":
+                    logger.info("like button pressed");
+                    FeedbackUtil.getInstance().userLikeDislike(selectedValue, true);
+                    break;
+
+                case "dislike_button":
+                    logger.info("dislike button pressed");
+                    FeedbackUtil.getInstance().userLikeDislike(selectedValue, false);
+                    break;
+
+                case "view_comments":
+                    logger.info("view comments button pressed");
+                    ResponseConstructionUtil.getInstance().viewComments(selectedValue, response_url);
+                    break;
+                case "add_comment":
+                    ResponseConstructionUtil.getInstance().promptForAddComment(selectedValue, response_url);
+                    break;
             }
 
             searchSession.put(userID, user);
@@ -206,7 +228,6 @@ public class RequestHandlerUtil {
             responseObj = ResponseConstructionUtil.getInstance().invokeSearch();
         }
         else if("/personalize".equals(command)) {
-
             responseObj = ResponseConstructionUtil.getInstance().personalize();
         }
         else if("/cookbetterhelp".equals(command)) {
@@ -215,6 +236,11 @@ public class RequestHandlerUtil {
         else if("/surpriseme".equals(command)) {
             String userID = requestMap.get("user_id");
             responseObj = ResponseConstructionUtil.getInstance().surpriseMe(userID);
+        }
+        else if("/addcomment".equals(command)) {
+            String userID = requestMap.get("user_id");
+            String text = requestMap.get("text");
+            responseObj = FeedbackUtil.getInstance().addFeedback(userID, text);
         }
         return responseObj;
     }

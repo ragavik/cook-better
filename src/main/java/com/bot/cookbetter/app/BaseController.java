@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * Handles post request from slack to respective business class.
  */
@@ -22,7 +21,7 @@ public class BaseController {
 
     @RequestMapping("/")
     public ResponseEntity<String> index() {
-        return ResponseEntity.ok("Welcome to CookBetter!");
+        return ResponseEntity.ok(":pushpin: Welcome to CookBetter!");
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/slack", consumes = "application/x-www-form-urlencoded")

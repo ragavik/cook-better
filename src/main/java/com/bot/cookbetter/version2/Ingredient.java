@@ -8,9 +8,7 @@ import java.util.Set;
 public class Ingredient {
 
     private String name;
-
     private  boolean exists;
-
 
     public Ingredient(String name) {
         this.name = name;
@@ -23,11 +21,12 @@ public class Ingredient {
 
     public boolean isExisits() {
 
-       return this.exists;
-
+        return this.exists;
     }
 
-
+    public void setExisits(boolean exisits) {
+        this.exists = exisits;
+    }
 
     @Override
     public String toString() {

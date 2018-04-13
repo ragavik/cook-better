@@ -11,6 +11,8 @@ public class Recipe {
 
     private String name;
 
+    private double rating;
+
     private Set<Ingredient> ingredients;
 
 
@@ -38,6 +40,10 @@ public class Recipe {
         this.ingredients = ingredients;
     }
 
+    public void setRating(double rating) { this.rating = rating; }
+
+    public double getRating() { return rating; }
+
     @Override
     public String toString() {
         return "Recipe{" +
@@ -46,5 +52,25 @@ public class Recipe {
                 ", ingredients=" + ingredients +
                 '}';
     }
+
+    /*
+    * Method to get recipe ID from given recipe title
+    * Returns 0 if recipe title is invalid
+    */
+    public static int getRecipeIdFromTitle(String title) {
+        // TODO
+        return 0;
+    }
+
+    /*
+    * Method to get recipe title from given recipe ID
+    * Returns empty string if recipe ID is invalid
+    */
+    public static String getRecipeTitleFromID(int recipeID) {
+        String recipeTitle = "";
+        // TODO
+        return recipeTitle;
+    }
+
 }
 
