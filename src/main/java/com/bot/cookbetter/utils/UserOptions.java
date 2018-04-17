@@ -34,6 +34,8 @@ public class UserOptions {
         this.ingredients.add(new Ingredient(ingredient));
     }
 
+    public void setIngredientList(Set<Ingredient> ingredientset) { this.ingredients = ingredientset; }
+
     /*public void setIngredient(int num, String value) {
         switch (num) {
             case 1:
@@ -75,12 +77,12 @@ public class UserOptions {
         logger.info(this.specialOccasion);
     }*/
 
-    public void startSearch(String response_url) throws Exception {
+    public JSONObject startSearch(String response_url) throws Exception {
 
         // Error message when user does not select any ingredient
         if(this.ingredients.isEmpty()) {
             ResponseConstructionUtil.getInstance().noIngredientsSelectedResponse(response_url);
-            return;
+            return null;
         }
 
         Connection conn = DatabaseUtil.getConnection();
@@ -216,7 +218,10 @@ public class UserOptions {
         }
         jsonObject.put("attachments", attachments);
 
-        RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);
+        if(response_url != null) {
+            RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);
+        }
+        return jsonObject;
     }
 
 }

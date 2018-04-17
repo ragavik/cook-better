@@ -1,15 +1,27 @@
 package com.bot.cookbetter.utils;
 
+import clarifai2.api.ClarifaiBuilder;
+import clarifai2.api.ClarifaiClient;
+import clarifai2.api.ClarifaiResponse;
+import clarifai2.dto.input.ClarifaiInput;
+import com.bot.cookbetter.version2.DatabaseUtil;
 import com.bot.cookbetter.version2.FeedbackUtil;
+import com.bot.cookbetter.version2.Ingredient;
+import netscape.javascript.JSObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.*;
 
 
@@ -61,6 +73,7 @@ public class RequestHandlerUtil {
             String response_url = payloadObject.getString("response_url");
             JSONObject userObject = payloadObject.getJSONObject("user");
             String userID = userObject.getString("id");
+            String triggerID = payloadObject.getString("trigger_id");
 
             if ("button".equals(type)) {
                 selectedValue = actionObject.getString("value");
@@ -171,21 +184,19 @@ public class RequestHandlerUtil {
 
                 // Handling feedback buttons
                 case "like_button":
-                    logger.info("like button pressed");
                     FeedbackUtil.getInstance().userLikeDislike(selectedValue, true);
                     break;
 
                 case "dislike_button":
-                    logger.info("dislike button pressed");
                     FeedbackUtil.getInstance().userLikeDislike(selectedValue, false);
                     break;
 
                 case "view_comments":
-                    logger.info("view comments button pressed");
                     ResponseConstructionUtil.getInstance().viewComments(selectedValue, response_url);
                     break;
                 case "add_comment":
-                    ResponseConstructionUtil.getInstance().promptForAddComment(selectedValue, response_url);
+                    //ResponseConstructionUtil.getInstance().promptForAddComment(selectedValue, response_url);
+                    JSONObject response = ResponseConstructionUtil.getInstance().constructRecipeDialog(triggerID, response_url, selectedValue);
                     break;
             }
 
@@ -237,10 +248,17 @@ public class RequestHandlerUtil {
             String userID = requestMap.get("user_id");
             responseObj = ResponseConstructionUtil.getInstance().surpriseMe(userID);
         }
-        else if("/addcomment".equals(command)) {
+        /*else if("/addcomment".equals(command)) {
             String userID = requestMap.get("user_id");
             String text = requestMap.get("text");
             responseObj = FeedbackUtil.getInstance().addFeedback(userID, text);
+        }*/
+        else if("/recipestats".equals(command)) {
+
+        }
+        else if("/imagesearch".equals(command)) {
+            String userID = requestMap.get("user_id");
+            //responseObj = imageSearch(userID);
         }
         return responseObj;
     }
@@ -253,5 +271,7 @@ public class RequestHandlerUtil {
         String result = restTemplate.postForObject(response_url, httpEntity, String.class);
         return result;
     }
+
+
 
 }
