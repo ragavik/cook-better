@@ -275,8 +275,8 @@ public class ResponseConstructionUtil {
 
         JSONArray attachments = new JSONArray();
 
-        List<String> comments = FeedbackUtil.getInstance().getFeedback(recipeID);
-        if (comments.isEmpty()) {
+        //List<String> comments = FeedbackUtil.getInstance().getFeedback(recipeID);
+        /*if (comments.isEmpty()) {
             JSONObject commentObj = new JSONObject();
             commentObj.put("color", "#ff0000");
             commentObj.put("text", "This recipe does not have any comments yet! :worried:");
@@ -289,7 +289,7 @@ public class ResponseConstructionUtil {
                 commentObj.put("text", comment);
                 attachments.put(commentObj);
             }
-        }
+        }*/
 
         response.put("attachments", attachments);
 

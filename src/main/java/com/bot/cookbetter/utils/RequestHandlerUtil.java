@@ -184,11 +184,11 @@ public class RequestHandlerUtil {
 
                 // Handling feedback buttons
                 case "like_button":
-                    FeedbackUtil.getInstance().userLikeDislike(selectedValue, true);
+                    //FeedbackUtil.getInstance().userLikeDislike(selectedValue, true);
                     break;
 
                 case "dislike_button":
-                    FeedbackUtil.getInstance().userLikeDislike(selectedValue, false);
+                    //FeedbackUtil.getInstance().userLikeDislike(selectedValue, false);
                     break;
 
                 case "view_comments":
@@ -258,7 +258,7 @@ public class RequestHandlerUtil {
         }
         else if("/imagesearch".equals(command)) {
             String userID = requestMap.get("user_id");
-            //responseObj = imageSearch(userID);
+            responseObj = imageSearch(userID);
         }
         return responseObj;
     }
@@ -272,6 +272,133 @@ public class RequestHandlerUtil {
         return result;
     }
 
+    public static JSONObject imageSearch(String userID) throws Exception {
 
+        // Getting the last file the user uploaded by calling files.list method
+        String url = "https://slack.com/api/files.list?token=xoxp-334900294064-335571428500-335829077234-64535fff384c94d759986fbfb84a7c9a&count=1&ts_to=now&user="+userID+"&pretty=1";
+
+        // Sending GET request to slack
+        RestTemplate restTemplate = new RestTemplate();
+        String responseStr = restTemplate.getForObject(url, String.class);
+        JSONObject response = new JSONObject(responseStr);
+
+        JSONArray files = response.getJSONArray("files");
+        JSONObject file = files.getJSONObject(0);
+        String id = file.getString("id");
+        String fileName = file.getString("name");
+        String title = file.getString("title");
+
+        // Making the file URL public
+        String publicURL = "https://slack.com/api/files.sharedPublicURL?token=xoxp-334900294064-335571428500-335829077234-64535fff384c94d759986fbfb84a7c9a&file="+id+"&pretty=1";
+        String publicResponse = restTemplate.getForObject(publicURL,String.class);
+        System.out.println(publicResponse);
+        //JSONObject publicFile = respo.getJSONObject("file");
+        String permaPublic = file.getString("permalink_public");
+        String[] splitWords = permaPublic.split("-");
+        String secretKey = splitWords[splitWords.length-1];
+        String finalURL = file.getString("url_private")+"?pub_secret="+secretKey;
+
+        // Constructing response to be sent to user
+        JSONObject result = new JSONObject();
+        result.put("text", ":pushpin: *Recipe Search from Ingredients Image*");
+        JSONArray attachments = new JSONArray();
+
+        // Image Recognition
+        ClarifaiBuilder cBuilder = new ClarifaiBuilder("cf85654f579d4a10ae216a48bcb0cf17");
+        ClarifaiClient client = cBuilder.buildSync();
+        ClarifaiResponse imageResponse =  client.getDefaultModels().generalModel().predict().withInputs(ClarifaiInput.forImage(finalURL)).executeSync();
+        String imageResponseStr = imageResponse.rawBody();
+        System.out.println(imageResponseStr);
+        JSONObject imageJSON = new JSONObject(imageResponseStr);
+
+        // Checking if valid image was uploaded
+        JSONObject status = imageJSON.getJSONObject("status");
+        String success = status.getString("description");
+        if("ok".equalsIgnoreCase(success)) {
+            JSONObject imageDetails = new JSONObject();
+            imageDetails.put("color", "#BDB76B");
+            imageDetails.put("title", "Image Details");
+            imageDetails.put("text", "File Name: " + fileName + " | File Title: " + title);
+            attachments.put(imageDetails);
+        }
+        else {
+            JSONObject imageDetails = new JSONObject();
+            imageDetails.put("color", "#FF0000");
+            imageDetails.put("title", "Input image decoding failed. Check file format sent.");
+            imageDetails.put("text", "File Name: " + fileName + " | File Title: " + title);
+            attachments.put(imageDetails);
+            result.put("attachments", attachments);
+            return result;
+        }
+
+        // Filtering image recognition output to get ingredients identified
+        JSONArray outputs = imageJSON.getJSONArray("outputs");
+        JSONObject output = outputs.getJSONObject(0);
+        JSONObject data = output.getJSONObject("data");
+        JSONArray concepts = data.getJSONArray("concepts");
+        List<String> initialIngredients = new ArrayList<>();
+        for(int i = 0; i < concepts.length(); i++) {
+            JSONObject prediction = concepts.getJSONObject(i);
+            initialIngredients.add(prediction.getString("name"));
+            System.out.println("ing = "+ prediction.getString("name"));
+            double probability = prediction.getDouble("value");
+            System.out.println("prob = " + probability);
+        }
+
+        // Validating if the ingredients identified are valid
+        // Sample query: select display_name from ingredients where display_name in ('onion', 'tomato');
+        Connection connection = DatabaseUtil.getConnection();
+        String query = "select display_name from ingredients where display_name in (";
+        int count = 0;
+        for(String ingredient : initialIngredients) {
+            count++;
+            query += "'" + ingredient.toLowerCase().trim() + "'";
+            if(count != initialIngredients.size()) {
+                query += ",";
+            }
+        }
+        query += ");";
+        ResultSet rs = connection.prepareStatement(query).executeQuery();
+
+        List<String> ingredients = new ArrayList<>(); // For printing
+        Set<Ingredient> ingredientSet = new HashSet<>(); // For searching
+        while(rs.next()) {
+            String ingredient = rs.getString("display_name");
+            ingredients.add(ingredient);
+            ingredientSet.add(new Ingredient(ingredient));
+        }
+
+        // Displaying identitfied ingredients to user
+        if(ingredients.isEmpty()) {
+            JSONObject ingredientsObj = new JSONObject();
+            ingredientsObj.put("color", "#FF0000");
+            ingredientsObj.put("title", "Ingredients Identified");
+            ingredientsObj.put("text", "No ingredients were identified. Try again with a different image!");
+            attachments.put(ingredientsObj);
+            result.put("attachments", attachments);
+            return result;
+        }
+        else {
+            JSONObject ingredientsObj = new JSONObject();
+            ingredientsObj.put("color", "#FFA500");
+            ingredientsObj.put("title", "Ingredients Identified");
+            ingredientsObj.put("text", ingredients.toString().replace("[", "").replace("]", ""));
+            attachments.put(ingredientsObj);
+        }
+
+        // Searching for recipes
+        UserOptions user = new UserOptions(userID);
+        user.setIngredientList(ingredientSet);
+        JSONObject searchResults = user.startSearch(null);
+        JSONArray searchAttachments = searchResults.getJSONArray("attachments");
+        for(int i = 0; i < searchAttachments.length(); i++) {
+            JSONObject recipeJSON = searchAttachments.getJSONObject(i);
+            attachments.put(recipeJSON);
+        }
+
+        result.put("attachments", attachments);
+
+        return result;
+    }
 
 }
