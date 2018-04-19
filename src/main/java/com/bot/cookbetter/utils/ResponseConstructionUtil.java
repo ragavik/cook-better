@@ -3,6 +3,7 @@ package com.bot.cookbetter.utils;
 import com.bot.cookbetter.version2.DatabaseUtil;
 import com.bot.cookbetter.version2.FeedbackUtil;
 import com.bot.cookbetter.version2.Recipe;
+import com.bot.cookbetter.version2.Util;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -268,7 +269,7 @@ public class ResponseConstructionUtil {
 
         String recipeIDStr = buttonValue.split("_")[1];
         int recipeID = Integer.parseInt(recipeIDStr);
-        String recipeTitle = Recipe.getRecipeTitleFromID(recipeID);
+        String recipeTitle = Util.getRecipe(recipeID).getName();
         response.put("text", ":pushpin: *Comments for `" + recipeTitle + "`:*");
         response.put("attachment_type", "default");
         response.put("replace_original", false);

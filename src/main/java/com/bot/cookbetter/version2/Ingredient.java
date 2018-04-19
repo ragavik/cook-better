@@ -13,10 +13,31 @@ public class Ingredient {
     private String name;
     private  boolean exists;
 
-    public Ingredient(String name) {
-        this.receivedName = name;
-        this.name = matchWithExisting(name);
-        this.exists = this.name != null;
+    public static void main(String[] arg){
+
+        System.out.println(new Ingredient("egg", true));
+
+    }
+
+    public Ingredient(String name){
+
+        this(name, true);
+    }
+
+    public Ingredient(String name, boolean existing) {
+
+        if (existing){
+
+            this.receivedName = name;
+            this.name = this.receivedName;
+            this.exists = true;
+
+        }else{
+            this.receivedName = name;
+            this.name = matchWithExisting(name);
+            this.exists = this.name != null;
+        }
+
     }
 
     private  static int computeScore(String ingredient1, String ingredient2){
@@ -45,6 +66,8 @@ public class Ingredient {
             for (String availableIngredient : Util.getAllIngredientNames()){
 
                int computedScore = computeScore(availableIngredient, receivedIngredient);
+
+
                 if (   computedScore   > currentScore ){
                     currentScore = computedScore;
                     result = availableIngredient;
@@ -72,6 +95,22 @@ public class Ingredient {
 
     public void setExisits(boolean exisits) {
         this.exists = exisits;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return this.getName().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj instanceof  Ingredient){
+            return ((Ingredient) obj).getName().equalsIgnoreCase(this.getName());
+        }
+
+        return super.equals(obj);
     }
 
     @Override

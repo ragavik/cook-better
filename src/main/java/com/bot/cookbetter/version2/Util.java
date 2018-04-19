@@ -56,8 +56,8 @@ public class Util {
 
             for (String userIngredient : ingredients){
 
-                if (userIngredient.equalsIgnoreCase(vIngredient.getName())){
-                    ingredientsBuffer.append(vIngredient.getName()+",");
+                {
+                    ingredientsBuffer.append(new Ingredient(userIngredient, false).getName()+",");
                 }
 
             }
@@ -73,7 +73,7 @@ public class Util {
         Set<Ingredient> ingredients = new HashSet<>();
         for(String ingredientName : getAllIngredientNames()){
 
-            ingredients.add(new Ingredient(ingredientName));
+            ingredients.add(new Ingredient(ingredientName, true));
         }
 
         return  ingredients;
@@ -86,7 +86,7 @@ public class Util {
 
         for(String csvIngredient : csvIngredients.split(",")){
 
-            ingredients.add(new Ingredient(csvIngredient.trim()));
+            ingredients.add(new Ingredient(csvIngredient.trim(), true));
         }
 
         return ingredients;
@@ -100,6 +100,11 @@ public class Util {
         // Handle plurality!
 
         return false;
+    }
+
+
+    public static void main(String[] a){
+        System.out.print(getRecipe(1));
     }
 
     //@charan
@@ -129,10 +134,10 @@ public class Util {
                 int numberOfColumns = rsMetaData.getColumnCount();
 
                 Set<Ingredient> ingredients = new HashSet<Ingredient>();
-                for (int idx = 14; idx < numberOfColumns + 1; idx++) {
+                for (int idx = 14; idx < numberOfColumns - 1 ; idx++) {
                     // Get the name of the column's name
                     if (rs.getInt(idx) == 1)
-                        ingredients.add(new Ingredient(rsMetaData.getColumnName(idx)));
+                        ingredients.add(new Ingredient(rsMetaData.getColumnName(idx), true));
                 }
                 recipe.setIngredients(ingredients);
 
