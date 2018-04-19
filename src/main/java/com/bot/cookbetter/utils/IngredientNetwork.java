@@ -1,0 +1,103 @@
+package com.bot.cookbetter.utils;
+
+import com.bot.cookbetter.model.Recipe;
+
+import javax.validation.constraints.Null;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+public class IngredientNetwork {
+
+    private HashMap<String, Integer> ingredCount = null;
+    private String[] inputIngredList = null;
+    private HashMap<String, Float> ingredPMI = null;
+    private Set<Recipe> filteredRecipe = null;
+
+    public IngredientNetwork(String ingreds) {
+        this.inputIngredList = ingreds.replaceAll(" ","").split(",");
+        this.ingredCount = countIngreds();
+        this.ingredPMI = generatePMINet();
+    }
+
+    private HashMap<String, Integer> countIngreds(){
+        List<Recipe> recipeList = new RecipeDataHandler().getRecipes();
+        HashMap<String, Integer> ingredCount = new HashMap<>();
+        if (this.inputIngredList != null || this.inputIngredList.length > 0) {
+            for (String ingred : this.inputIngredList) {
+                int count = 0;
+                for (Recipe recipe : recipeList) {
+                    if (recipe != null && recipe.getIngredients() != null && recipe.getIngredients().length > 0) {
+                        for (String re_ingred : recipe.getIngredients()) {
+                            if (re_ingred.toLowerCase().contains(ingred.toLowerCase())) {
+                                count++;
+                                break;
+                            }
+                        }
+                    }
+                }
+                ingredCount.put(ingred, count);
+            }
+        }
+        ingredCount = mutualIngred(recipeList, ingredCount);
+        return ingredCount;
+    }
+
+    private HashMap<String, Integer> mutualIngred(List<Recipe> recipeList, HashMap<String, Integer> ingredCount){
+        int size = this.inputIngredList.length;
+        if (this.inputIngredList != null || this.inputIngredList.length > 0) {
+            for (int i = 0; i < size; i++) {
+                for (int j = i+1; j < size; j++){
+                    ingredCount = mutualIngredCount(recipeList,ingredCount,this.inputIngredList[i], this.inputIngredList[j]);
+                }
+            }
+        }
+        return ingredCount;
+    }
+
+    private HashMap<String, Integer> mutualIngredCount(List<Recipe> recipeList, HashMap<String, Integer> ingredCount, String ingred1, String ingred2) {
+        int count = 0;
+        for (Recipe recipe : recipeList) {
+            boolean ingred1F = false;
+            boolean ingred2F = false;
+            if (recipe != null && recipe.getIngredients() != null && recipe.getIngredients().length > 0) {
+                for (String re_ingred : recipe.getIngredients()) {
+                    if (re_ingred.toLowerCase().contains(ingred1.toLowerCase())) {
+                        ingred1F = true;
+                    }else if (re_ingred.toLowerCase().contains(ingred2.toLowerCase())) {
+                        ingred2F = true;
+                    }
+                    if(ingred1F && ingred2F){
+                        count++;
+                        if(recipe.getRating() > 4.0){
+                            filteredRecipe.add(recipe);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        ingredCount.put(ingred1+","+ingred2, count);
+        return ingredCount;
+    }
+
+    private HashMap<String, Float> generatePMINet(){
+        HashMap<String, Float> pmiMap = new HashMap<>();
+        for (String name : this.ingredCount.keySet()){
+            float pmi;
+            if(name.contains(",")){
+                String[] ingreds = name.split(",");
+                pmi = (float)this.ingredCount.get(name)/(float) (this.ingredCount.get(ingreds[0]) * this.ingredCount.get(ingreds[1]));
+                pmiMap.put(name,pmi);
+            }
+        }
+        return pmiMap;
+    }
+
+
+    public void calculatePMI(){
+
+    }
+}
