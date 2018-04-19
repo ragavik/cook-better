@@ -5,12 +5,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-<<<<<<< HEAD
-
-
-=======
 import java.sql.*;
->>>>>>> 45425cbd07a9e1e5d792ab42aa19681edf2cb795
+
 import java.util.ArrayList;
 import java.util.List;
 
