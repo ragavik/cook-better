@@ -12,7 +12,7 @@ public class RecommenderSystemTest {
     public static void main(String[] arg){
 
         RecommenderSystem recommenderSystem = new RecommenderSystem();
-        Set<Ingredient> ingredients = Util.constructIngredients("zzz, zzz");
+        Set<Ingredient> ingredients = Util.constructIngredients("egg");
 
         Stack<Recipe> recipes = recommenderSystem.recommend(ingredients);
 

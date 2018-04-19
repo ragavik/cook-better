@@ -15,7 +15,8 @@ public class EditDistance
         }
 
         private static int score = 0;
-       public static int computeScore(String string1 , String string2 )
+
+        public static int computeScore(String string1 , String string2 )
         {
 
             score = 0;
@@ -30,8 +31,6 @@ public class EditDistance
         }
 
         private static void traverse(String longer, String shorter, int start, int end){
-
-
 
            if (longer.contains(shorter)){
                score = Math.max(shorter.length(), score);
