@@ -18,6 +18,7 @@ public class Util {
         return string == null || string.trim().length() == 0;
     }
 
+
 //    public static void main(String[] args) {
 //        Recipe rec;
 //        Set<Ingredient> ing = getAllIngredients();
@@ -41,7 +42,9 @@ public class Util {
 //        for (Ingredient in1 : ing){
 //            System.out.println(in1.getName());
 //        }
-//    }
+//        System.out.println("\nDirections: ");
+//        System.out.println(rec.getDirections());
+// }
 
     //@kashyap
     public static String extractIngredients(String naturalQuery){
@@ -112,9 +115,11 @@ public class Util {
 
         try {
             // Database connection
-            // Class.forName("com.mysql.jdbc.Driver");
-            // String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-            Connection conn = DatabaseUtil.getConnection();
+
+            Class.forName("com.mysql.jdbc.Driver");
+            String connectionUrl = "jdbc:mysql://cookbetter.ci2drxnp952j.us-east-1.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+            Connection conn = DriverManager.getConnection(connectionUrl);
+
             //System.out.println("Conn established");
             String query = "select * from data where id = '"+recipeID+"';";
 
@@ -129,12 +134,16 @@ public class Util {
                 String name = rs.getString(2);
                 recipe.setID(ID);
                 recipe.setName(name);
-
+                String directions = rs.getString("directions");
+                //System.out.println("Directions: "+directions);
+                recipe.setDirections(directions);
                 ResultSetMetaData rsMetaData = rs.getMetaData();
                 int numberOfColumns = rsMetaData.getColumnCount();
 
                 Set<Ingredient> ingredients = new HashSet<Ingredient>();
+
                 for (int idx = 14; idx < numberOfColumns - 1 ; idx++) {
+
                     // Get the name of the column's name
                     if (rs.getInt(idx) == 1)
                         ingredients.add(new Ingredient(rsMetaData.getColumnName(idx), true));
@@ -178,9 +187,11 @@ public class Util {
         ResultSet column_names = null;
         Set<String> ing = new HashSet<>();
         try {
-            // Class.forName("com.mysql.jdbc.Driver");
-            // String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-            Connection conn = DatabaseUtil.getConnection();
+
+            Class.forName("com.mysql.jdbc.Driver");
+            String connectionUrl = "jdbc:mysql://cookbetter.ci2drxnp952j.us-east-1.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+            Connection conn = DriverManager.getConnection(connectionUrl);
+
             String query = "select column_name from information_schema.columns where table_name = 'data'";
             column_names = conn.prepareStatement(query).executeQuery();
 

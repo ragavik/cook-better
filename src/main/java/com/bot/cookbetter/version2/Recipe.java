@@ -16,6 +16,7 @@ public class Recipe {
 
     private Set<Ingredient> ingredients = new HashSet<>();
 
+    private String directions;
 
     public String getName() {
         return name;
@@ -29,6 +30,8 @@ public class Recipe {
         return ingredients;
     }
 
+    public String getDirections() { return directions;}
+
     public void setName(String name) {
         this.name = name;
     }
@@ -40,6 +43,8 @@ public class Recipe {
     public void setIngredients(Set<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
+
+    public void setDirections(String directions) { this.directions = directions; }
 
     public void setRating(double rating) { this.rating = rating; }
 
