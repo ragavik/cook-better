@@ -1,6 +1,9 @@
 package com.bot.cookbetter.version2;
 
+import com.bot.cookbetter.app.BaseController;
 import com.bot.cookbetter.utils.RecipeCompare;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -9,16 +12,23 @@ import java.util.*;
  */
 public class RecommenderSystem {
 
+    private final Logger logger = LoggerFactory.getLogger(BaseController.class);
+
     private Stack<Recipe> recipeStack = new Stack();
 
     private List<RecipeWrapper> recipeWrappers = new ArrayList<>();
 
     public Stack<Recipe> recommend(Set<Ingredient> ingredientSet) {
 
-        for (int recipeID = 1; recipeID < 40; recipeID++) {
+        Set<Integer> recipeIds = new HashSet<>();
+
+        for (Ingredient ingredient : ingredientSet){
+            recipeIds.addAll( Util.getRecipeIDs(ingredient.getName()));
+        }
+
+        for (Integer recipeID : recipeIds) {
 
             Recipe recipe = Util.getRecipe(recipeID);
-
 
             if (recipe != null) {
 
@@ -26,7 +36,9 @@ public class RecommenderSystem {
 
                     int score = computeScore(recipe, ingredientSet);
 
-                    System.out.println(score+" - "+recipe);
+                    if (score == 0) continue;
+
+                    logger.info(score+" - "+recipe);
 
                     recipeWrappers.add(new RecipeWrapper(recipe, score));
 

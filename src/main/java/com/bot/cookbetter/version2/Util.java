@@ -146,7 +146,6 @@ public class Util {
                     break;
                 }
             }*/
-                System.out.println("Query: " + query);
                 ResultSet RS = conn.prepareStatement(query).executeQuery();
 
                 while (RS.next()) {
