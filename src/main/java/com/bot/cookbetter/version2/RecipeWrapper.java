@@ -25,6 +25,6 @@ public class RecipeWrapper implements Comparable<RecipeWrapper> {
     @Override
     public int compareTo(RecipeWrapper o) {
 
-        return getScore() - o.getScore();
+        return o.getScore() - getScore();
     }
 }

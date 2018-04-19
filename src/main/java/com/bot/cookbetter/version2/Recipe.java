@@ -1,5 +1,6 @@
 package com.bot.cookbetter.version2;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -9,11 +10,11 @@ public class Recipe {
 
     private int ID;
 
-    private String name;
+    private String name = "";
 
     private double rating;
 
-    private Set<Ingredient> ingredients;
+    private Set<Ingredient> ingredients = new HashSet<>();
 
     private String directions;
 
@@ -57,25 +58,5 @@ public class Recipe {
                 ", ingredients=" + ingredients +
                 '}';
     }
-
-    /*
-    * Method to get recipe ID from given recipe title
-    * Returns 0 if recipe title is invalid
-    */
-    public static int getRecipeIdFromTitle(String title) {
-        // TODO
-        return 0;
-    }
-
-    /*
-    * Method to get recipe title from given recipe ID
-    * Returns empty string if recipe ID is invalid
-    */
-    public static String getRecipeTitleFromID(int recipeID) {
-        String recipeTitle = "";
-        // TODO
-        return recipeTitle;
-    }
-
 }
 

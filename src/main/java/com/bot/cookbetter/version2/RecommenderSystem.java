@@ -15,9 +15,10 @@ public class RecommenderSystem {
 
     public Stack<Recipe> recommend(Set<Ingredient> ingredientSet) {
 
-        for (int recipeID = 0; recipeID < 30000; recipeID++) {
+        for (int recipeID = 1; recipeID < 40; recipeID++) {
 
             Recipe recipe = Util.getRecipe(recipeID);
+
 
             if (recipe != null) {
 
@@ -25,14 +26,10 @@ public class RecommenderSystem {
 
                     int score = computeScore(recipe, ingredientSet);
 
-                    if (score == RecommenderConfiguration.EXACT_MATCH) {
+                    System.out.println(score+" - "+recipe);
 
-                        recipeStack.push(recipe);
+                    recipeWrappers.add(new RecipeWrapper(recipe, score));
 
-                    } else {
-
-                        recipeWrappers.add(new RecipeWrapper(recipe, score));
-                    }
                 }else{
                     break;
                 }
@@ -80,7 +77,12 @@ public class RecommenderSystem {
 
         int finalScore = RecommenderConfiguration.EXTRA_INGREDIENT * extraIngredientCount + RecommenderConfiguration.MISSING_INGREDIENT * missingIngredientCount;
 
-        return finalScore;
+        if (matchingIngredient > 0){
+            return ( matchingIngredient * 1000 ) - finalScore;
+        }else{
+            return 0;
+        }
+
     }
 
 

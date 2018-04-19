@@ -65,12 +65,17 @@ public class Util {
 
                 for (String userIngredient : ingredients) {
 
-                    if (userIngredient.equalsIgnoreCase(vIngredient.getName())) {
+/*                    if (userIngredient.equalsIgnoreCase(vIngredient.getName())) {
                         ingredientsBuffer.append(vIngredient.getName() + ",");
+                    }*/
+
+
+                    {
+                        ingredientsBuffer.append(new Ingredient(userIngredient, false).getName() + ",");
+
                     }
 
                 }
-
             }
 
             // return csv : apple,milk,orange
@@ -78,16 +83,16 @@ public class Util {
         }
 
 
-        public static Set<Ingredient> getAllIngredients () {
+    public static Set<Ingredient> getAllIngredients(){
 
-            Set<Ingredient> ingredients = new HashSet<>();
-            for (String ingredientName : getAllIngredientNames()) {
+        Set<Ingredient> ingredients = new HashSet<>();
+        for(String ingredientName : getAllIngredientNames()){
 
-                ingredients.add(new Ingredient(ingredientName));
-            }
-
-            return ingredients;
+            ingredients.add(new Ingredient(ingredientName, true));
         }
+
+        return  ingredients;
+    }
 
         //@kashyap
         public static Set<Ingredient> constructIngredients (String csvIngredients){
@@ -96,10 +101,12 @@ public class Util {
 
             for (String csvIngredient : csvIngredients.split(",")) {
 
-                ingredients.add(new Ingredient(csvIngredient.trim()));
+                ingredients.add(new Ingredient(csvIngredient.trim(), true));
+                //ingredients.add(new Ingredient(csvIngredient.trim()));
             }
 
             return ingredients;
+
         }
 
 
@@ -112,7 +119,7 @@ public class Util {
             return false;
         }
 
-
+        //@charan
         public static Set<Integer> getRecipeIDs(String IngName){
 
             Set<Integer> IDs = new HashSet<Integer>();
