@@ -1,9 +1,12 @@
 package com.bot.cookbetter.utils;
 
+import com.bot.cookbetter.version2.DatabaseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.json.JSONObject;
 import org.json.JSONArray;
+
+import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -110,9 +113,8 @@ public class  PersonalizeOptions {
     }*/
 
     public void submitPreferences(String response_url) throws Exception {
-        Class.forName("com.mysql.jdbc.Driver");
-        String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-        Connection conn = DriverManager.getConnection(connectionUrl);
+
+        Connection conn = DatabaseUtil.getConnection();
         String query = "";
         String selectQuery = "select * from personalize where userid = '"+this.userID + "'";
         ResultSet rs = conn.prepareStatement(selectQuery).executeQuery();

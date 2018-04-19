@@ -1,4 +1,5 @@
 package com.bot.cookbetter.utils;
+import com.bot.cookbetter.version2.DatabaseUtil;
 import com.bot.cookbetter.version2.Ingredient;
 import com.bot.cookbetter.version2.Recipe;
 import org.json.JSONArray;
@@ -32,6 +33,8 @@ public class UserOptions {
     public void setIngredients(String ingredient) {
         this.ingredients.add(new Ingredient(ingredient));
     }
+
+    public void setIngredientList(Set<Ingredient> ingredientset) { this.ingredients = ingredientset; }
 
     /*public void setIngredient(int num, String value) {
         switch (num) {
@@ -74,17 +77,15 @@ public class UserOptions {
         logger.info(this.specialOccasion);
     }*/
 
-    public void startSearch(String response_url) throws Exception {
+    public JSONObject startSearch(String response_url) throws Exception {
 
         // Error message when user does not select any ingredient
         if(this.ingredients.isEmpty()) {
             ResponseConstructionUtil.getInstance().noIngredientsSelectedResponse(response_url);
-            return;
+            return null;
         }
 
-        Class.forName("com.mysql.jdbc.Driver");
-        String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-        Connection conn = DriverManager.getConnection(connectionUrl);
+        Connection conn = DatabaseUtil.getConnection();
 
         boolean firstConditionSet = false;
 
@@ -217,7 +218,10 @@ public class UserOptions {
         }
         jsonObject.put("attachments", attachments);
 
-        RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);
+        if(response_url != null) {
+            RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);
+        }
+        return jsonObject;
     }
 
 }
