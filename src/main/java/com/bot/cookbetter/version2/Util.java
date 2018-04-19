@@ -1,11 +1,17 @@
 package com.bot.cookbetter.version2;
 
+import com.bot.cookbetter.utils.RequestHandlerUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.sql.ResultSet;
 import java.util.Set;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSetMetaData;
 import java.util.HashSet;
+
+import static com.bot.cookbetter.utils.ResponseConstructionUtil.getRecipeIDFromButton;
 
 /**
  * @author snaraya7
@@ -192,7 +198,8 @@ public class Util {
                             ingredients.add(new Ingredient(rsMetaData.getColumnName(idx)));
                     }
                     recipe.setIngredients(ingredients);
-
+                    String ingredientMeasurement = rs.getString("ingredients");
+                    recipe.setIngredientMeasurement(ingredientMeasurement);
                     //result+="<";
                     //String link = "https://www.epicurious.com/search/";
                     //String modTitle = name.replaceAll(" ", "%20");
@@ -207,6 +214,22 @@ public class Util {
             return null;
         }
 
+
+        public static void displayInstructions( String response_url, String buttonValue) throws Exception{
+
+            int recipeID = getRecipeIDFromButton(buttonValue);
+
+            Recipe rec = new Recipe();
+
+            rec = getRecipe(recipeID);
+
+            String result = "Directions:\n"+rec.getDirections()+"\nIngredients:\n"+rec.getIngredientMeasuremnet();
+
+            JSONObject response = new JSONObject();
+            response.put("text",result);
+            RequestHandlerUtil.getInstance().sendSlackResponse(response_url,response);
+
+        }
         //@karthik
         public static Set<Ingredient> getIngredients ( int recipeID){
             Recipe Rec = getRecipe(recipeID);

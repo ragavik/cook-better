@@ -7,6 +7,7 @@ import clarifai2.dto.input.ClarifaiInput;
 import com.bot.cookbetter.version2.DatabaseUtil;
 import com.bot.cookbetter.version2.FeedbackUtil;
 import com.bot.cookbetter.version2.Ingredient;
+import com.bot.cookbetter.version2.Util;
 import netscape.javascript.JSObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -194,10 +195,15 @@ public class RequestHandlerUtil {
                 case "view_comments":
                     ResponseConstructionUtil.getInstance().viewComments(selectedValue, response_url);
                     break;
+
                 case "add_comment":
                     //ResponseConstructionUtil.getInstance().promptForAddComment(selectedValue, response_url);
                     JSONObject response = ResponseConstructionUtil.getInstance().constructRecipeDialog(triggerID, response_url, selectedValue);
                     break;
+                case "instructions":
+                    Util.displayInstructions(response_url,selectedValue);
+                    break;
+
             }
 
             searchSession.put(userID, user);
