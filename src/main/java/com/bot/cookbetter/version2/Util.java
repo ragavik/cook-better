@@ -14,30 +14,30 @@ import java.util.HashSet;
 public class Util {
 
 
-    public static void main(String[] args) {
-        Recipe rec;
-        Set<Ingredient> ing = getAllIngredients();
-        Set<Ingredient> ing1 = getIngredients(2);
-        rec = getRecipe(2);
-
-        //Get Recipe ID
-        System.out.println(rec.getID());
-        //Get Recipe Name
-        System.out.println(rec.getName());
-        //Get Recipe Ingredients
-        for (Ingredient in : rec.getIngredients()) {
-            System.out.print(in.getName());
-            System.out.print("\t");
-        }
-        System.out.println("\n******************************************************\n");
-        for (Ingredient in1 : ing1){
-            System.out.println(in1.getName());
-        }
-        System.out.println("\n******************************************************\n");
-        for (Ingredient in1 : ing){
-            System.out.println(in1.getName());
-        }
-    }
+//    public static void main(String[] args) {
+//        Recipe rec;
+//        Set<Ingredient> ing = getAllIngredients();
+//        Set<Ingredient> ing1 = getIngredients(2);
+//        rec = getRecipe(2);
+//
+//        //Get Recipe ID
+//        System.out.println(rec.getID());
+//        //Get Recipe Name
+//        System.out.println(rec.getName());
+//        //Get Recipe Ingredients
+//        for (Ingredient in : rec.getIngredients()) {
+//            System.out.print(in.getName());
+//            System.out.print("\t");
+//        }
+//        System.out.println("\n******************************************************\n");
+//        for (Ingredient in1 : ing1){
+//            System.out.println(in1.getName());
+//        }
+//        System.out.println("\n******************************************************\n");
+//        for (Ingredient in1 : ing){
+//            System.out.println(in1.getName());
+//        }
+//    }
 
     //@kashyap
     public static String extractIngredients(String naturalQuery){
@@ -103,9 +103,9 @@ public class Util {
 
         try {
             // Database connection
-            Class.forName("com.mysql.jdbc.Driver");
-            String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-            Connection conn = DriverManager.getConnection(connectionUrl);
+            // Class.forName("com.mysql.jdbc.Driver");
+            // String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+            Connection conn = DatabaseUtil.getConnection();
             //System.out.println("Conn established");
             String query = "select * from data where id = '"+recipeID+"';";
 
@@ -169,9 +169,9 @@ public class Util {
         ResultSet column_names = null;
         Set<String> ing = new HashSet<>();
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-            Connection conn = DriverManager.getConnection(connectionUrl);
+            // Class.forName("com.mysql.jdbc.Driver");
+            // String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+            Connection conn = DatabaseUtil.getConnection();
             String query = "select column_name from information_schema.columns where table_name = 'data'";
             column_names = conn.prepareStatement(query).executeQuery();
 

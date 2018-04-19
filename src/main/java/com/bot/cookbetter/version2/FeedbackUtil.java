@@ -29,9 +29,9 @@ public class FeedbackUtil {
             String dupQuery = "select * from comments where userID='" + userID + "' and recipeID = '" + recipeID + "'";
             try {
                 // Database connection
-                Class.forName("com.mysql.jdbc.Driver");
-                String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-                Connection conn = DriverManager.getConnection(connectionUrl);
+                // Class.forName("com.mysql.jdbc.Driver");
+                // String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+                Connection conn = DatabaseUtil.getConnection();
                 ResultSet rs = conn.prepareStatement(dupQuery).executeQuery();
                 if(rs.next()){
                     fbRow = "update comments set comment = '" + comment + "', timeStamp = '" + timestamp.getTime() + "' where userID = '" + userID + "' and recipeID = '" + recipeID + "'";
@@ -59,9 +59,9 @@ public class FeedbackUtil {
         }
         String dupQuery = "select * from feedback where recipeid = '" + recipeID + "'";
         try{
-            Class.forName("com.mysql.jdbc.Driver");
-            String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-            Connection conn = DriverManager.getConnection(connectionUrl);
+            // Class.forName("com.mysql.jdbc.Driver");
+            // String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+            Connection conn = DatabaseUtil.getConnection();
             ResultSet rs = conn.prepareStatement(dupQuery).executeQuery();
             if(rs.next()){
                 curr_likes = rs.getInt(4);
@@ -81,9 +81,9 @@ public class FeedbackUtil {
         List<String> comments = new ArrayList<>();
         String query = "select * from comments where recipeid = '" + recipeId + "'";
         try{
-            Class.forName("com.mysql.jdbc.Driver");
-            String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-            Connection conn = DriverManager.getConnection(connectionUrl);
+            // Class.forName("com.mysql.jdbc.Driver");
+            // String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+            Connection conn = DatabaseUtil.getConnection();
             ResultSet rs = conn.prepareStatement(query).executeQuery();
             while(rs.next()){
                 comments.add(rs.getString(3));
@@ -101,9 +101,9 @@ public class FeedbackUtil {
         stats[3] = 0;
         String query = "select * from feedback where recipeid = '" + recipeId + "'";
         try{
-            Class.forName("conn.mysql.jdbc.Driver");
-            String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-            Connection conn = DriverManager.getConnection(connectionUrl);
+            // Class.forName("conn.mysql.jdbc.Driver");
+            // String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+            Connection conn = DatabaseUtil.getConnection();
             ResultSet rs = conn.prepareStatement(query).executeQuery();
             while(rs.next()) {
                 stats[1] = rs.getInt(3);
@@ -119,9 +119,9 @@ public class FeedbackUtil {
     public static void addViews(String recipeId){
         String dupQuery = "select * from feedback where recipeid = '" + recipeId + "'";
         try{
-            Class.forName("conn.mysql.jdbc.Driver");
-            String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-            Connection conn = DriverManager.getConnection(connectionUrl);
+            // Class.forName("conn.mysql.jdbc.Driver");
+            // String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+            Connection conn = DatabaseUtil.getConnection();
             ResultSet rs = conn.prepareStatement(dupQuery).executeQuery();
             if(rs.next()) {
                 int new_views = rs.getInt(3) + 1;
