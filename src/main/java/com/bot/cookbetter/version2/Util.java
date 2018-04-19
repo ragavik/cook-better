@@ -120,7 +120,9 @@ public class Util {
                 String name = rs.getString(2);
                 recipe.setID(ID);
                 recipe.setName(name);
+                String directions = rs.getString("directions");
 
+                recipe.setDirections(directions);
                 ResultSetMetaData rsMetaData = rs.getMetaData();
                 int numberOfColumns = rsMetaData.getColumnCount();
 
