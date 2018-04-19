@@ -26,6 +26,8 @@ public class RecommenderSystem {
 
                     int score = computeScore(recipe, ingredientSet);
 
+                    if (score == 0) continue;
+
                     System.out.println(score+" - "+recipe);
 
                     recipeWrappers.add(new RecipeWrapper(recipe, score));
