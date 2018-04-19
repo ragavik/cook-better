@@ -8,10 +8,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -199,8 +206,10 @@ public class ResponseConstructionUtil {
         response.put("attachment_type", "default");
         response.put("callback_id", "recipe_" + recipeID + "_callback");
 
+        // TODO: display image
+
         // Displaying rating & likes data
-        JSONArray fields = new JSONArray();
+        /*JSONArray fields = new JSONArray();
         JSONObject ratingData = new JSONObject();
         ratingData.put("title", "Rating: " + recipe.getRating());
         ratingData.put("short", false);
@@ -212,11 +221,11 @@ public class ResponseConstructionUtil {
             ratingData.put("value", people + " people have tried this recipe. " + likes + " liked it :thumbsup: & " + dislikes + " disliked it :thumbsdown:!");
         }
         fields.put(ratingData);
-        response.put("fields", fields);
+        response.put("fields", fields);*/
 
         // Displaying buttons
         JSONArray actions = new JSONArray();
-        JSONObject likeButton = new JSONObject();
+        /*JSONObject likeButton = new JSONObject();
         likeButton.put("name", "like_button");
         likeButton.put("text", ":thumbsup:");
         likeButton.put("type", "button");
@@ -227,16 +236,22 @@ public class ResponseConstructionUtil {
         dislikeButton.put("text", ":thumbsdown:");
         dislikeButton.put("type", "button");
         dislikeButton.put("value", "dislikeButton_" + recipeID);
-        actions.put(dislikeButton);
+        actions.put(dislikeButton);*/
+        JSONObject instructions = new JSONObject();
+        instructions.put("name", "instructions");
+        instructions.put("text", "Make Recipe!");
+        instructions.put("type", "button");
+        instructions.put("value", "instructions_" + recipeID);
+        actions.put(instructions);
         JSONObject viewComments = new JSONObject();
         viewComments.put("name", "view_comments");
-        viewComments.put("text", "View Comments");
+        viewComments.put("text", "View Feedback");
         viewComments.put("type", "button");
         viewComments.put("value", "viewComments_" + recipeID);
         actions.put(viewComments);
         JSONObject addComment = new JSONObject();
         addComment.put("name", "add_comment");
-        addComment.put("text", "Add Comment");
+        addComment.put("text", "Add Feedback");
         addComment.put("type", "button");
         addComment.put("value", "addComment_" + recipeID);
         actions.put(addComment);
@@ -260,8 +275,8 @@ public class ResponseConstructionUtil {
 
         JSONArray attachments = new JSONArray();
 
-        List<String> comments = FeedbackUtil.getInstance().getFeedback(recipeID);
-        if (comments.isEmpty()) {
+        //List<String> comments = FeedbackUtil.getInstance().getFeedback(recipeID);
+        /*if (comments.isEmpty()) {
             JSONObject commentObj = new JSONObject();
             commentObj.put("color", "#ff0000");
             commentObj.put("text", "This recipe does not have any comments yet! :worried:");
@@ -274,7 +289,7 @@ public class ResponseConstructionUtil {
                 commentObj.put("text", comment);
                 attachments.put(commentObj);
             }
-        }
+        }*/
 
         response.put("attachments", attachments);
 
@@ -282,16 +297,69 @@ public class ResponseConstructionUtil {
     }
 
     // Method that shows instruction on how to add comment
-    public void promptForAddComment(String buttonValue, String response_url) throws Exception {
+    /*public void promptForAddComment(String buttonValue, String response_url) throws Exception {
 
         String recipeIDStr = buttonValue.split("_")[1];
         int recipeID = Integer.parseInt(recipeIDStr);
         String recipeTitle = Recipe.getRecipeTitleFromID(recipeID);
 
         JSONObject response = new JSONObject();
-        response.put("text", ":pushpin: Type */addcomment `{" + recipeTitle + "}`* followed by your comment.");
+        response.put("text", ":pushpin: Type /addcomment `{" + recipeTitle + "}` followed by your comment.");
         response.put("replace_original", false);
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
+    }*/
+
+    public static int getRecipeIDFromButton(String buttonValue) {
+        String recipeIDStr = buttonValue.split("_")[1];
+        int recipeID = Integer.parseInt(recipeIDStr);
+        return recipeID;
     }
+
+    public JSONObject constructRecipeDialog(String triggerID, String response_url, String buttonValue) throws Exception {
+        int recipeID = getRecipeIDFromButton(buttonValue);
+
+        logger.info("TESTING : in constructRecipeDialog for triggerID = " + triggerID + " & response_url = " + response_url);
+        JSONObject response = new JSONObject();
+
+        //response.put("trigger_id", triggerID);
+        JSONObject dialog = new JSONObject();
+        dialog.put("title", "Feedback");
+        dialog.put("callback_id", "feedback_dialog");
+        dialog.put("submit_label", "Done");
+
+        JSONArray elements = new JSONArray();
+        JSONObject comments = new JSONObject();
+        comments.put("type", "textarea");
+        comments.put("label", "Comment");
+        comments.put("name", "comment_for_" + recipeID);
+        elements.put(comments);
+
+        // Display like, dislike buttons
+        // Display textarea for adding comment
+
+        dialog.put("elements", elements);
+        response.put("dialog", dialog);
+
+
+        logger.info("TESTING : JSON sent = " + response.toString());
+
+        response_url = "https://slack.com/api/dialog.open?token=xoxp-334900294064-335571428500-335829077234-64535fff384c94d759986fbfb84a7c9a";
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<String, String>();
+        requestBody.add("dialog", URLEncoder.encode(response.toString()));
+        requestBody.add("trigger_id", triggerID);
+
+
+        logger.info("TESTING : ENC = " + URLEncoder.encode(response.toString()));
+                RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity httpEntity = new HttpEntity<MultiValueMap<String, String>>(requestBody, httpHeaders);
+        String result = restTemplate.postForObject(response_url, httpEntity, String.class);
+        logger.info("TESTING :  DONE : " + result);
+       // RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
+        return response;
+    }
+
+
 
 }
