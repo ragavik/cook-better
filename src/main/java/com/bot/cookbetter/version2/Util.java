@@ -13,6 +13,10 @@ import java.util.HashSet;
  */
 public class Util {
 
+    public static boolean isNullString(String string){
+
+        return string == null || string.trim().length() == 0;
+    }
 
     public static void main(String[] args) {
         Recipe rec;
