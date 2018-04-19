@@ -5,21 +5,42 @@ import com.bot.cookbetter.model.Recipe;
 import javax.validation.constraints.Null;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class IngredientNetwork {
 
     private HashMap<String, Integer> ingredCount = null;
     private String[] inputIngredList = null;
     private HashMap<String, Float> ingredPMI = null;
-    private Set<Recipe> filteredRecipe = null;
+    private Set<Recipe> filteredRecipe = new HashSet<>();
+    private String result;
 
     public IngredientNetwork(String ingreds) {
         this.inputIngredList = ingreds.replaceAll(" ","").split(",");
         this.ingredCount = countIngreds();
         this.ingredPMI = generatePMINet();
+    }
+
+    private HashMap<String, Integer> updateIngredientCount(HashMap<String, Integer> ingredCount1) {
+        HashMap<String, Integer> ingredCount = new HashMap<>(ingredCount1);
+        Iterator it = ingredCount.entrySet().iterator();
+        while (it.hasNext())
+        {
+            Map.Entry entry = (Map.Entry) it.next();
+            String name = (String) entry.getKey();
+            if(ingredCount.get(name) == 0){
+                if (result == null){
+                    result = "Following ingrediants not found: " + name;
+                }else {
+                    result = result + "," + name;
+                }
+                ingredCount1.remove(name);
+                List<String> list = new ArrayList<String>(Arrays.asList(this.inputIngredList));
+                list.remove(name);
+                this.inputIngredList = list.toArray(new String[0]);
+            }
+        }
+        return ingredCount1;
     }
 
     private HashMap<String, Integer> countIngreds(){
@@ -41,6 +62,7 @@ public class IngredientNetwork {
                 ingredCount.put(ingred, count);
             }
         }
+        ingredCount = updateIngredientCount(ingredCount);
         ingredCount = mutualIngred(recipeList, ingredCount);
         return ingredCount;
     }
@@ -89,7 +111,7 @@ public class IngredientNetwork {
             float pmi;
             if(name.contains(",")){
                 String[] ingreds = name.split(",");
-                pmi = (float)this.ingredCount.get(name)/(float) (this.ingredCount.get(ingreds[0]) * this.ingredCount.get(ingreds[1]));
+                pmi = ((float)this.ingredCount.get(name)/(float) (this.ingredCount.get(ingreds[0]) * this.ingredCount.get(ingreds[1]))) * 10000;
                 pmiMap.put(name,pmi);
             }
         }

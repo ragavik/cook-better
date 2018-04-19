@@ -16,7 +16,7 @@ import java.util.List;
 @SpringBootTest(classes = CookBetterApplication.class)
 public class RecipeDataHandlerTest {
 
-    private final static String INPUT_INGREDS = "Chicken, thyme, butter, pepper, eggs, bread";
+    private final static String INPUT_INGREDS = "Chicken, thyme, butter, pepper, egg, bread, honey, salt, abcde";
     RecipeDataHandler handler;
     IngredientNetwork ingredientNetwork;
 

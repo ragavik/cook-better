@@ -76,4 +76,8 @@ public class Recipe {
     public double getSodium() {
         return sodium;
     }
+
+    public boolean equals(Object o) {
+        return (o instanceof Recipe) && (((Recipe) o).getTitle()).equals(this.getTitle());
+    }
 }
