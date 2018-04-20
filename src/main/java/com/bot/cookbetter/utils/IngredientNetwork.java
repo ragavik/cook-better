@@ -14,6 +14,7 @@ public class IngredientNetwork {
     private HashMap<String, Float> ingredPMI = null;
     private Set<Recipe> filteredRecipe = new HashSet<>();
     private String result;
+    private Set<String> incompatibleIngred = new HashSet<>();
 
     public IngredientNetwork(String ingreds) {
         this.inputIngredList = ingreds.replaceAll(" ","").split(",");
@@ -118,8 +119,20 @@ public class IngredientNetwork {
         return pmiMap;
     }
 
-
-    public void calculatePMI(){
-
+    /**
+     * This is a temporary method to Analyze the results
+     */
+    public void getAnalysis(){
+        System.out.println(this.result);
+        for(String st: this.ingredPMI.keySet()){
+            float value = this.ingredPMI.get(st);
+            if(value < 5.0) {
+                System.out.println(st + "," + this.ingredPMI.get(st));
+            }else{
+                System.out.println(st + "," + this.ingredPMI.get(st) + "--------------");
+            }
+        }
     }
+
+
 }
