@@ -5,21 +5,16 @@ import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.dto.input.ClarifaiInput;
 import com.bot.cookbetter.version2.DatabaseUtil;
-import com.bot.cookbetter.version2.FeedbackUtil;
 import com.bot.cookbetter.version2.Ingredient;
-import netscape.javascript.JSObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.*;
@@ -195,8 +190,8 @@ public class RequestHandlerUtil {
                     ResponseConstructionUtil.getInstance().viewComments(selectedValue, response_url);
                     break;
                 case "add_comment":
-                    //ResponseConstructionUtil.getInstance().promptForAddComment(selectedValue, response_url);
-                    JSONObject response = ResponseConstructionUtil.getInstance().constructRecipeDialog(triggerID, response_url, selectedValue);
+                    // ResponseConstructionUtil.getInstance().promptForAddComment(selectedValue, response_url);
+                    // JSONObject response = ResponseConstructionUtil.getInstance().constructRecipeDialog(triggerID, response_url, selectedValue);
                     break;
             }
 
@@ -253,9 +248,6 @@ public class RequestHandlerUtil {
             String text = requestMap.get("text");
             responseObj = FeedbackUtil.getInstance().addFeedback(userID, text);
         }*/
-        else if("/recipestats".equals(command)) {
-
-        }
         else if("/imagesearch".equals(command)) {
             String userID = requestMap.get("user_id");
             responseObj = imageSearch(userID);
