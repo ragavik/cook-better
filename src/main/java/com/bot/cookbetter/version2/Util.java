@@ -3,6 +3,8 @@ package com.bot.cookbetter.version2;
 import com.bot.cookbetter.utils.RequestHandlerUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.util.Set;
@@ -18,6 +20,8 @@ import static com.bot.cookbetter.utils.ResponseConstructionUtil.getRecipeIDFromB
  * Shrikanth N C
  */
 public class Util {
+
+    final static Logger logger = LoggerFactory.getLogger(RequestHandlerUtil.class);
 
     public static boolean isNullString(String string){
 
@@ -222,10 +226,18 @@ public class Util {
 
             rec = getRecipe(recipeID);
 
-            String result = "Directions:\n"+rec.getDirections()+"\nIngredients:\n"+rec.getIngredientMeasuremnet();
+            //JSONObject sendImage = new JSONObject();
+            //sendImage.put("text", imageUrl );
+            //RequestHandlerUtil.getInstance().sendSlackResponse(response_url, sendImage);
+            //String result = imageUrl;
+            String result = "\n\n*Directions:*\n"+rec.getDirections()+"\n*Measurements:*\n"+rec.getIngredientMeasuremnet();
+
+            logger.info("TESTING RESULT = " + result);
 
             JSONObject response = new JSONObject();
             response.put("text",result);
+
+            logger.info("TESTING JSON = " + response);
             RequestHandlerUtil.getInstance().sendSlackResponse(response_url,response);
 
         }

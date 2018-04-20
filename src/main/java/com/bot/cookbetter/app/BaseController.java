@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class BaseController {
 
+    public static final String API_TOKEN = "xoxp-334900294064-335571428500-349543974417-294dfe7ff4cd0dddb3d0d6f9d0ef65d5";
+
     final Logger logger = LoggerFactory.getLogger(BaseController.class);
 
     @RequestMapping("/")

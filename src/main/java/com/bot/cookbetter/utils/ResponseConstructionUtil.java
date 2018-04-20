@@ -204,9 +204,9 @@ public class ResponseConstructionUtil {
         response.put("attachment_type", "default");
         response.put("callback_id", "recipe_" + recipeID + "_callback");
 
-        // Display image
         String imageUrl = GoogleImageFetcher.getAnImageLink(recipe.getName());
-        response.put("text", imageUrl);
+        response.put("image_url", imageUrl);
+
         // Displaying rating & likes data
         /*JSONArray fields = new JSONArray();
         JSONObject ratingData = new JSONObject();
