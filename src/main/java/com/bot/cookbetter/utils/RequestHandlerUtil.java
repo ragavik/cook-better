@@ -247,7 +247,7 @@ public class RequestHandlerUtil {
         else if("/addcomment".equals(command)) {
             String userID = requestMap.get("user_id");
             String text = requestMap.get("text");
-            int recipeID = 0;
+            int recipeID = 0; //TODO: extract recipeID from request
             responseObj = FeedbackUtil.getInstance().addComment(recipeID, userID, text);
         }
         else if("/imagesearch".equals(command)) {
