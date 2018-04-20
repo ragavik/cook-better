@@ -5,6 +5,7 @@ import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.dto.input.ClarifaiInput;
 import com.bot.cookbetter.version2.DatabaseUtil;
+import com.bot.cookbetter.version2.FeedbackUtil;
 import com.bot.cookbetter.version2.Ingredient;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -243,11 +244,12 @@ public class RequestHandlerUtil {
             String userID = requestMap.get("user_id");
             responseObj = ResponseConstructionUtil.getInstance().surpriseMe(userID);
         }
-        /*else if("/addcomment".equals(command)) {
+        else if("/addcomment".equals(command)) {
             String userID = requestMap.get("user_id");
             String text = requestMap.get("text");
-            responseObj = FeedbackUtil.getInstance().addFeedback(userID, text);
-        }*/
+            int recipeID = 0;
+            responseObj = FeedbackUtil.getInstance().addComment(recipeID, userID, text);
+        }
         else if("/imagesearch".equals(command)) {
             String userID = requestMap.get("user_id");
             responseObj = imageSearch(userID);

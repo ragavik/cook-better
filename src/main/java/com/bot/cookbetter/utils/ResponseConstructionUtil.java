@@ -277,7 +277,7 @@ public class ResponseConstructionUtil {
 
         JSONArray attachments = new JSONArray();
 
-        List<String> comments = FeedbackUtil.getInstance().getComments(String.valueOf(recipeID));
+        List<String> comments = FeedbackUtil.getInstance().getComments(recipeID);
         if (comments.isEmpty()) {
             JSONObject commentObj = new JSONObject();
             commentObj.put("color", "#ff0000");
