@@ -21,7 +21,8 @@ public class BaseController {
     final Logger logger = LoggerFactory.getLogger(BaseController.class);
 
     @RequestMapping("/")
-    public ResponseEntity<String> index() { return ResponseEntity.ok(":pushpin: Welcome to CookBetter!"); }
+    public ResponseEntity<String> index() {
+        return ResponseEntity.ok(":pushpin: Welcome to CookBetter!"); }
 
     @RequestMapping(method = RequestMethod.POST, value = "/slack", consumes = "application/x-www-form-urlencoded")
     public void slack(HttpServletRequest request) {

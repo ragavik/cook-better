@@ -254,7 +254,7 @@ public class RequestHandlerUtil {
             responseObj = FeedbackUtil.getInstance().addFeedback(userID, text);
         }*/
         else if("/recipestats".equals(command)) {
-
+            responseObj = Stats.recipestats();
         }
         else if("/imagesearch".equals(command)) {
             String userID = requestMap.get("user_id");
