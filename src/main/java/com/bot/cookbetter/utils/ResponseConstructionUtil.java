@@ -1,8 +1,6 @@
 package com.bot.cookbetter.utils;
 
-import com.bot.cookbetter.version2.DatabaseUtil;
-import com.bot.cookbetter.version2.FeedbackUtil;
-import com.bot.cookbetter.version2.Recipe;
+import com.bot.cookbetter.version2.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -207,8 +205,9 @@ public class ResponseConstructionUtil {
         response.put("attachment_type", "default");
         response.put("callback_id", "recipe_" + recipeID + "_callback");
 
-        // TODO: display image
-
+        // Display image
+        String imageUrl = GoogleImageFetcher.getAnImageLink(recipe.getName());
+        response.put("text", imageUrl);
         // Displaying rating & likes data
         /*JSONArray fields = new JSONArray();
         JSONObject ratingData = new JSONObject();
@@ -258,6 +257,8 @@ public class ResponseConstructionUtil {
         actions.put(addComment);
         response.put("actions", actions);
 
+        logger.info("RESPONSE JSON = " + response.toString());
+
         return response;
     }
 
@@ -269,15 +270,15 @@ public class ResponseConstructionUtil {
 
         String recipeIDStr = buttonValue.split("_")[1];
         int recipeID = Integer.parseInt(recipeIDStr);
-        String recipeTitle = Recipe.getRecipeTitleFromID(recipeID);
+        String recipeTitle = Util.getRecipe(recipeID).getName();
         response.put("text", ":pushpin: *Comments for `" + recipeTitle + "`:*");
         response.put("attachment_type", "default");
         response.put("replace_original", false);
 
         JSONArray attachments = new JSONArray();
 
-        //List<String> comments = FeedbackUtil.getInstance().getFeedback(recipeID);
-        /*if (comments.isEmpty()) {
+        List<String> comments = FeedbackUtil.getInstance().getComments(String.valueOf(recipeID));
+        if (comments.isEmpty()) {
             JSONObject commentObj = new JSONObject();
             commentObj.put("color", "#ff0000");
             commentObj.put("text", "This recipe does not have any comments yet! :worried:");
@@ -290,7 +291,7 @@ public class ResponseConstructionUtil {
                 commentObj.put("text", comment);
                 attachments.put(commentObj);
             }
-        }*/
+        }
 
         response.put("attachments", attachments);
 

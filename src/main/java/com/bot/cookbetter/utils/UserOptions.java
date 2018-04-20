@@ -2,6 +2,7 @@ package com.bot.cookbetter.utils;
 import com.bot.cookbetter.version2.DatabaseUtil;
 import com.bot.cookbetter.version2.Ingredient;
 import com.bot.cookbetter.version2.Recipe;
+import com.bot.cookbetter.version2.RecommenderSystem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -179,7 +180,8 @@ public class UserOptions {
         JSONObject jsonObject = new JSONObject();
 
         List<Recipe> recipes = new ArrayList<>();
-        while(rs.next()){
+        recipes = new RecommenderSystem().recommend(this.ingredients);
+        /*while(rs.next()){
 
             Recipe recipe = new Recipe();
             int ID = rs.getInt(1); // Unused for now
@@ -195,7 +197,9 @@ public class UserOptions {
             String modTitle = name.replaceAll(" ", "%20");
             link+=modTitle+"%20";
             result+= link + "|"+name+"> \n";*/
-        }
+        /*}*/
+
+
 
         jsonObject.put("text", ":pushpin: Here are your search results!");
         JSONArray attachments = new JSONArray();

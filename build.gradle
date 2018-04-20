@@ -33,6 +33,8 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.json:json:20180130')
 	compile('com.google.code.gson:gson:2.8.2')
+	// For JSONLoader Functionality
+	compile ('com.googlecode.json-simple:json-simple:1.1.1')
 	// Use MySQL Connector-J
 	compile 'mysql:mysql-connector-java'
 	//compile 'org.hsqldb:hsqldb:2.3.3'
