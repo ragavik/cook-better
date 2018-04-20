@@ -48,6 +48,10 @@ public class FeedbackUtil {
                 success = false;
             }
         }
+        if(success){
+            response.put("userid",userID);
+            response.put("comment",comment);
+        }
         return response;
     }
 
