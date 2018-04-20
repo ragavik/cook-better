@@ -1,7 +1,6 @@
 package com.bot.cookbetter.app;
 
 import com.bot.cookbetter.utils.RequestHandlerUtil;
-import com.bot.cookbetter.utils.ResponseConstructionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

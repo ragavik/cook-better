@@ -6,8 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 public class FeedbackUtil {
 
@@ -21,8 +24,9 @@ public class FeedbackUtil {
         return feedbackUtil;
     }
 
-    public static Boolean addComment(int recipeID, String userID, String comment){
+    public static JSONObject addComment(int recipeID, String userID, String comment){
         Boolean success = false;
+        JSONObject response = new JSONObject();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if(recipeID>0){
             String fbRow = "insert into comments (recipeID, userID, comment, timeStamp) values ('" + recipeID + "','" + userID + "','" + comment + "','" + timestamp.getTime() + "')";
@@ -45,10 +49,10 @@ public class FeedbackUtil {
                 success = false;
             }
         }
-        return success;
+        return response;
     }
 
-    public static Boolean addLikes(String recipeID, Boolean like){
+    public static Boolean addLikes(int recipeID, Boolean like){
         // This function must be called only after calling addViews
         Boolean success = false;
         int likes = 0, dislikes = 0, curr_likes = 0, curr_dislikes = 0;
@@ -77,7 +81,7 @@ public class FeedbackUtil {
         return success;
     }
 
-    public static List<String> getComments(String recipeId){
+    public static List<String> getComments(int recipeId){
         List<String> comments = new ArrayList<>();
         String query = "select * from comments where recipeid = '" + recipeId + "'";
         try{
@@ -94,7 +98,7 @@ public class FeedbackUtil {
         return comments;
     }
 
-    public static int[] getViewsLikes(String recipeId){
+    public static int[] getViewsLikes(int recipeId){
         int[] stats = new int[3];
         stats[1] = 0;
         stats[2] = 0;
@@ -116,7 +120,7 @@ public class FeedbackUtil {
         return stats;
     }
 
-    public static void addViews(String recipeId){
+    public static void addViews(int recipeId){
         String dupQuery = "select * from feedback where recipeid = '" + recipeId + "'";
         try{
             // Class.forName("conn.mysql.jdbc.Driver");

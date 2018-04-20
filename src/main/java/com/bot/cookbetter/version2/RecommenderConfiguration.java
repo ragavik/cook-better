@@ -9,7 +9,6 @@ public interface RecommenderConfiguration {
 
     int MISSING_INGREDIENT = 1;
 
-    int RECOMMEND_UPTO = 3;
+    int RECOMMEND_UPTO = 1;
 
-    int EXACT_MATCH = 0;
 }

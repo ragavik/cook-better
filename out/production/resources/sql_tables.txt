@@ -1,0 +1,3 @@
+create table cookbetter.personalize(userid varchar(50),age_group varchar(50),allergy_1 varchar(50),allergy_2 varchar(50),allergy_3 varchar(50),diet_res_1 varchar(50),diet_res_2 varchar(50),diet_res_3 varchar(50),dis_1 varchar(50),dis_2 varchar(50),dis_3 varchar(50),goal_lose_wt varchar(50),goal_gain_wt varchar(50),goal_gain_muscle varchar(50),PRIMARY KEY(userid));
+create table cookbetter.feedback(recipeid varchar(50),rating varchar(50),views varchar(50),likes varchar(50),dislikes varchar(50),PRIMARY KEY(recipeid));
+create table cookbetter.comments(recipeid varchar(50),userid varchar(50),comment varchar(50),timestamp varchar(50),PRIMARY KEY(recipeid),FOREIGN KEY(userid));
