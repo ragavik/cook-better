@@ -22,7 +22,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ResponseConstructionUtil {
 
@@ -172,6 +174,7 @@ public class ResponseConstructionUtil {
         }
 
         jsonObject.put("text", result);
+        conn.close();
 
         return jsonObject;
     }
@@ -191,6 +194,10 @@ public class ResponseConstructionUtil {
     public JSONObject constructRecipeResponse(Recipe recipe) {
         JSONObject response = new JSONObject();
         int recipeID = recipe.getID();
+
+        // Increasing view count for recipe
+        FeedbackUtil.addViews(recipeID);
+
         String title = recipe.getName();
 
         // Displaying title & link
@@ -225,7 +232,7 @@ public class ResponseConstructionUtil {
 
         // Displaying buttons
         JSONArray actions = new JSONArray();
-        /*JSONObject likeButton = new JSONObject();
+        JSONObject likeButton = new JSONObject();
         likeButton.put("name", "like_button");
         likeButton.put("text", ":thumbsup:");
         likeButton.put("type", "button");
@@ -236,7 +243,7 @@ public class ResponseConstructionUtil {
         dislikeButton.put("text", ":thumbsdown:");
         dislikeButton.put("type", "button");
         dislikeButton.put("value", "dislikeButton_" + recipeID);
-        actions.put(dislikeButton);*/
+        actions.put(dislikeButton);
         JSONObject instructions = new JSONObject();
         instructions.put("name", "instructions");
         instructions.put("text", "Make Recipe!");
@@ -256,8 +263,6 @@ public class ResponseConstructionUtil {
         addComment.put("value", "addComment_" + recipeID);
         actions.put(addComment);
         response.put("actions", actions);
-
-        logger.info("RESPONSE JSON = " + response.toString());
 
         return response;
     }
@@ -299,23 +304,55 @@ public class ResponseConstructionUtil {
     }
 
     // Method that shows instruction on how to add comment
-    /*public void promptForAddComment(String buttonValue, String response_url) throws Exception {
+    public void promptForAddComment(String buttonValue, String response_url) throws Exception {
 
         String recipeIDStr = buttonValue.split("_")[1];
         int recipeID = Integer.parseInt(recipeIDStr);
-        String recipeTitle = Recipe.getRecipeTitleFromID(recipeID);
+        Recipe recipe = Util.getRecipe(recipeID);
+        String recipeTitle = recipe.getName();
 
         JSONObject response = new JSONObject();
-        response.put("text", ":pushpin: Type /addcomment `{" + recipeTitle + "}` followed by your comment.");
+        response.put("text", ":pushpin: Type /addcomment {" + recipeTitle + "} followed by your comment.");
         response.put("replace_original", false);
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
-    }*/
+    }
 
     public static int getRecipeIDFromButton(String buttonValue) {
         String recipeIDStr = buttonValue.split("_")[1];
         int recipeID = Integer.parseInt(recipeIDStr);
         return recipeID;
     }
+
+    public JSONObject suggestFromNaturalQuery(String query, String userID) throws Exception {
+        logger.info("HELP : in suggest method");
+        System.out.println("query = " + query);
+        JSONObject response = new JSONObject();
+        String ingredientsCsv = Util.extractIngredients(query);
+        logger.info("extratced ingredients = " + ingredientsCsv);
+        Set<Ingredient> ingredientSet = new HashSet<>();
+        for(String ingredient : ingredientsCsv.split(",")) {
+            logger.info("input = " + ingredient);
+            Ingredient ing = new Ingredient(ingredient, false);
+            if(ing.isExisits()) {
+                ingredientSet.add(ing);
+                logger.info(ing.toString());
+            }
+            logger.info("= output");
+        }
+
+        // Searching for recipes
+        UserOptions user = new UserOptions(userID);
+        user.setIngredientList(ingredientSet);
+        logger.info("TESTING QUERY SEARCH : ");
+        logger.info(ingredientSet.toString());
+        JSONObject searchResults = user.startSearch(null);
+        JSONArray searchAttachments = searchResults.getJSONArray("attachments");
+        response = searchResults;
+        logger.info("Response = " + response.toString());
+
+        return response;
+    }
+
 }
 //    public JSONObject constructRecipeDialog(String triggerID, String response_url, String buttonValue) throws Exception {
 //        int recipeID = getRecipeIDFromButton(buttonValue);

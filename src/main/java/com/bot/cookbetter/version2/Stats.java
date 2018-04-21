@@ -60,7 +60,7 @@ public class Stats {
                 k++;
             }
             logger.info("STATS TESTING : recipe_vegan_likes" + recipe_vegan_likes + "recipe_vegetarian_likes" + recipe_vegetarian_likes + "recipe_other_dishes_likes" + recipe_other_dishes_likes);
-
+            conn.close();
         }
         catch(Exception e)
         {
