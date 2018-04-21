@@ -107,7 +107,7 @@ public class UserOptions {
         }
 
         RecipeDataHandler handler = new RecipeDataHandler();
-        List<Recipe> recipes = handler.getRecipes();
+        List<Recipe> recipes = RecipeDataHandler.RECIPE_LIST;
 
         Class.forName("com.mysql.jdbc.Driver");
         //String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";

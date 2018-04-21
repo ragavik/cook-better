@@ -22,11 +22,8 @@ public class RecipeDataHandlerTest {
 
     @Test
     public void testGetRecipes(){
-        handler = new RecipeDataHandler();
-        List<Recipe> data = handler.getRecipes();
-
         ingredientNetwork = new IngredientNetwork(INPUT_INGREDS);
         ingredientNetwork.getAnalysis();
-        assertNotNull(data);
+        assertNotNull(ingredientNetwork);
     }
 }

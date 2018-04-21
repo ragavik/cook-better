@@ -19,17 +19,19 @@ public class RecipeDataHandler {
     /**
      * Read recipes.json file
      *
-     * @return lis of recipes with all attributes
+     * @return list of recipes with all attributes
      */
-    public List<Recipe> getRecipes() {
-        List<Recipe> recipesList = null;
+
+    static List<Recipe> RECIPE_LIST;
+
+    static{
         try {
             ObjectMapper objectMapper = new ObjectMapper();
 
-            InputStream is = getClass().getResourceAsStream("/recipes.json");
+            InputStream is = new Object().getClass().getResourceAsStream("/recipes.json");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-            recipesList = objectMapper.readValue(
+            RECIPE_LIST = objectMapper.readValue(
                     br,
                     objectMapper.getTypeFactory().constructCollectionType(
                             List.class, Recipe.class));
@@ -40,6 +42,5 @@ public class RecipeDataHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return recipesList;
     }
 }

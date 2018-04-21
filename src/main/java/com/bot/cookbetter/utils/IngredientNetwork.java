@@ -45,7 +45,7 @@ public class IngredientNetwork {
     }
 
     private HashMap<String, Integer> countIngreds(){
-        List<Recipe> recipeList = new RecipeDataHandler().getRecipes();
+        List<Recipe> recipeList = RecipeDataHandler.RECIPE_LIST;
         HashMap<String, Integer> ingredCount = new HashMap<>();
         if (this.inputIngredList != null || this.inputIngredList.length > 0) {
             for (String ingred : this.inputIngredList) {
@@ -134,5 +134,27 @@ public class IngredientNetwork {
         }
     }
 
+    public HashMap<String, Integer> getIngredCount() {
+        return ingredCount;
+    }
 
+    public String[] getInputIngredList() {
+        return inputIngredList;
+    }
+
+    public HashMap<String, Float> getIngredPMI() {
+        return ingredPMI;
+    }
+
+    public Set<Recipe> getFilteredRecipe() {
+        return filteredRecipe;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public Set<String> getIncompatibleIngred() {
+        return incompatibleIngred;
+    }
 }
