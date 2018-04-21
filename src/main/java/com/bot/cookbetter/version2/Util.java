@@ -252,6 +252,7 @@ public class Util {
 
         //@karthik
         public static Set<String> getAllIngredientNames () {
+
             // Database connection
             ResultSet column_names = null;
             Set<String> ing = new HashSet<>();

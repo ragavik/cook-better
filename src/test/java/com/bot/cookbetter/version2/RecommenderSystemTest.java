@@ -21,6 +21,8 @@ public class RecommenderSystemTest {
             System.out.println("We recommend : "+recipe);
         }
 
+        System.out.println("Done!");
+
 
 
     }
