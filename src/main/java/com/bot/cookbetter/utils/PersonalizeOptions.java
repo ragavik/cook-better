@@ -167,6 +167,8 @@ public class  PersonalizeOptions {
         attachments.put(item);
         response.put("attachments", attachments);
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
+
+        conn.close();
     }
 
 

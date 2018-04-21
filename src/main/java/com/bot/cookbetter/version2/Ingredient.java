@@ -38,6 +38,11 @@ public class Ingredient {
             this.exists = this.name != null;
         }
 
+        System.out.println("Constructor : " );
+        System.out.println(this.receivedName);
+        System.out.println(this.name);
+        System.out.println(this.exists);
+
     }
 
     private  static int computeScore(String ingredient1, String ingredient2){
@@ -56,6 +61,7 @@ public class Ingredient {
 
 
     private static String matchWithExisting(String receivedIngredient){
+        System.out.println("receivedIngredient = " + receivedIngredient);
 
         String result = null;
 
@@ -78,7 +84,7 @@ public class Ingredient {
 
 
         }
-
+        System.out.println("method result = " + result);
         return  result;
     }
 

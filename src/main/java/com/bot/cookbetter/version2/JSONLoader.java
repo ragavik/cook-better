@@ -105,6 +105,7 @@ public class JSONLoader {
             if (updated == 1)
                 BatchQuery.executeBatch();
 
+            conn.close();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {

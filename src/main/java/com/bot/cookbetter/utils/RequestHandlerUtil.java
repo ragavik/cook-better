@@ -10,6 +10,7 @@ import com.bot.cookbetter.version2.FeedbackUtil;
 import com.bot.cookbetter.version2.Ingredient;
 import com.bot.cookbetter.version2.Util;
 import com.bot.cookbetter.version2.Stats;
+import jdk.jfr.DataAmount;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -183,19 +184,27 @@ public class RequestHandlerUtil {
 
                 // Handling feedback buttons
                 case "like_button":
-                    //FeedbackUtil.getInstance().userLikeDislike(selectedValue, true);
+                    int recipeID = ResponseConstructionUtil.getRecipeIDFromButton(selectedValue);
+                    logger.info("LIKE : recipeid = " + recipeID);
+                    FeedbackUtil.getInstance().addLikes(recipeID, true);
                     break;
 
                 case "dislike_button":
-                    //FeedbackUtil.getInstance().userLikeDislike(selectedValue, false);
+                    int recipeID2 = ResponseConstructionUtil.getRecipeIDFromButton(selectedValue);
+                    logger.info("DISLIKE : recipeid = "+ recipeID2);
+                    FeedbackUtil.getInstance().addLikes(recipeID2, false);
                     break;
 
                 case "view_comments":
                     ResponseConstructionUtil.getInstance().viewComments(selectedValue, response_url);
                     break;
                 case "add_comment":
-                    // ResponseConstructionUtil.getInstance().promptForAddComment(selectedValue, response_url);
+                    ResponseConstructionUtil.getInstance().promptForAddComment(selectedValue, response_url);
                     // JSONObject response = ResponseConstructionUtil.getInstance().constructRecipeDialog(triggerID, response_url, selectedValue);
+                    break;
+
+                case "instructions":
+                    Util.displayInstructions(response_url, selectedValue);
                     break;
             }
 
@@ -250,17 +259,50 @@ public class RequestHandlerUtil {
         else if("/addcomment".equals(command)) {
             String userID = requestMap.get("user_id");
             String text = requestMap.get("text");
-            int recipeID = 0; //TODO: extract recipeID from request
-            responseObj = FeedbackUtil.getInstance().addComment(recipeID, userID, text);
+            logger.info("TESTING text = " + text);
+            String[] split = text.split("}");
+            logger.info("TESTING ADD COMMENT");
+            String recipeName = split[0].replace("{", "").trim();
+            text = split[1].trim(); // comment
+            int recipeID = getRecipeID(recipeName);
+            logger.info("recipe name = " + recipeName);
+            logger.info("comment = " + text);
+            logger.info("recipeID = " + recipeID);
+            if(recipeID > 0) {
+                responseObj = FeedbackUtil.getInstance().addComment(recipeID, userID, text);
+            }
+            else {
+                responseObj.put("text", "That recipe does not exist. :open_mouth: Try again with a different recipe name!");
+            }
+
         }
         else if("/recipestats".equals(command)) {
             responseObj = Stats.recipestats();
         }
         else if("/imagesearch".equals(command)) {
+            logger.info("HELP : image search invoked");
             String userID = requestMap.get("user_id");
             responseObj = imageSearch(userID);
         }
+        else if("/suggest".equals(command)) {
+            logger.info("HELP : suggest invoked");
+            String text = requestMap.get("text");
+            responseObj = ResponseConstructionUtil.getInstance().suggestFromNaturalQuery(text, requestMap.get("user_id"));
+        }
         return responseObj;
+    }
+
+    public static int getRecipeID(String recipeName) throws Exception {
+        int recipeID = 0;
+        Connection connection = DatabaseUtil.getConnection();
+        String query = "select id from data where title like '%" + recipeName + "%';";
+        ResultSet rs = connection.prepareStatement(query).executeQuery();
+        while(rs.next()) {
+            recipeID = rs.getInt("id");
+            break;
+        }
+        connection.close();
+        return recipeID;
     }
 
     public String sendSlackResponse(String response_url, JSONObject responseObj) throws Exception {
@@ -275,7 +317,7 @@ public class RequestHandlerUtil {
     public static JSONObject imageSearch(String userID) throws Exception {
 
         // Getting the last file the user uploaded by calling files.list method
-        String url = "https://slack.com/api/files.list?token=" + BaseController.API_TOKEN + "&count=1&ts_to=now&user="+userID+"&pretty=1";
+        String url = "https://slack.com/api/files.list?token=" + BaseController.API_TOKEN + "&ts_to=now&user="+userID+"&pretty=1";
 
         // Sending GET request to slack
         RestTemplate restTemplate = new RestTemplate();
@@ -283,10 +325,27 @@ public class RequestHandlerUtil {
         JSONObject response = new JSONObject(responseStr);
 
         JSONArray files = response.getJSONArray("files");
-        JSONObject file = files.getJSONObject(0);
+
+        // Sorting files by timestamp to get most recent one
+        logger.info(files.toString());
+        long tempTime;
+        long maxTime = 0L;
+        JSONObject file;
+        for(int i = 0; i < files.length(); i++) {
+            JSONObject fileObj = files.getJSONObject(i);
+            tempTime = fileObj.getLong("timestamp");
+            if(tempTime > maxTime) {
+                maxTime = tempTime;
+                file = fileObj;
+            }
+        }
+
+        file = files.getJSONObject(0);
         String id = file.getString("id");
         String fileName = file.getString("name");
         String title = file.getString("title");
+
+        logger.info("HELP : fileName = " + fileName);
 
         // Making the file URL public
         String publicURL = "https://slack.com/api/files.sharedPublicURL?token=" + BaseController.API_TOKEN + "&file="+id+"&pretty=1";
@@ -393,9 +452,12 @@ public class RequestHandlerUtil {
         for (String visualIngr : initialIngredients){
             System.out.println("input = " + visualIngr);
             Ingredient ingredient = new Ingredient(visualIngr, false);
-            ingredientSet.add(ingredient);
-            System.out.println("output = " );
-            System.out.println(ingredient);
+            if(ingredient.isExisits()) {
+                ingredientSet.add(ingredient);
+                System.out.println(ingredient);
+            }
+            System.out.println(" = output" );
+
         }
         System.out.println("INGREDIENT SET SIZE =  " );
         System.out.println(ingredientSet.size());

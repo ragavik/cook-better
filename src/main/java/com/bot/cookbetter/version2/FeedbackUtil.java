@@ -24,30 +24,53 @@ public class FeedbackUtil {
     }
 
     public static JSONObject addComment(int recipeID, String userID, String comment){
+        System.out.println("HELP : in addComment method - recipeID = " + recipeID);
+        System.out.println("userID = " + userID);
+        System.out.println("comment = " + comment);
         Boolean success = false;
         JSONObject response = new JSONObject();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if(recipeID>0){
-            String fbRow = "insert into comments (recipeID, userID, comment, timeStamp) values ('" + recipeID + "','" + userID + "','" + comment + "','" + timestamp.getTime() + "')";
-            String dupQuery = "select * from comments where userID='" + userID + "' and recipeID = '" + recipeID + "'";
+            String fbRow = "insert into comments (recipeid, userid, comment) values ('" + recipeID + "','" + userID + "','" + comment + "')";
+            logger.info("HELP : insert query = " + fbRow);
+            String dupQuery = "select * from comments where userid='" + userID + "' and recipeid = '" + recipeID + "'";
+            logger.info("HELP : select query = " + dupQuery);
             try {
                 // Database connection
                 // Class.forName("com.mysql.jdbc.Driver");
                 // String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
                 Connection conn = DatabaseUtil.getConnection();
                 ResultSet rs = conn.prepareStatement(dupQuery).executeQuery();
-                if(rs.next()){
-                    fbRow = "update comments set comment = '" + comment + "', timeStamp = '" + timestamp.getTime() + "' where userID = '" + userID + "' and recipeID = '" + recipeID + "'";
-                    conn.prepareStatement(fbRow).executeQuery();
+                logger.info("Selected:)");
+                int rowCount = 0;
+                while(rs.next()) {
+                    rowCount++;
+                }
+                logger.info("row count = " + rowCount);
+                if(rowCount > 0){
+                    fbRow = "update comments set comment = '" + comment + "' ' where userid = '" + userID + "' and recipeid = '" + recipeID + "'";
+                    conn.prepareStatement(fbRow).executeUpdate();
                     success = true;
                 } else {
-                    conn.prepareStatement(fbRow).executeQuery();
+                    conn.prepareStatement(fbRow).executeUpdate();
                     success = true;
                 }
+                logger.info("query = "  + fbRow);
+                conn.close();
             } catch(Exception e){
+                e.printStackTrace();
                 success = false;
             }
+
+
         }
+        if(success) {
+            response.put("text", "Comment added!");
+        }
+        else {
+            response.put("text", "Error adding comment! :worried:");
+        }
+        logger.info("success = " + success);
         return response;
     }
 
@@ -72,11 +95,15 @@ public class FeedbackUtil {
             }
             likes += curr_likes;
             dislikes += curr_dislikes;
-            String statement = "update comments set likes = '" + likes + "', dislikes = '" + dislikes + "'";
-            conn.prepareStatement(statement).executeQuery();
+            logger.info("like=" + likes + " dislikes="+dislikes);
+            String statement = "update comments set likes = '" + likes + "', dislikes = '" + dislikes + "' where recipeid = '" + recipeID + "'";
+            logger.info("LIKE/DISLIKE stmt = " + statement);
+            conn.prepareStatement(statement).executeUpdate();
+            conn.close();
         }catch(Exception e){
             System.err.println(e);
         }
+
         return success;
     }
 
@@ -91,6 +118,7 @@ public class FeedbackUtil {
             while(rs.next()){
                 comments.add(rs.getString(3));
             }
+            conn.close();
         }catch(Exception e){
             System.err.println(e);
         }
@@ -113,6 +141,7 @@ public class FeedbackUtil {
                 stats[2] = rs.getInt(4);
                 stats[3] = rs.getInt(5);
             }
+            conn.close();
             }catch(Exception e){
                 System.err.println(e);
             }
@@ -129,12 +158,15 @@ public class FeedbackUtil {
             if(rs.next()) {
                 int new_views = rs.getInt(3) + 1;
                 String statement = "update feedback set views = '" + new_views + "' where recipeid = '" + recipeId + "'";
-                conn.prepareStatement(statement).executeQuery();
+                logger.info("in if - stmt = " + statement);
+                conn.prepareStatement(statement).executeUpdate();
             }else{
                 int rating = 5;                                                                 // TBD calculate rating
-                String statement = "insert into feedback  (recipeid, rating, views, likes, dislikes) values ('"+ recipeId + "','" + rating + "','0','0')";
-                conn.prepareStatement(statement).executeQuery();
+                String statement = "insert into feedback  (recipeid, views, likes, dislikes) values ('"+ recipeId + "','" + rating + "','0','0')";
+                logger.info("in else - stmt = " + statement);
+                conn.prepareStatement(statement).executeUpdate();
             }
+            conn.close();
         }catch(Exception e){
             System.err.println(e);
         }

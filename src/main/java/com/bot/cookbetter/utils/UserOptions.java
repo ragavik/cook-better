@@ -228,6 +228,7 @@ public class UserOptions {
         if(response_url != null) {
             RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);
         }
+        conn.close();
         return jsonObject;
     }
 

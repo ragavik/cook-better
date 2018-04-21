@@ -155,7 +155,7 @@ public class Util {
                 while (RS.next()) {
                     IDs.add(RS.getInt(1));
                 }
-
+                conn.close();
                 return IDs;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -209,6 +209,7 @@ public class Util {
                     //link+=modTitle+"%20";
                     //result+= link + "|"+name+"> \n";
                 }
+                conn.close();
                 return recipe;
             } catch (Exception e) {
                 //System.err.println(e);
@@ -226,18 +227,11 @@ public class Util {
 
             rec = getRecipe(recipeID);
 
-            //JSONObject sendImage = new JSONObject();
-            //sendImage.put("text", imageUrl );
-            //RequestHandlerUtil.getInstance().sendSlackResponse(response_url, sendImage);
-            //String result = imageUrl;
             String result = "\n\n*Directions:*\n"+rec.getDirections()+"\n*Measurements:*\n"+rec.getIngredientMeasuremnet();
-
-            logger.info("TESTING RESULT = " + result);
 
             JSONObject response = new JSONObject();
             response.put("text",result);
 
-            logger.info("TESTING JSON = " + response);
             RequestHandlerUtil.getInstance().sendSlackResponse(response_url,response);
 
         }
@@ -274,7 +268,7 @@ public class Util {
                     ing.add(column_names.getString(1));
                 }
 
-
+                conn.close();
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println(e);
