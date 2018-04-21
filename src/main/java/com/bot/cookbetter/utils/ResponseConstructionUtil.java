@@ -1,7 +1,9 @@
 package com.bot.cookbetter.utils;
 
+import com.bot.cookbetter.model.Recipe;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +13,9 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.List;
 
+//handle request for JSON file and the main code of /supriseme
 public class ResponseConstructionUtil {
 
     private static ResponseConstructionUtil responseConstructionUtil;
@@ -57,11 +61,52 @@ public class ResponseConstructionUtil {
         return readJSONFile("/helpdoc.json");
     }
 
+    public JSONObject ynButton() {
+        RecipeDataHandler handler = new RecipeDataHandler();
+        List<Recipe> recipes = handler.getRecipes();
+        JSONObject result = readJSONFile("/ynbutton.json");
+        result.put("text", recipes.get(0).getTitle());
+        return result;
+        //return readJSONFile("/ynbutton.json");
+    }
+
+
+    /*
+    public JSONObject surpriseMe() throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        String result = "Welcome";
+
+        try {
+            JSONObject json = ResponseConstructionUtil.getInstance().getRecipeData();
+            //result += json.length();
+        }
+        catch (Exception e){
+                System.console().writer().println("Can't get recipe data");
+        }
+        //JSONArray names = json.names();
+        //result +="\n" + names;
+        //System.out.println(result);
+        //recipe_data.
+
+        //original
+        jsonObject.put("text",result);
+        return jsonObject;
+
+
+
+
+
+
+    }
+    */
+
     public JSONObject surpriseMe(String userID) throws Exception {
 
         // Database connection
         Class.forName("com.mysql.jdbc.Driver");
-        String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+        //String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+        String connectionUrl = "jdbc:mysql://cookbetter.ci2drxnp952j.us-east-1.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+
         Connection conn = DriverManager.getConnection(connectionUrl);
 
         String query = "select * from data where title is not null";
@@ -137,6 +182,7 @@ public class ResponseConstructionUtil {
         // Selecting 1 random row
         query += " order by rand() limit 1";
 
+
         ResultSet rs = conn.prepareStatement(query).executeQuery();
         JSONObject jsonObject = new JSONObject();
         String result = "";
@@ -159,8 +205,8 @@ public class ResponseConstructionUtil {
         }
 
         jsonObject.put("text",result);
-
         return jsonObject;
     }
+
 
 }

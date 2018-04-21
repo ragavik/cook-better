@@ -101,6 +101,7 @@ public class RequestHandlerUtil {
                     user.setQuickMeal(selectedValue);
                     break;
 
+
                 case "special_occasions":
                     user.setSpecialOccasion(selectedValue);
                     break;
@@ -108,6 +109,10 @@ public class RequestHandlerUtil {
                 case "search_button":
                     user.startSearch(response_url);
                     user = null;
+                    break;
+
+                case "ynbutton":
+                    user.setLike(response_url, selectedValue);
                     break;
 
                 // Handling user selections for /personalize command
@@ -167,6 +172,7 @@ public class RequestHandlerUtil {
                     p_user.submitPreferences(response_url);
                     p_user = null;
                     break;
+
             }
 
             searchSession.put(userID, user);
@@ -217,6 +223,12 @@ public class RequestHandlerUtil {
         else if("/surpriseme".equals(command)) {
             String userID = requestMap.get("user_id");
             responseObj = ResponseConstructionUtil.getInstance().surpriseMe(userID);
+            //responseObj = ResponseConstructionUtil.getInstance().surpriseMe();
+        }
+        else if ("/test123".equals(command)){
+            responseObj = ResponseConstructionUtil.getInstance().ynButton();
+
+
         }
         return responseObj;
     }
