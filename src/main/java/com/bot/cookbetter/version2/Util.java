@@ -1,5 +1,11 @@
 package com.bot.cookbetter.version2;
 
+import com.bot.cookbetter.utils.RequestHandlerUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.ResultSet;
 import java.util.Set;
 import java.sql.Connection;
@@ -7,11 +13,15 @@ import java.sql.DriverManager;
 import java.sql.ResultSetMetaData;
 import java.util.HashSet;
 
+import static com.bot.cookbetter.utils.ResponseConstructionUtil.getRecipeIDFromButton;
+
 /**
  * @author snaraya7
  * Shrikanth N C
  */
 public class Util {
+
+    final static Logger logger = LoggerFactory.getLogger(RequestHandlerUtil.class);
 
     public static boolean isNullString(String string){
 
@@ -191,7 +201,8 @@ public class Util {
                             ingredients.add(new Ingredient(rsMetaData.getColumnName(idx)));
                     }
                     recipe.setIngredients(ingredients);
-
+                    String ingredientMeasurement = rs.getString("ingredients");
+                    recipe.setIngredientMeasurement(ingredientMeasurement);
                     //result+="<";
                     //String link = "https://www.epicurious.com/search/";
                     //String modTitle = name.replaceAll(" ", "%20");
@@ -206,6 +217,30 @@ public class Util {
             return null;
         }
 
+
+        public static void displayInstructions( String response_url, String buttonValue) throws Exception{
+
+            int recipeID = getRecipeIDFromButton(buttonValue);
+
+            Recipe rec = new Recipe();
+
+            rec = getRecipe(recipeID);
+
+            //JSONObject sendImage = new JSONObject();
+            //sendImage.put("text", imageUrl );
+            //RequestHandlerUtil.getInstance().sendSlackResponse(response_url, sendImage);
+            //String result = imageUrl;
+            String result = "\n\n*Directions:*\n"+rec.getDirections()+"\n*Measurements:*\n"+rec.getIngredientMeasuremnet();
+
+            logger.info("TESTING RESULT = " + result);
+
+            JSONObject response = new JSONObject();
+            response.put("text",result);
+
+            logger.info("TESTING JSON = " + response);
+            RequestHandlerUtil.getInstance().sendSlackResponse(response_url,response);
+
+        }
         //@karthik
         public static Set<Ingredient> getIngredients ( int recipeID){
             Recipe Rec = getRecipe(recipeID);

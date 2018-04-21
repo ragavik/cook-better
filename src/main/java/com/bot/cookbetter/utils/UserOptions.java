@@ -35,7 +35,9 @@ public class UserOptions {
         this.ingredients.add(new Ingredient(ingredient));
     }
 
-    public void setIngredientList(Set<Ingredient> ingredientset) { this.ingredients = ingredientset; }
+    public void setIngredientList(Set<Ingredient> ingredientset) {
+        this.ingredients = ingredientset;
+    }
 
     /*public void setIngredient(int num, String value) {
         switch (num) {
@@ -200,6 +202,7 @@ public class UserOptions {
         /*}*/
 
 
+        logger.info("RESULT SET SIZE = " + recipes.size());
 
         jsonObject.put("text", ":pushpin: Here are your search results!");
         JSONArray attachments = new JSONArray();

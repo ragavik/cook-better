@@ -4,22 +4,21 @@ import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.dto.input.ClarifaiInput;
+import com.bot.cookbetter.app.BaseController;
 import com.bot.cookbetter.version2.DatabaseUtil;
 import com.bot.cookbetter.version2.FeedbackUtil;
 import com.bot.cookbetter.version2.Ingredient;
-import netscape.javascript.JSObject;
+import com.bot.cookbetter.version2.Util;
+import com.bot.cookbetter.version2.Stats;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.*;
@@ -29,7 +28,7 @@ import java.util.*;
 public class RequestHandlerUtil {
 
     private static RequestHandlerUtil requestHandlerUtil;
-    final Logger logger = LoggerFactory.getLogger(RequestHandlerUtil.class);
+    final static Logger logger = LoggerFactory.getLogger(RequestHandlerUtil.class);
     private static Map<String, UserOptions> searchSession = new HashMap<>();
     private static Map<String, PersonalizeOptions> personalizeSession=new HashMap<>();
 
@@ -195,8 +194,8 @@ public class RequestHandlerUtil {
                     ResponseConstructionUtil.getInstance().viewComments(selectedValue, response_url);
                     break;
                 case "add_comment":
-                    //ResponseConstructionUtil.getInstance().promptForAddComment(selectedValue, response_url);
-                    JSONObject response = ResponseConstructionUtil.getInstance().constructRecipeDialog(triggerID, response_url, selectedValue);
+                    // ResponseConstructionUtil.getInstance().promptForAddComment(selectedValue, response_url);
+                    // JSONObject response = ResponseConstructionUtil.getInstance().constructRecipeDialog(triggerID, response_url, selectedValue);
                     break;
             }
 
@@ -248,13 +247,14 @@ public class RequestHandlerUtil {
             String userID = requestMap.get("user_id");
             responseObj = ResponseConstructionUtil.getInstance().surpriseMe(userID);
         }
-        /*else if("/addcomment".equals(command)) {
+        else if("/addcomment".equals(command)) {
             String userID = requestMap.get("user_id");
             String text = requestMap.get("text");
-            responseObj = FeedbackUtil.getInstance().addFeedback(userID, text);
-        }*/
+            int recipeID = 0; //TODO: extract recipeID from request
+            responseObj = FeedbackUtil.getInstance().addComment(recipeID, userID, text);
+        }
         else if("/recipestats".equals(command)) {
-
+            responseObj = Stats.recipestats();
         }
         else if("/imagesearch".equals(command)) {
             String userID = requestMap.get("user_id");
@@ -275,7 +275,7 @@ public class RequestHandlerUtil {
     public static JSONObject imageSearch(String userID) throws Exception {
 
         // Getting the last file the user uploaded by calling files.list method
-        String url = "https://slack.com/api/files.list?token=xoxp-334900294064-335571428500-335829077234-64535fff384c94d759986fbfb84a7c9a&count=1&ts_to=now&user="+userID+"&pretty=1";
+        String url = "https://slack.com/api/files.list?token=" + BaseController.API_TOKEN + "&count=1&ts_to=now&user="+userID+"&pretty=1";
 
         // Sending GET request to slack
         RestTemplate restTemplate = new RestTemplate();
@@ -289,7 +289,7 @@ public class RequestHandlerUtil {
         String title = file.getString("title");
 
         // Making the file URL public
-        String publicURL = "https://slack.com/api/files.sharedPublicURL?token=xoxp-334900294064-335571428500-335829077234-64535fff384c94d759986fbfb84a7c9a&file="+id+"&pretty=1";
+        String publicURL = "https://slack.com/api/files.sharedPublicURL?token=" + BaseController.API_TOKEN + "&file="+id+"&pretty=1";
         String publicResponse = restTemplate.getForObject(publicURL,String.class);
         System.out.println(publicResponse);
         //JSONObject publicFile = respo.getJSONObject("file");
@@ -347,7 +347,7 @@ public class RequestHandlerUtil {
 
         // Validating if the ingredients identified are valid
         // Sample query: select display_name from ingredients where display_name in ('onion', 'tomato');
-        Connection connection = DatabaseUtil.getConnection();
+        /*Connection connection = DatabaseUtil.getConnection();
         String query = "select display_name from ingredients where display_name in (";
         int count = 0;
         for(String ingredient : initialIngredients) {
@@ -358,18 +358,18 @@ public class RequestHandlerUtil {
             }
         }
         query += ");";
-        ResultSet rs = connection.prepareStatement(query).executeQuery();
+        ResultSet rs = connection.prepareStatement(query).executeQuery();*/
 
-        List<String> ingredients = new ArrayList<>(); // For printing
+       /*List<String> ingredients = new ArrayList<>(); // For printing
         Set<Ingredient> ingredientSet = new HashSet<>(); // For searching
         while(rs.next()) {
             String ingredient = rs.getString("display_name");
             ingredients.add(ingredient);
             ingredientSet.add(new Ingredient(ingredient));
-        }
+        }*/
 
         // Displaying identitfied ingredients to user
-        if(ingredients.isEmpty()) {
+        /*if(ingredients.isEmpty()) {
             JSONObject ingredientsObj = new JSONObject();
             ingredientsObj.put("color", "#FF0000");
             ingredientsObj.put("title", "Ingredients Identified");
@@ -384,11 +384,27 @@ public class RequestHandlerUtil {
             ingredientsObj.put("title", "Ingredients Identified");
             ingredientsObj.put("text", ingredients.toString().replace("[", "").replace("]", ""));
             attachments.put(ingredientsObj);
+        }*/
+
+        System.out.println("Adding strings to ingredient set");
+
+
+        Set<Ingredient> ingredientSet = new HashSet<>();
+        for (String visualIngr : initialIngredients){
+            System.out.println("input = " + visualIngr);
+            Ingredient ingredient = new Ingredient(visualIngr, false);
+            ingredientSet.add(ingredient);
+            System.out.println("output = " );
+            System.out.println(ingredient);
         }
+        System.out.println("INGREDIENT SET SIZE =  " );
+        System.out.println(ingredientSet.size());
 
         // Searching for recipes
         UserOptions user = new UserOptions(userID);
         user.setIngredientList(ingredientSet);
+        logger.info("TESTING IMAGE SEARCH : ");
+        logger.info(ingredientSet.toString());
         JSONObject searchResults = user.startSearch(null);
         JSONArray searchAttachments = searchResults.getJSONArray("attachments");
         for(int i = 0; i < searchAttachments.length(); i++) {

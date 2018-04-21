@@ -18,6 +18,8 @@ public class Recipe {
 
     private String directions;
 
+    private String ingredientMeasurement;
+
     public String getName() {
         return name;
     }
@@ -32,6 +34,8 @@ public class Recipe {
 
     public String getDirections() { return directions;}
 
+    public String getIngredientMeasuremnet() { return ingredientMeasurement;}
+
     public void setName(String name) {
         this.name = name;
     }
@@ -45,6 +49,8 @@ public class Recipe {
     }
 
     public void setDirections(String directions) { this.directions = directions; }
+
+    public void setIngredientMeasurement(String ingredientMeasurement) { this.ingredientMeasurement = ingredientMeasurement;}
 
     public void setRating(double rating) { this.rating = rating; }
 
