@@ -1,5 +1,6 @@
 package com.bot.cookbetter.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Recipe {
@@ -49,6 +50,16 @@ public class Recipe {
         return categories;
     }
 
+    public boolean isInCategories(ArrayList<String> checklist){
+        for (String category: categories){
+            for (String c: checklist) {
+                if (category.toLowerCase().contains(c))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public double getCalories() {
         return calories;
     }
@@ -71,6 +82,18 @@ public class Recipe {
 
     public String[] getIngredients() {
         return ingredients;
+    }
+
+    public String getIngredientList(){
+        if (ingredients.length == 0){
+            return "String[] not exist";
+        }
+
+        String result = "1. " + ingredients[0];
+        for (int i = 1; i < ingredients.length; i++){
+            result += "\n" + (i+1) +". " + ingredients[i];
+        }
+        return result;
     }
 
     public double getSodium() {
