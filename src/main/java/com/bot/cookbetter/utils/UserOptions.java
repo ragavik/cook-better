@@ -1,4 +1,5 @@
 package com.bot.cookbetter.utils;
+import com.bot.cookbetter.model.Recipe;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -7,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserOptions {
     private String userID;
