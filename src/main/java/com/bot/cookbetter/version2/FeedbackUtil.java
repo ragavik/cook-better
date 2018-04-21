@@ -64,6 +64,7 @@ public class FeedbackUtil {
 
 
         }
+
         if(success) {
             response.put("text", "Comment added!");
         }
@@ -71,6 +72,7 @@ public class FeedbackUtil {
             response.put("text", "Error adding comment! :worried:");
         }
         logger.info("success = " + success);
+
         return response;
     }
 
