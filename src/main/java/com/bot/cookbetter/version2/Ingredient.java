@@ -2,7 +2,12 @@ package com.bot.cookbetter.version2;
 
 import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
+import java.io.*;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
+
+import static org.springframework.util.SerializationUtils.serialize;
 
 /**
  * @author snaraya7 Shrikanth N C
@@ -15,8 +20,7 @@ public class Ingredient {
 
     public static void main(String[] arg){
 
-        System.out.println(new Ingredient("egg", true));
-
+        System.out.println(new Ingredient("egg, eggs1", false));
     }
 
     public Ingredient(String name){
@@ -59,9 +63,71 @@ public class Ingredient {
     }
 
 
+    private static Set<String> dbIngredients = new HashSet<>();
+    static{
+        dbIngredients = Util.getAllIngredientNames();
+    }
+
+    private static HashMap<String,String> ingredientCache = new HashMap<>();
+
+    static {
+
+        ingredientCache = desiralize();
+    }
+
+    private static HashMap<String,String> desiralize() {
+
+        HashMap<String,String> cache = new HashMap<>();
+
+        try {
+            FileInputStream fileIn = new FileInputStream("ingrcache.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            cache = (HashMap<String,String>) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            c.printStackTrace();
+        }
+
+        return  cache;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+
+        serialize();
+    }
+
+    private static void serialize() {
+
+        try {
+            FileOutputStream fileOut =
+                    new FileOutputStream("ingrcache.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(ingredientCache);
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
 
     private static String matchWithExisting(String receivedIngredient){
-        System.out.println("receivedIngredient = " + receivedIngredient);
+
+        String matchingIngredient = ingredientCache.get(receivedIngredient);
+
+        if (matchingIngredient == null){
+
+            ingredientCache.put(receivedIngredient, find(receivedIngredient));
+        }
+
+        return ingredientCache.get(receivedIngredient);
+    }
+
+    private static String find(String receivedIngredient){
 
         String result = null;
 
@@ -69,7 +135,7 @@ public class Ingredient {
 
         if (!Util.isNullString(receivedIngredient)){
 
-            for (String availableIngredient : Util.getAllIngredientNames()){
+            for (String availableIngredient : dbIngredients){
 
                int computedScore = computeScore(availableIngredient, receivedIngredient);
 
