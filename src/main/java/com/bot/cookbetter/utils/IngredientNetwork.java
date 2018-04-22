@@ -100,7 +100,7 @@ public class IngredientNetwork {
                     }
                     if(ingred1F && ingred2F){
                         count++;
-                        if(recipe.getRating() > 4.0){
+                        if(recipe.getRating() > 2.0){
                             filteredRecipe.add(recipe);
                         }
                         break;

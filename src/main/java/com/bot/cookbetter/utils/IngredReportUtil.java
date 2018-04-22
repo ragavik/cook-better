@@ -6,7 +6,6 @@ import java.util.*;
 
 public class IngredReportUtil {
 
-    private IngredientNetwork network = null;
     private static final double NEG_INGRED_THRESHOLD = -0.15017;
     private static final double BEST_COMBINATION_THRESHOLD = 0.0923;
 
@@ -18,15 +17,14 @@ public class IngredReportUtil {
 
     String notRecommended;
 
-    public void buildCombinations(String ingreds) {
+    public void buildCombinations(IngredientNetwork network) {
         HashMap<String, Double> ingredPMI = null;
         this.negateCombinations = new HashMap<>();
         this.notRecommendedCombinations = new HashMap<>();
         this.bestCombinations = new HashMap<>();
 
-        network = new IngredientNetwork(ingreds);
         ingredPMI = network.getIngredPMI();
-        ingreds = removeCommonIngred(network.getCommonIngred(), ingreds, network.getNoSuchIngredient());
+
         for (String ingredSet : ingredPMI.keySet()) {
             double value = ingredPMI.get(ingredSet);
             String[] ingred = ingredSet.split(",");
@@ -38,11 +36,9 @@ public class IngredReportUtil {
                 this.notRecommendedCombinations = updateIngredMap(this.notRecommendedCombinations, ingred[0], ingred[1]);
             }
         }
-
-        excludeIngredient(ingreds);
     }
 
-    private String removeCommonIngred(Set<String> commonIngred, String ingreds, Set<String> noIngred) {
+    public String removeCommonIngred(Set<String> commonIngred, String ingreds, Set<String> noIngred) {
         String filteredIngreds = "";
         if(ingreds != null && ingreds.trim() != "" && commonIngred != null && !commonIngred.isEmpty()) {
             String[] ingred = ingreds.split(",");
@@ -74,7 +70,7 @@ public class IngredReportUtil {
         ingredPMI.put(key, list);
     }
 
-    private String excludeIngredient(String ingreds) {
+    public String excludeIngredient(String ingreds) {
 
         String max_key = "";
         double count = ingreds.split(",").length * 0.5;
@@ -105,7 +101,7 @@ public class IngredReportUtil {
         return "No outlier found";
     }
 
-    private HashSet<String> findRecommendedIngred(){
+    public HashSet<String> findRecommendedIngred(){
         HashSet<String> bestIngredsSet = new HashSet<>();
         boolean notMatchFlag = false;
         String best_ingred = findMax();
