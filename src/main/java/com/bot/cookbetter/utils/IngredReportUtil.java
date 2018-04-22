@@ -105,7 +105,68 @@ public class IngredReportUtil {
         return "No outlier found";
     }
 
-    private void findRecommendedIngred(){
+    private HashSet<String> findRecommendedIngred(){
+        HashSet<String> bestIngredsSet = new HashSet<>();
+        boolean notMatchFlag = false;
+        String best_ingred = findMax();
+        bestIngredsSet.add(best_ingred);
 
+        while (best_ingred != null){
+                if (!bestIngredsSet.isEmpty()){
+                    if(this.bestCombinations.containsKey(best_ingred)){
+                       for(String st: bestIngredsSet){
+                           if(!st.equals(best_ingred) && !this.bestCombinations.get(best_ingred).contains(st)){
+                               notMatchFlag = true;
+                           }
+                       }
+                    }
+                }
+                if(notMatchFlag){
+                    best_ingred = null;
+                }else{
+                    bestIngredsSet.add(best_ingred);
+                    best_ingred = findMax(best_ingred, bestIngredsSet);
+                }
+        }
+        return bestIngredsSet;
+    }
+
+    private String findMax(){
+        String best_ingre = null;
+        int count = 0;
+        for(String str: this.bestCombinations.keySet()){
+            int size = this.bestCombinations.get(str).size();
+            if(size > count){
+                best_ingre = str;
+                count = size;
+            }
+        }
+        return best_ingre;
+    }
+
+    private String findMax(String ingred, HashSet<String> bestIngredsSet){
+        List<String> list = null;
+        String best_ingre = null;
+        int count = 0;
+
+        if(this.bestCombinations.containsKey(ingred)){
+            list = this.bestCombinations.get(ingred);
+        }
+        if(list != null) {
+            for (String str : list) {
+                int size = this.bestCombinations.get(str).size();
+                if (size > count && !bestIngredsSet.contains(str)) {
+                    best_ingre = str;
+                    count = size;
+                }
+            }
+        }
+        return best_ingre;
+    }
+
+    private void updateBestMap(HashSet<String> bestIngredsSet, String ingred){
+        if (bestIngredsSet != null || !bestIngredsSet.isEmpty()){
+
+        }
     }
 }
