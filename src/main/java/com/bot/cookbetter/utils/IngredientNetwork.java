@@ -9,12 +9,16 @@ import java.util.*;
 
 public class IngredientNetwork {
 
+    private final static int PMI_MULTIPLIER = RecipeDataHandler.RECIPE_LIST.size();
+    private final static double COMMON_INGRED_THRESHOLD = 0.33;
+
     private HashMap<String, Integer> ingredCount = null;
     private String[] inputIngredList = null;
-    private HashMap<String, Float> ingredPMI = null;
+    private HashMap<String, Double> ingredPMI = null;
     private Set<Recipe> filteredRecipe = new HashSet<>();
-    private String result;
-    private Set<String> incompatibleIngred = new HashSet<>();
+    private Set<String> noSuchIngredient =  new HashSet<>();
+
+    private Set<String> commonIngred =  new HashSet<>();
 
     public IngredientNetwork(String ingreds) {
         this.inputIngredList = ingreds.replaceAll(" ","").split(",");
@@ -30,11 +34,7 @@ public class IngredientNetwork {
             Map.Entry entry = (Map.Entry) it.next();
             String name = (String) entry.getKey();
             if(ingredCount.get(name) == 0){
-                if (result == null){
-                    result = "Following ingrediants not found: " + name;
-                }else {
-                    result = result + "," + name;
-                }
+                noSuchIngredient.add(name.toLowerCase().trim());
                 ingredCount1.remove(name);
                 List<String> list = new ArrayList<String>(Arrays.asList(this.inputIngredList));
                 list.remove(name);
@@ -60,7 +60,11 @@ public class IngredientNetwork {
                         }
                     }
                 }
-                ingredCount.put(ingred, count);
+                if(count > PMI_MULTIPLIER * COMMON_INGRED_THRESHOLD){
+                    commonIngred.add(ingred.toLowerCase());
+                }else {
+                    ingredCount.put(ingred, count);
+                }
             }
         }
         ingredCount = updateIngredientCount(ingredCount);
@@ -73,7 +77,9 @@ public class IngredientNetwork {
         if (this.inputIngredList != null || this.inputIngredList.length > 0) {
             for (int i = 0; i < size; i++) {
                 for (int j = i+1; j < size; j++){
-                    ingredCount = mutualIngredCount(recipeList,ingredCount,this.inputIngredList[i], this.inputIngredList[j]);
+                    if(!(this.commonIngred.contains(this.inputIngredList[i]) || this.commonIngred.contains(this.inputIngredList[j]))) {
+                        ingredCount = mutualIngredCount(recipeList, ingredCount, this.inputIngredList[i], this.inputIngredList[j]);
+                    }
                 }
             }
         }
@@ -106,13 +112,13 @@ public class IngredientNetwork {
         return ingredCount;
     }
 
-    private HashMap<String, Float> generatePMINet(){
-        HashMap<String, Float> pmiMap = new HashMap<>();
+    private HashMap<String, Double> generatePMINet(){
+        HashMap<String, Double> pmiMap = new HashMap<>();
         for (String name : this.ingredCount.keySet()){
-            float pmi;
+            double pmi;
             if(name.contains(",")){
                 String[] ingreds = name.split(",");
-                pmi = ((float)this.ingredCount.get(name)/(float) (this.ingredCount.get(ingreds[0]) * this.ingredCount.get(ingreds[1]))) * 10000;
+                pmi = Math.log(((float)this.ingredCount.get(name)/((float) (this.ingredCount.get(ingreds[0]) * this.ingredCount.get(ingreds[1])))) * PMI_MULTIPLIER);
                 pmiMap.put(name,pmi);
             }
         }
@@ -123,9 +129,8 @@ public class IngredientNetwork {
      * This is a temporary method to Analyze the results
      */
     public void getAnalysis(){
-        System.out.println(this.result);
         for(String st: this.ingredPMI.keySet()){
-            float value = this.ingredPMI.get(st);
+            Double value = this.ingredPMI.get(st);
             if(value < 5.0) {
                 System.out.println(st + "," + this.ingredPMI.get(st));
             }else{
@@ -142,7 +147,7 @@ public class IngredientNetwork {
         return inputIngredList;
     }
 
-    public HashMap<String, Float> getIngredPMI() {
+    public HashMap<String, Double> getIngredPMI() {
         return ingredPMI;
     }
 
@@ -150,11 +155,11 @@ public class IngredientNetwork {
         return filteredRecipe;
     }
 
-    public String getResult() {
-        return result;
+    public Set<String> getNoSuchIngredient() {
+        return noSuchIngredient;
     }
 
-    public Set<String> getIncompatibleIngred() {
-        return incompatibleIngred;
+    public Set<String> getCommonIngred() {
+        return commonIngred;
     }
 }
