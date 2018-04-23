@@ -1,5 +1,6 @@
 package com.bot.cookbetter.utils;
 
+import com.bot.cookbetter.model.Recipe;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -10,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +26,26 @@ public class RequestHandlerUtil {
     private static Map<String, UserOptions> searchSession = new HashMap<>();
     private static Map<String, PersonalizeOptions> personalizeSession=new HashMap<>();
 
+    public JSONObject readJSONFile(String fileName) {
+        JSONObject response;
+        String result = "";
+        try {
+            InputStream is = getClass().getResourceAsStream(fileName);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+            while (line != null) {
+                sb.append(line);
+                line = br.readLine();
+            }
+            result = sb.toString();
+            logger.info(result);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        response = new JSONObject(result);
+        return response;
+    }
 
     public static RequestHandlerUtil getInstance() {
         if(requestHandlerUtil == null) {
@@ -176,7 +200,27 @@ public class RequestHandlerUtil {
                     p_user.submitPreferences(response_url);
                     p_user = null;
                     break;
-
+                case "showrecipe":
+                    RecipeDataHandler handler = new RecipeDataHandler();
+                    List<Recipe> recipes = handler.getRecipes();
+                    JSONObject responseObj = readJSONFile("/recommendresponse.json");
+                    Recipe r = recipes.get(Integer.parseInt(selectedValue));
+                    String info = "";
+                    info += "Title: " + r.getTitle();
+                    info += "\nIngredients:\n" + r.getIngredientList();
+                    info += "\nCalories: " + r.getCalories();
+                    if(r.getDirections() != null){
+                        info += "\nDirections:\n";
+                        int step = 1;
+                        for(String st: r.getDirections()){
+                            info += step++ + ". " + st + "\n";
+                        }
+                    }
+                    info += "\nRating: " + r.getRating();
+                    responseObj.remove("text");
+                    responseObj.put("text", info);
+                    sendSlackResponse(response_url, responseObj);
+//http://cookbetter-env.us-east-2.elasticbeanstalk.com/slack-interactive
             }
 
             searchSession.put(userID, user);

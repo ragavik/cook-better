@@ -215,19 +215,18 @@ public class ResponseConstructionUtil {
     public JSONObject recommend(String userID) {
         System.out.println("recommend1");
         RecipeDataHandler handler = new RecipeDataHandler();
-        System.out.println("recommend2");
         List<Recipe> recipes = handler.getRecipes();
         System.out.println("recommend3");
         JSONObject result = readJSONFile("/recommendresponse.json");
         System.out.println("recommend4");
-        result.put("text", handler(userID, recipes));
+        //result.put("text", handler(userID, recipes, result));
         System.out.println("recommend5");
-        return result;
+        return handler(userID, recipes, result);
         //return readJSONFile("/ynbutton.json");
     }
 
 
-    public  String handler(String userID, List<Recipe> rlist) {
+    public  JSONObject handler(String userID, List<Recipe> rlist, JSONObject result) {
         //Make list of list for data
         List<List<Integer>> data = new LinkedList<List<Integer>>();
         int user = 100;
@@ -283,17 +282,32 @@ public class ResponseConstructionUtil {
 
 
         //Display results
-        return displayResults(sol, recipes);
+        return displayResults(sol, recipes, result);
     }
 
-    public static String displayResults(List<List<Integer>> list, List<String> recipes) {
+    public JSONObject displayResults(List<List<Integer>> list, List<String> recipes, JSONObject result) {
         int len = list.size();
-        String answer = "";
+        JSONObject obj = new JSONObject();
+        List<JSONObject> objs = new LinkedList<JSONObject>();
+        System.out.println(objs);
         for(int i=0; i<len; i++) {
             List<Integer> details = list.get(i);
-            answer += (details.get(1) + "% of the people who like \'" + recipes.get(details.get(2)) + "\' like \'" + recipes.get(details.get(0)) + "\'.\n");
+            JSONObject o = readJSONFile("/recommendresponse.json");
+            List<JSONObject> lis = new LinkedList<JSONObject>();
+            JSONObject ac = readJSONFile("/recaction.json");
+            ac.remove("value");
+            ac.put("value", details.get(0));
+            lis.add(ac);
+            o.put("actions", lis);
+            String answer = (details.get(1) + "% of the people who like \'" + recipes.get(details.get(2)) + "\' also like \'" + recipes.get(details.get(0)) + "\'");
+            o.remove("text");
+            o.put("text", answer);
+            objs.add(o);
         }
-        return answer;
+        System.out.println(obj);
+        obj.put("attachments", objs);
+        System.out.println(obj);
+        return obj;
     }
 
     public static List<Integer> recommendOnRecipe(List<List<Integer>> list, int recipe, List<Integer> userRecipes) {
