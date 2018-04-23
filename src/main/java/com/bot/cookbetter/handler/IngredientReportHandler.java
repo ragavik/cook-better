@@ -12,6 +12,7 @@ public class IngredientReportHandler {
 
     private IngredReportUtil ingredReportUtil;
     private IngredientNetwork network;
+    private Set<Recipe> recommendedRecipe;
 
     public JSONObject buildReport(String ingreds) {
         ingredReportUtil = new IngredReportUtil();
@@ -20,6 +21,7 @@ public class IngredientReportHandler {
 
         try {
             if (!network.getIngredPMI().isEmpty()) {
+
                 ingredReportUtil.buildCombinations(network);
 
                 ingreds = ingredReportUtil.removeCommonIngred(network.getCommonIngred(), ingreds, network.getNoSuchIngredient());
@@ -27,10 +29,8 @@ public class IngredientReportHandler {
                 String exclude = excludeIngredients(ingredReportUtil, ingreds);
                 Set<String> bestIngreds = bestCombinations(ingredReportUtil);
                 getPredicatedRating(network, bestIngreds);
-                getRecommendedRecipe(network, bestIngreds);
-                String tempOutlier = buildOuput(network.getNoSuchIngredient());
-
                 result.put("text", buildString(network, exclude, bestIngreds));
+
             } else {
                 result.put("text", "please provide the appropriate input");
             }
@@ -53,8 +53,17 @@ public class IngredientReportHandler {
     }
 
     private double getPredicatedRating(IngredientNetwork network, Set<String> bestIngred) {
-
-        return 0;
+        this.recommendedRecipe = getRecommendedRecipe(network, bestIngred);
+        double rating = 0;
+        int count = 0;
+        if(this.recommendedRecipe != null && this.recommendedRecipe.size() > 0){
+            for (Recipe recipe: this.recommendedRecipe){
+                rating = rating + recipe.getRating();
+                count++;
+            }
+            rating = rating/count;
+        }
+        return rating;
     }
 
     private Set<Recipe> getRecommendedRecipe(IngredientNetwork network, Set<String> bestIngred) {
@@ -82,23 +91,23 @@ public class IngredientReportHandler {
 
         String tempOutlier = buildOuput(network.getNoSuchIngredient());
         if (tempOutlier.isEmpty()) {
-            tempOutlier = "Input accepted. Generating report .... \n Going through more than 20000 options.... this might take a few seconds (5-10s)...  ";
+            tempOutlier = "Input accepted. Generating report .... \n" + "Going through more than 20000 options.... this might take a few seconds (5-10s)...  ";
         } else {
             tempOutlier = "Generating report ...." +
-                    "Going through more than 20000 options.... this might take a few seconds (5-10s)...\n" + "Following ingredient does not exist in our data: " + tempOutlier;
+                    "Going through more than 20000 options.... this might take a few seconds (5-10s)...\n-- " + "Following ingredient does not exist in our data: " + tempOutlier;
         }
         String bestIngred = "We need to add more ingredients, Since all inout ingredients contradicts each other in terms of taste.";
         if (bestIngreds != null && !bestIngreds.isEmpty()) {
-            bestIngred = buildOuput(bestIngreds);
+            bestIngred = "Optimum compatible ingredient found by algorithms are:" + buildOuput(bestIngreds) + ".";
         }
 
         if (network.getCommonIngred() != null && !network.getCommonIngred().isEmpty()) {
-            String commonIngred = "Our algorithm doesn't consider " + buildOuput(network.getCommonIngred()) + " ingredients as these are used in" +
-                    " most of the recipes";
-            finalOutput = tempOutlier + "\n" + commonIngred + "\n1: " + exclude + "\n2: " + bestIngred;
+            String commonIngred = " -- Our algorithm doesn't consider " + buildOuput(network.getCommonIngred()) + " ingredients as these are used in" +
+                    " most of the recipes.";
+            finalOutput = tempOutlier + "\n" + commonIngred + "\n-- " + exclude + "\n-- " + bestIngred + "\n-- " + getPredicatedRating(network, bestIngreds);
 
         } else {
-            finalOutput = tempOutlier + "\n1: " + exclude + "\n2: " + bestIngred;
+            finalOutput = tempOutlier + "\n-- " + exclude + "\n-- " + bestIngred + "\n-- " + getPredicatedRating(network, bestIngreds);
         }
         return finalOutput;
     }
