@@ -53,7 +53,7 @@ public class Recipe {
     public boolean isInCategories(ArrayList<String> checklist){
         for (String category: categories){
             for (String c: checklist) {
-                if (category.toLowerCase().contains(c))
+                if (category.toLowerCase().contains(c.toLowerCase()))
                     return true;
             }
         }

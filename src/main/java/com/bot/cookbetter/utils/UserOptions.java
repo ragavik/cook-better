@@ -53,19 +53,7 @@ public class UserOptions {
         this.specialOccasion = value;
     }
 
-    /*
-    // For testing
-    public void printDetails() {
-        logger.info(this.userID);
-        logger.info(this.ing1);
-        logger.info(this.ing2);
-        logger.info(this.ing3);
-        logger.info("" + this.quickMeal);
-        logger.info(this.recipeType);
-        logger.info(this.specialOccasion);
-    }*/
-
-    private JSONObject getResult(Recipe recipe, String exclude){
+    private JSONObject getResult(Recipe recipe, String exclude, String inputIngString){
         ResponseConstructionUtil responseConstructionUtil = new ResponseConstructionUtil();
         JSONObject response = new JSONObject();
         JSONArray attachments = new JSONArray();
@@ -74,12 +62,12 @@ public class UserOptions {
         String show = "";
 
         if (exclude != ""){
-            show += "Sorry, can't find any recipe match according to your ingredients, But if you exclude " + exclude + ", you can cook\n";
+            show += "Sorry, can't find any recipe match to *" + inputIngString + "*.\nBut if you exclude *" + exclude + "*, you can cook:\n";
         }
         show += "<https://www.epicurious.com/search/" + recipe.getTitle().replaceAll(" ", "%20") + "|" + recipe.getTitle() + ">\n";
         show += recipe.getDesc() +"\n\n";
         show += "Ingredients:\n" + recipe.getIngredientList() +"\n\n";
-        show += "Rated: " + recipe.getRating() + ", Calories:" + recipe.getCalories() + ", Sodium: " + recipe.getSodium() + ", Fat" + recipe.getFat();
+        show += "Rated: " + recipe.getRating() + ", Calories:" + recipe.getCalories() + ", Sodium: " + recipe.getSodium() + ", Fat" + recipe.getFat() + ", Protein: " + recipe.getProtein();
         result.put("text", show);
         attachments.put(result);
         attachments.put(item);
@@ -87,147 +75,17 @@ public class UserOptions {
         return result;
     }
 
-    private void getPersonalData(){
-
+    private boolean checkAllergy(ArrayList<String> allergies, String[] ingredients){
+        for (String allergy: allergies){
+            for (String ingred: ingredients){
+                if (ingred.toLowerCase().contains(allergy.toLowerCase()))
+                    return true;
+            }
+        }
+        return false;
     }
 
     public void startSearch(String response_url) throws Exception {
-
-        // Error message when user does not select any ingredient
-        if (ing1 == null && ing2 == null && ing3 == null) {
-            JSONObject response = new JSONObject();
-            JSONArray attachments = new JSONArray();
-            JSONObject item = new JSONObject();
-            item.put("color", "#FF0000");
-            item.put("text", "Oops! Looks like you have not selected any ingredients. Please select at least 1 ingredient & try again!");
-            attachments.put(item);
-            response.put("attachments", attachments);
-            RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
-            return;
-        }
-
-        RecipeDataHandler handler = new RecipeDataHandler();
-        List<Recipe> recipes = RecipeDataHandler.RECIPE_LIST;
-
-        Class.forName("com.mysql.jdbc.Driver");
-        //String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-        String connectionUrl = "jdbc:mysql://cookbetter.ci2drxnp952j.us-east-1.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-        Connection conn = DriverManager.getConnection(connectionUrl);
-
-
-        String personalQuery = "select * from personalize where userid = '" + this.userID + "';";
-        ResultSet ps = conn.prepareStatement(personalQuery).executeQuery();
-        String allergy_1 = "", allergy_2 = "", allergy_3 = "";
-        Boolean vegan = false, gluten_free = false, alcohol_free = false, cholesterol = false, muscle = false, lose = false, gain = false;
-        ArrayList<String> checkList = new ArrayList<String>();
-        //personal
-        while (ps.next()) {
-            allergy_1 = ps.getString("allergy_1");
-            allergy_2 = ps.getString("allergy_2");
-            allergy_3 = ps.getString("allergy_3");
-            // Vegan
-            String diet_res_1 = ps.getString("diet_res_1");
-            if(!"-1".equals(diet_res_1))
-                checkList.add("vegan");
-            // Gluten free
-            String diet_res_2 = ps.getString("diet_res_2");
-            if(!"-1".equals(diet_res_2))
-                checkList.add("gluten-free");
-            //Alcohol-free
-            String diet_res_3 = ps.getString("diet_res_3");
-            if(!"-1".equals(diet_res_3))
-                checkList.add("Non-Alcoholic");
-
-            //Cholesterol
-            String dis_1 = ps.getString("dis_1");
-            if(!"-1".equals(dis_1))
-                checkList.add("Low Cholesterol");
-
-            //Diabetes
-            Object dis_2 = ps.getString("dis_2");
-            if(!"-1".equals(dis_2))
-                checkList.add("No Sugar");
-
-            //Weak Kidney - check for protein content //what???? why?????
-            //Object dis_3 = ps.getString("dis_3");
-            //query+= " and "+dis_3 +" <= 7";
-
-            // Lose weight - foods less than 500 calories
-            Object goal_lose_wt = ps.getString("goal_lose_wt");
-            if(!"-1".equals(goal_lose_wt))
-                lose = true;
-                //query+= " and "+goal_lose_wt +" <= 500";
-
-            // Gain weight
-            Object goal_gain_wt = ps.getString("goal_gain_wt");
-            if(!"-1".equals(goal_gain_wt))
-                gain = true;
-
-            // Gain Muscle
-            Object goal_gain_muscle = ps.getString("goal_gain_muscle");
-            if(!"-1".equals(goal_gain_muscle))
-                muscle = true;
-                break;
-        }
-
-
-        for (Recipe recipe : recipes) {
-
-            boolean flag_1 = false;
-            boolean flag_2 = false;
-            boolean flag_3 = false;
-
-            //other
-            //Boolean vegan, gluten_free , alcohol_free , cholesterol , Diabetes;
-            if (recipe.isInCategories(checkList))
-                continue;
-
-            // muscle, lose, gain
-            if (lose){
-                if (recipe.getCalories() > 500)
-                    continue;
-            }
-            else if (gain){
-                if (recipe.getCalories() < 700)
-                    continue;
-            }
-
-            if (muscle){
-                if (recipe.getProtein() <20)
-                    continue;
-            }
-
-            if (recipe.getIngredients() != null) {
-                for (String ingreds : recipe.getIngredients()) {
-                    //allergies
-                    if (allergy_1 == "" || ingreds.toLowerCase().contains(allergy_1) )
-                        continue;
-                    if (allergy_2 == "" || ingreds.toLowerCase().contains(allergy_2) )
-                        continue;
-                    if (allergy_3 == "" || ingreds.toLowerCase().contains(allergy_3) )
-                        continue;
-
-                    if (ingreds != null) {
-                        if (ing1 != null && ingreds.toLowerCase().contains(ing1.toLowerCase())) {
-                            flag_1 = true;
-                        } else if (ing2 != null && ingreds.toLowerCase().contains(ing2.toLowerCase())) {
-                            flag_2 = true;
-                        } else if (ing3 != null && ingreds.toLowerCase().contains(ing3.toLowerCase())) {
-                            flag_3 = true;
-                        }
-                    }
-
-                    if ((flag_1 && flag_2) || (flag_1 && flag_3) || (flag_2 && flag_3)) {
-                        RequestHandlerUtil.getInstance().sendSlackResponse(response_url, getResult(recipe, "*test*"));
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-/*
-        public void startSearch(String response_url) throws Exception {
 
         // Error message when user does not select any ingredient
         if(ing1 == null && ing2 == null && ing3 == null) {
@@ -242,11 +100,33 @@ public class UserOptions {
             return;
         }
 
+        int ingredcount = 0;
+        String inputIngString = "";
+        if (ing1 != null) {
+            ingredcount++;
+            inputIngString += ing1 + " ";
+        }
+        if (ing2 != null) {
+            ingredcount++;
+            inputIngString += ing2 + " ";
+        }
+        if (ing3 != null) {
+            ingredcount++;
+            inputIngString += ing3 + " ";
+        }
+        String excludeString = "";
+        Boolean existTwoIng = false;
+        Recipe twoIngRecipe = new Recipe();
+        Boolean existOneIng = false;
+        Recipe oneIngRecipe = new Recipe();
+
 
         Class.forName("com.mysql.jdbc.Driver");
         //String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
         String connectionUrl = "jdbc:mysql://cookbetter.ci2drxnp952j.us-east-1.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
         Connection conn = DriverManager.getConnection(connectionUrl);
+
+        List<Recipe> recipes = RecipeDataHandler.RECIPE_LIST;
 
         boolean firstConditionSet = false;
 
@@ -283,46 +163,66 @@ public class UserOptions {
         String personalQuery = "select * from personalize where userid = '"+this.userID+"';";
         ResultSet ps = conn.prepareStatement(personalQuery).executeQuery();
 
+        String allergy_1 = "", allergy_2 = "", allergy_3 = "";
+        ArrayList<String> allergiesList = new ArrayList<>();
+        Boolean vegan = false, gluten_free = false, alcohol_free = false, cholesterol = false, muscle = false, lose = false, gain = false;
+        ArrayList<String> checkList = new ArrayList<String>();
+
         while(ps.next()){
 
-            String allergy_1 = ps.getString("allergy_1");
-            if(!"-1".equals(allergy_1))
-                query+= " and "+allergy_1+" !=1";
+            allergy_1 = ps.getString("allergy_1");
+            if(!"-1".equals(allergy_1)) {
+                query += " and " + allergy_1 + " !=1";
+                allergiesList.add(allergy_1);
+            }
 
-            String allergy_2 = ps.getString("allergy_2");
-            if(!"-1".equals(allergy_2))
-                query+= " and "+allergy_2+" !=1";
+            allergy_2 = ps.getString("allergy_2");
+            if(!"-1".equals(allergy_2)) {
+                query += " and " + allergy_2 + " !=1";
+                allergiesList.add(allergy_2);
+            }
 
-            String allergy_3 = ps.getString("allergy_3");
-            if(!"-1".equals(allergy_3))
-                query+= " and "+allergy_3+" !=1";
+            allergy_3 = ps.getString("allergy_3");
+            if(!"-1".equals(allergy_3)) {
+                query += " and " + allergy_3 + " !=1";
+                allergiesList.add(allergy_3);
+            }
 
             // Vegan
             String diet_res_1 = ps.getString("diet_res_1");
-            if(!"-1".equals(diet_res_1))
-                query+= " and "+diet_res_1+" =1";
+            if(!"-1".equals(diet_res_1)) {
+                query += " and " + diet_res_1 + " =1";
+                checkList.add("vegan");
+            }
 
             // TODO: add vegetarian option
 
             // Gluten free
             String diet_res_2 = ps.getString("diet_res_2");
-            if(!"-1".equals(diet_res_2))
-                query+= " and "+diet_res_2 +" =1";
+            if(!"-1".equals(diet_res_2)) {
+                query += " and " + diet_res_2 + " =1";
+                checkList.add("gluten-free");
+            }
 
             //Alcohol-free
             String diet_res_3 = ps.getString("diet_res_3");
-            if(!"-1".equals(diet_res_3))
+            if(!"-1".equals(diet_res_3)){
                 query+= " and "+diet_res_3 +" =0";
-
+                checkList.add("Non-Alcoholic");
+            }
             //Cholestrol
             String dis_1 = ps.getString("dis_1");
-            if(!"-1".equals(dis_1))
-                query+= " and "+dis_1 +" <= 20";
+            if(!"-1".equals(dis_1)) {
+                query += " and " + dis_1 + " <= 20";
+                checkList.add("Low Cholesterol");
+            }
 
             //Diabetes
             Object dis_2 = ps.getString("dis_2");
-            if(!"-1".equals(dis_2))
-                query+= " and "+dis_2 +" = 1";
+            if(!"-1".equals(dis_2)) {
+                query += " and " + dis_2 + " = 1";
+                checkList.add("No Sugar");
+            }
 
             //Weak Kidney - check for protein content
             Object dis_3 = ps.getString("dis_3");
@@ -331,20 +231,138 @@ public class UserOptions {
 
             // Lose weight - foods less than 500 calories
             Object goal_lose_wt = ps.getString("goal_lose_wt");
-            if(!"-1".equals(goal_lose_wt))
-                query+= " and "+goal_lose_wt +" <= 500";
+            if(!"-1".equals(goal_lose_wt)) {
+                query += " and " + goal_lose_wt + " <= 500";
+                lose = true;
+            }
 
             // Gain weight
             Object goal_gain_wt = ps.getString("goal_gain_wt");
-            if(!"-1".equals(goal_gain_wt))
+            if(!"-1".equals(goal_gain_wt)){
                 query+= " and "+goal_gain_wt +" >=  700";
+                gain = true;
+            }
 
             // Gain Muscle
             Object goal_gain_muscle = ps.getString("goal_gain_muscle");
-            if(!"-1".equals(goal_gain_muscle))
-                query+= " and "+goal_gain_muscle +" >= 20";
+            if(!"-1".equals(goal_gain_muscle)) {
+                query += " and " + goal_gain_muscle + " >= 20";
+                muscle = true;
+            }
 
             break;
+        }
+
+        //TODO: our
+        for (Recipe recipe : recipes) {
+
+
+            boolean flag_1 = false;
+            boolean flag_2 = false;
+            boolean flag_3 = false;
+
+            //other
+            //Boolean vegan, gluten_free , alcohol_free , cholesterol , Diabetes;
+
+            // muscle, lose, gain
+            if (lose) {
+                if (recipe.getCalories() > 500)
+                    continue;
+            } else if (gain) {
+                if (recipe.getCalories() < 700)
+                    continue;
+            }
+            if (muscle) {
+                if (recipe.getProtein() < 20)
+                    continue;
+            }
+
+            if (recipe.getIngredients() != null) {
+                for (String ingreds : recipe.getIngredients()) {
+
+                    if (ingreds != null) {
+                        if (ing1 != null && ingreds.toLowerCase().contains(ing1.toLowerCase())) {
+                            flag_1 = true;
+                        } else if (ing2 != null && ingreds.toLowerCase().contains(ing2.toLowerCase())) {
+                            flag_2 = true;
+                        } else if (ing3 != null && ingreds.toLowerCase().contains(ing3.toLowerCase())) {
+                            flag_3 = true;
+                        }
+                    }
+
+                    //algorithm
+                    if (ingredcount == 3 && flag_1 && flag_2 && flag_3) {
+                        if (checkAllergy(allergiesList, recipe.getIngredients()))
+                            break;
+                        if (checkList.size() > 0) {
+                            if (recipe.isInCategories(checkList))
+                                break;
+                        }
+                        RequestHandlerUtil.getInstance().sendSlackResponse(response_url, getResult(recipe, "", inputIngString));
+                        return;
+                    }
+
+                    if (ingredcount >= 2 && ((flag_1 && flag_2) || (flag_1 && flag_3) || (flag_2 && flag_3))) {
+                        if (checkAllergy(allergiesList, recipe.getIngredients()))
+                            break;
+                        if (checkList.size() > 0) {
+                            if (recipe.isInCategories(checkList))
+                                break;
+                        }
+                        if (!existTwoIng && ingredcount == 3){
+                            if (!flag_1)
+                                excludeString = ing1;
+                            else if (!flag_2)
+                                excludeString = ing2;
+                            else
+                                excludeString = ing3;
+
+                            existTwoIng = true;
+                            twoIngRecipe = recipe;
+                        }
+                        else if (ingredcount == 2){
+                            RequestHandlerUtil.getInstance().sendSlackResponse(response_url, getResult(recipe, "", inputIngString));
+                            return;
+                        }
+                        //}
+                    }
+
+                    if(ingredcount >= 1 && (flag_1 || flag_2 || flag_3)){
+                        if (checkAllergy(allergiesList, recipe.getIngredients()))
+                            break;
+                        if (checkList.size() > 0) {
+                            if (recipe.isInCategories(checkList))
+                                break;
+                        }
+
+                        if (!existOneIng && ingredcount > 1){
+                            if (!flag_1)
+                                excludeString = ing1 + " ";
+                            else if (!flag_2)
+                                excludeString += ing2 + " ";
+                            else
+                                excludeString += ing3 + " ";
+
+                            existOneIng = true;
+                            oneIngRecipe = recipe;
+                        }
+                        else if (ingredcount == 1){
+                            RequestHandlerUtil.getInstance().sendSlackResponse(response_url, getResult(recipe, "", inputIngString));
+                            return;
+                        }
+                    }
+
+                }
+            }
+        }
+
+        if(existTwoIng){
+            RequestHandlerUtil.getInstance().sendSlackResponse(response_url, getResult(twoIngRecipe, excludeString, inputIngString));
+            return;
+        }
+        else if(existOneIng){
+            RequestHandlerUtil.getInstance().sendSlackResponse(response_url, getResult(oneIngRecipe, excludeString, inputIngString));
+            return;
         }
 
         ResultSet rs = conn.prepareStatement(query).executeQuery();
@@ -373,14 +391,13 @@ public class UserOptions {
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);
     }
 
-    */
 
     public void setLike(String response_url, String selectedValue) throws Exception{
         JSONObject response = new JSONObject();
         JSONArray attachments = new JSONArray();
         JSONObject item = new JSONObject();
         item.put("color", "#FF0000");
-        item.put("text", "Your response is saved" + selectedValue);
+        item.put("text", "Your response *"+ selectedValue +"* is saved.");
         attachments.put(item);
         response.put("attachments", attachments);
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
