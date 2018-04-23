@@ -117,9 +117,13 @@ public class IngredientNetwork {
         for (String name : this.ingredCount.keySet()){
             double pmi;
             if(name.contains(",")){
-                String[] ingreds = name.split(",");
-                pmi = Math.log(((float)this.ingredCount.get(name)/((float) (this.ingredCount.get(ingreds[0]) * this.ingredCount.get(ingreds[1])))) * PMI_MULTIPLIER);
-                pmiMap.put(name,pmi);
+                if(this.ingredCount.get(name) != 0.0) {
+                    String[] ingreds = name.split(",");
+                    pmi = Math.log(((float) this.ingredCount.get(name) / ((float) (this.ingredCount.get(ingreds[0]) * this.ingredCount.get(ingreds[1])))) * PMI_MULTIPLIER);
+                    pmiMap.put(name, pmi);
+                }else {
+                    pmiMap.put(name, -10.0);
+                }
             }
         }
         return pmiMap;

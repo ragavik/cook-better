@@ -1,5 +1,6 @@
 package com.bot.cookbetter.utils;
 
+import com.bot.cookbetter.handler.IngredientReportHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -225,10 +226,8 @@ public class RequestHandlerUtil {
             responseObj = ResponseConstructionUtil.getInstance().surpriseMe(userID);
             //responseObj = ResponseConstructionUtil.getInstance().surpriseMe();
         }
-        else if ("/test123".equals(command)){
-            responseObj = ResponseConstructionUtil.getInstance().ynButton();
-
-
+        else if ("/beyourownchef".equals(command)){
+            responseObj = new IngredientReportHandler().buildReport(requestMap.get("text"));
         }
         return responseObj;
     }

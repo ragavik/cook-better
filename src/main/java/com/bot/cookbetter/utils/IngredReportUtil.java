@@ -84,10 +84,10 @@ public class IngredReportUtil {
         }
         if (!(max_key.equals(null) || max_key.equals(""))) {
             String[] keys = max_key.split(" ");
-            notRecommended = "We recommend to exclude following ingredients: \n";
+            notRecommended = "According to the data, people do not usually prefer following ingredients together: \n";
             for (String key : keys) {
                 if (negateCombinations.containsKey(key)) {
-                    notRecommended = notRecommended + key + " as this doesn't taste good with ";
+                    notRecommended = notRecommended + key + " with ";
                     for (String st : negateCombinations.get(key)) {
                         notRecommended = notRecommended + st + ", ";
                     }
@@ -98,13 +98,16 @@ public class IngredReportUtil {
             }
             return notRecommended;
         }
-        return "No outlier found";
+        return "Combination of all input ingredient can yield a good taste";
     }
 
     public HashSet<String> findRecommendedIngred(){
         HashSet<String> bestIngredsSet = new HashSet<>();
         boolean notMatchFlag = false;
         String best_ingred = findMax();
+        if(best_ingred == null){
+            return null;
+        }
         bestIngredsSet.add(best_ingred);
 
         while (best_ingred != null){
