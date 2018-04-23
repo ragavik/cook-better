@@ -108,7 +108,12 @@ public class RequestHandlerUtil {
                     break;
 
                 case "search_button":
-                    user.startSearch(response_url);
+                    try {
+                        user.startSearch(response_url);
+                    }
+                    catch (Exception e){
+                        System.out.println(e.getMessage());
+                    }
                     user = null;
                     break;
 
