@@ -98,16 +98,22 @@ public class IngredientReportHandler {
         }
         String bestIngred = "We need to add more ingredients, Since all inout ingredients contradicts each other in terms of taste.";
         if (bestIngreds != null && !bestIngreds.isEmpty()) {
-            bestIngred = "Optimum compatible ingredient found by algorithms are:" + buildOuput(bestIngreds) + ".";
+            bestIngred = "Optimum compatible ingredient found by algorithms are: " + buildOuput(bestIngreds) + ".";
+        }
+
+        String predictedRating = "";
+        if (getPredicatedRating(network, bestIngreds) !=0){
+            predictedRating = String.valueOf(getPredicatedRating(network, bestIngreds));
+            predictedRating =  "Predicted rating of the recipe cooked using the combination of suggested ingredients is " + predictedRating;
         }
 
         if (network.getCommonIngred() != null && !network.getCommonIngred().isEmpty()) {
             String commonIngred = " -- Our algorithm doesn't consider " + buildOuput(network.getCommonIngred()) + " ingredients as these are used in" +
                     " most of the recipes.";
-            finalOutput = tempOutlier + "\n" + commonIngred + "\n-- " + exclude + "\n-- " + bestIngred + "\n-- " + getPredicatedRating(network, bestIngreds);
+            finalOutput = tempOutlier + "\n" + commonIngred + "\n-- " + exclude + "\n-- " + bestIngred + "\n-- " + predictedRating;
 
         } else {
-            finalOutput = tempOutlier + "\n-- " + exclude + "\n-- " + bestIngred + "\n-- " + getPredicatedRating(network, bestIngreds);
+            finalOutput = tempOutlier + "\n-- " + exclude + "\n-- " + bestIngred + "\n-- " + predictedRating;
         }
         return finalOutput;
     }
