@@ -7,13 +7,14 @@ import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 //handle request for JSON file and the main code of /supriseme
 public class ResponseConstructionUtil {
@@ -69,6 +70,8 @@ public class ResponseConstructionUtil {
         return result;
         //return readJSONFile("/ynbutton.json");
     }
+
+
 
 
     /*
@@ -206,6 +209,143 @@ public class ResponseConstructionUtil {
 
         jsonObject.put("text",result);
         return jsonObject;
+    }
+
+
+    public JSONObject recommend(String userID) {
+        System.out.println("recommend1");
+        RecipeDataHandler handler = new RecipeDataHandler();
+        System.out.println("recommend2");
+        List<Recipe> recipes = handler.getRecipes();
+        System.out.println("recommend3");
+        JSONObject result = readJSONFile("/recommendresponse.json");
+        System.out.println("recommend4");
+        result.put("text", handler(userID, recipes));
+        System.out.println("recommend5");
+        return result;
+        //return readJSONFile("/ynbutton.json");
+    }
+
+
+    public  String handler(String userID, List<Recipe> rlist) {
+        //Make list of list for data
+        List<List<Integer>> data = new LinkedList<List<Integer>>();
+        int user = 100;
+
+        List<String> recipes = new LinkedList<String>();
+        System.out.println("handler1");
+        try {
+            //Scanner sc = new Scanner(new File(ResponseConstructionUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath()+"datafile.txt"));
+            InputStream is = getClass().getResourceAsStream("/datafile.txt");
+            System.out.println("handler2");
+            //BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            Scanner sc = new Scanner(is);
+            System.out.println("handler3");
+            while(sc.hasNextLine()) {
+                List<Integer> u = new LinkedList<Integer>();
+                String s = sc.nextLine();
+                String[] arr = s.split("#");
+                for(int i=3; i<arr.length; i++) {
+                    u.add(Integer.parseInt(arr[i]));
+                }
+                data.add(u);
+            }
+            //System.out.println("Data: " + data);
+//            InputStream ist = getClass().getResourceAsStream("/recipelist.txt");
+//            //BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//            Scanner scs = new Scanner(ist);
+//            while(scs.hasNextLine()) {
+//                String str = scs.nextLine();
+//                recipes.add(str);
+//                //System.out.print(str);
+//            }
+            //for(int i=0; i<200; i++){
+            //    recipes.add("Recipe"+i);
+            //}
+            //System.out.println("Recipes: "+recipes);
+            sc.close();
+//            scs.close();
+
+        } catch (Exception e) {
+            //System.out.println("Error");
+            e.printStackTrace();
+        }
+
+        List<Integer> userRecipes = data.get(user);
+        List<List<Integer>> sol = recommendOnList(data, userRecipes);
+
+
+        //System.out.println(rlist);
+        for(int i=0; i<200; i++){
+            recipes.add(rlist.get(i).getTitle());
+        }
+
+
+
+        //Display results
+        return displayResults(sol, recipes);
+    }
+
+    public static String displayResults(List<List<Integer>> list, List<String> recipes) {
+        int len = list.size();
+        String answer = "";
+        for(int i=0; i<len; i++) {
+            List<Integer> details = list.get(i);
+            answer += (details.get(1) + "% of the people who like \'" + recipes.get(details.get(2)) + "\' like \'" + recipes.get(details.get(0)) + "\'.\n");
+        }
+        return answer;
+    }
+
+    public static List<Integer> recommendOnRecipe(List<List<Integer>> list, int recipe, List<Integer> userRecipes) {
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        int userwithrecipe = 0;
+        for(List<Integer> user: list) {
+            if(user.contains(recipe)) {
+                userwithrecipe++;
+                for(int item : user) {
+                    if(!userRecipes.contains(item)) {
+                        if(map.containsKey(item)) {
+                            int val = map.get(item);
+                            map.replace(item, val+1);
+                        }else {
+                            map.put(item, 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        int max_i = -1, max_count = 0;
+        for(int i : map.keySet()) {
+            if(i != recipe) {
+                if(map.get(i) > max_count) {
+                    max_i = i;
+                    max_count = map.get(i);
+                }
+            }
+        }
+
+        List<Integer> details = new LinkedList<Integer>();
+        if(max_count < 1) {
+            return details;
+        }
+        details.add(max_i);
+        int percentage = 100*max_count/userwithrecipe;
+        details.add(percentage);
+        details.add(recipe);
+        return details;
+    }
+
+    //list - sublists has the users who like the recipe at that index in the list.
+    //recipes - the list of recipes that the user likes.
+    public static List<List<Integer>> recommendOnList(List<List<Integer>> data, List<Integer> user_recipes) {
+        List<List<Integer>> solution = new LinkedList<List<Integer>>();
+        for(int recipe : user_recipes) {
+            List<Integer> details = recommendOnRecipe(data, recipe, user_recipes);
+            if(!details.isEmpty())
+                solution.add(details);
+        }
+        return solution;
     }
 
 

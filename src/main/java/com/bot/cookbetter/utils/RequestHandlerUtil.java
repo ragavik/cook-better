@@ -39,9 +39,13 @@ public class RequestHandlerUtil {
     public void handleSlackRequest(HttpServletRequest request) {
         try {
             Map requestMap = readSlackRequest(request);
+            System.out.println("1");
             JSONObject responseObj = handleSlashCommand(requestMap);
+            System.out.println("2");
             String response_url = (String) requestMap.get("response_url");
+            System.out.println("3");
             String result = sendSlackResponse(response_url, responseObj);
+            System.out.println("4");
             logger.debug(requestMap.get("command") + ": " + result);
         }
         catch (Exception e) {
@@ -227,9 +231,12 @@ public class RequestHandlerUtil {
         }
         else if ("/test123".equals(command)){
             responseObj = ResponseConstructionUtil.getInstance().ynButton();
-
-
         }
+        else if("/recommend".equals(command)){
+            System.out.println("processing");
+            responseObj = ResponseConstructionUtil.getInstance().recommend(requestMap.get("user_id"));
+        }
+        System.out.println("returning");
         return responseObj;
     }
 
