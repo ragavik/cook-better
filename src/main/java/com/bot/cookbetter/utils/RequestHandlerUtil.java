@@ -222,7 +222,7 @@ public class RequestHandlerUtil {
                     JSONObject likeObj = readJSONFile("/likebutton.json");
                     JSONObject obj = new JSONObject();
                     likeObj.remove("callback_id");
-                    likeObj.put("callback_id", Integer.parseInt(selectedValue));
+                    likeObj.put("callback_id",selectedValue);
                     List<JSONObject> l = new LinkedList<JSONObject>();
                     l.add(responseObj);
                     l.add(likeObj);
@@ -288,6 +288,10 @@ public class RequestHandlerUtil {
         else if("/recommend".equals(command)){
             System.out.println("processing");
             responseObj = ResponseConstructionUtil.getInstance().recommend(requestMap.get("user_id"));
+        }
+        else if("/recommendpopulate".equals(command)){
+            System.out.println("processing");
+            responseObj = ResponseConstructionUtil.getInstance().recommendpopulate(requestMap.get("user_id"));
         }
         System.out.println("returning");
         return responseObj;

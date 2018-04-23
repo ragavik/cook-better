@@ -213,6 +213,19 @@ public class ResponseConstructionUtil {
     }
 
 
+    public JSONObject recommendpopulate(String userID) {
+        System.out.println("recommend1");
+        RecipeDataHandler handler = new RecipeDataHandler();
+        List<Recipe> recipes = handler.getRecipes();
+        System.out.println("recommend3");
+        JSONObject result = readJSONFile("/recommendresponse.json");
+        System.out.println("recommend4");
+        //result.put("text", handler(userID, recipes, result));
+        System.out.println("recommend5");
+        return handler("99", recipes, result);
+        //return readJSONFile("/ynbutton.json");
+    }
+
     public JSONObject recommend(String userID) {
         System.out.println("recommend1");
         RecipeDataHandler handler = new RecipeDataHandler();
@@ -230,7 +243,6 @@ public class ResponseConstructionUtil {
     public  JSONObject handler(String userID, List<Recipe> rlist, JSONObject result) {
         //Make list of list for data
         List<List<Integer>> data = new LinkedList<List<Integer>>();
-        userID = "100";
 
         Connection con = null;
         HashMap<String, List<Integer>> map = new HashMap<String, List<Integer>>();
