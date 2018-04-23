@@ -14,10 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RequestHandlerUtil {
 
@@ -140,7 +137,10 @@ public class RequestHandlerUtil {
                     break;
 
                 case "ynbutton":
-                    user.setLike(response_url, selectedValue);
+                    user.setLike(response_url, selectedValue, userID);
+                    break;
+                case "nybutton":
+                    user.setLikeSQL(response_url, selectedValue, userID, payloadObject);
                     break;
 
                 // Handling user selections for /personalize command
@@ -219,7 +219,16 @@ public class RequestHandlerUtil {
                     info += "\nRating: " + r.getRating();
                     responseObj.remove("text");
                     responseObj.put("text", info);
-                    sendSlackResponse(response_url, responseObj);
+                    JSONObject likeObj = readJSONFile("/likebutton.json");
+                    JSONObject obj = new JSONObject();
+                    likeObj.remove("callback_id");
+                    likeObj.put("callback_id", Integer.parseInt(selectedValue));
+                    List<JSONObject> l = new LinkedList<JSONObject>();
+                    l.add(responseObj);
+                    l.add(likeObj);
+                    obj.put("attachments",l);
+                    sendSlackResponse(response_url, obj);
+                    //sendSlackResponse(response_url, likeObj);
 //http://cookbetter-env.us-east-2.elasticbeanstalk.com/slack-interactive
             }
 

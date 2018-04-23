@@ -11,6 +11,7 @@ import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -229,26 +230,63 @@ public class ResponseConstructionUtil {
     public  JSONObject handler(String userID, List<Recipe> rlist, JSONObject result) {
         //Make list of list for data
         List<List<Integer>> data = new LinkedList<List<Integer>>();
-        int user = 100;
+        userID = "100";
+
+        Connection con = null;
+        HashMap<String, List<Integer>> map = new HashMap<String, List<Integer>>();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "Kapil.963");
+            Statement statement = con.createStatement();
+            ResultSet rs = null;
+
+            rs = statement.executeQuery("Select * FROM cookdatabase.cookdata;");
+
+            while(rs.next()) {
+                String uid = rs.getString(1);
+                int rid = rs.getInt(2);
+                if(map.containsKey(uid)) {
+                    List<Integer> thelist = map.get(uid);
+                    if(!thelist.contains(rid)) {
+                        thelist.add(rid);
+                    }
+                    //System.out.println(thelist);
+                }else {
+                    List<Integer> thelist = new LinkedList<Integer>();
+                    thelist.add(rid);
+                    map.put(uid, thelist);
+                }
+            }
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for(String str : map.keySet()) {
+            data.add(map.get(str));
+        }
+
 
         List<String> recipes = new LinkedList<String>();
-        System.out.println("handler1");
-        try {
-            //Scanner sc = new Scanner(new File(ResponseConstructionUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath()+"datafile.txt"));
-            InputStream is = getClass().getResourceAsStream("/datafile.txt");
-            System.out.println("handler2");
-            //BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            Scanner sc = new Scanner(is);
-            System.out.println("handler3");
-            while(sc.hasNextLine()) {
-                List<Integer> u = new LinkedList<Integer>();
-                String s = sc.nextLine();
-                String[] arr = s.split("#");
-                for(int i=3; i<arr.length; i++) {
-                    u.add(Integer.parseInt(arr[i]));
-                }
-                data.add(u);
-            }
+//        System.out.println("handler1");
+//        try {
+//            //Scanner sc = new Scanner(new File(ResponseConstructionUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath()+"datafile.txt"));
+//            InputStream is = getClass().getResourceAsStream("/datafile.txt");
+//            System.out.println("handler2");
+//            //BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//            Scanner sc = new Scanner(is);
+//            System.out.println("handler3");
+//            while(sc.hasNextLine()) {
+//                List<Integer> u = new LinkedList<Integer>();
+//                String s = sc.nextLine();
+//                String[] arr = s.split("#");
+//                for(int i=3; i<arr.length; i++) {
+//                    u.add(Integer.parseInt(arr[i]));
+//                }
+//                data.add(u);
+//            }
+
+
+
             //System.out.println("Data: " + data);
 //            InputStream ist = getClass().getResourceAsStream("/recipelist.txt");
 //            //BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -262,15 +300,15 @@ public class ResponseConstructionUtil {
             //    recipes.add("Recipe"+i);
             //}
             //System.out.println("Recipes: "+recipes);
-            sc.close();
+            //sc.close();
 //            scs.close();
 
-        } catch (Exception e) {
+//        } catch (Exception e) {
             //System.out.println("Error");
-            e.printStackTrace();
-        }
+//            e.printStackTrace();
+ //       }
 
-        List<Integer> userRecipes = data.get(user);
+        List<Integer> userRecipes = map.get(userID);
         List<List<Integer>> sol = recommendOnList(data, userRecipes);
 
 

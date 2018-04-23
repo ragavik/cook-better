@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class UserOptions {
@@ -375,15 +378,42 @@ public class UserOptions {
 
     */
 
-    public void setLike(String response_url, String selectedValue) throws Exception{
+    public void setLike(String response_url, String selectedValue, String userID) throws Exception{
         JSONObject response = new JSONObject();
         JSONArray attachments = new JSONArray();
         JSONObject item = new JSONObject();
         item.put("color", "#FF0000");
-        item.put("text", "Your response is saved" + selectedValue);
+        item.put("text", "Your response is saved : " + selectedValue);
         attachments.put(item);
         response.put("attachments", attachments);
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
+        return;
+    }
+
+    public void setLikeSQL(String response_url, String selectedValue, String userID, JSONObject payloadObject) throws Exception{
+        JSONObject response = new JSONObject();
+        JSONArray attachments = new JSONArray();
+        JSONObject item = new JSONObject();
+        item.put("color", "#FF0000");
+        item.put("text", "Your response is saved : " + selectedValue);
+        attachments.put(item);
+        response.put("attachments", attachments);
+        RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
+        if(selectedValue.equals("yes")) {
+            Connection con = null;
+            HashMap<String, List<Integer>> map = new HashMap<String, List<Integer>>();
+            try {
+                System.out.println(payloadObject);
+                Class.forName("com.mysql.jdbc.Driver");
+                con = DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "Kapil.963");
+                Statement statement = con.createStatement();
+                statement.executeUpdate("INSERT INTO cookdatabase.cookdata VALUES (\'" + userID + "\'," + payloadObject.get("callback_id") + ");");
+                statement.close();
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return;
     }
 }
