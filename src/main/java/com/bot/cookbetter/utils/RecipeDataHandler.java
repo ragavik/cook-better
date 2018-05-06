@@ -43,4 +43,8 @@ public class RecipeDataHandler {
             e.printStackTrace();
         }
     }
+
+    public List<Recipe> getRecipes(){
+        return RECIPE_LIST;
+    }
 }

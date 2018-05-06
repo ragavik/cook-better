@@ -400,11 +400,8 @@ public class UserOptions {
         JSONArray attachments = new JSONArray();
         JSONObject item = new JSONObject();
         item.put("color", "#FF0000");
-<<<<<<< HEAD
         item.put("text", "Your response is saved : " + selectedValue);
-=======
         item.put("text", "Your response *"+ selectedValue +"* is saved.");
->>>>>>> be5707b9b4a9b64ea0a545109dc28308c7c49178
         attachments.put(item);
         response.put("attachments", attachments);
         RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
