@@ -1,6 +1,9 @@
 package com.bot.cookbetter.utils;
 
+<<<<<<< HEAD
 import com.bot.cookbetter.model.Recipe;
+=======
+>>>>>>> be5707b9b4a9b64ea0a545109dc28308c7c49178
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -282,8 +285,13 @@ public class RequestHandlerUtil {
             responseObj = ResponseConstructionUtil.getInstance().surpriseMe(userID);
             //responseObj = ResponseConstructionUtil.getInstance().surpriseMe();
         }
+<<<<<<< HEAD
         else if ("/test123".equals(command)){
             responseObj = ResponseConstructionUtil.getInstance().ynButton();
+=======
+        else if ("/beyourownchef".equals(command)){
+            responseObj = new IngredientReportHandler().buildReport(requestMap.get("text"));
+>>>>>>> be5707b9b4a9b64ea0a545109dc28308c7c49178
         }
         else if("/recommend".equals(command)){
             System.out.println("processing");

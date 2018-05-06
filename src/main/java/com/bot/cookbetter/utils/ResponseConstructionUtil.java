@@ -65,7 +65,7 @@ public class ResponseConstructionUtil {
 
     public JSONObject ynButton() {
         RecipeDataHandler handler = new RecipeDataHandler();
-        List<Recipe> recipes = handler.getRecipes();
+        List<Recipe> recipes = RecipeDataHandler.RECIPE_LIST;
         JSONObject result = readJSONFile("/ynbutton.json");
         result.put("text", recipes.get(0).getTitle());
         return result;

@@ -1,8 +1,14 @@
 package com.bot.cookbetter;
 
 import com.bot.cookbetter.app.CookBetterApplication;
+import com.bot.cookbetter.handler.IngredientReportHandler;
 import com.bot.cookbetter.model.Recipe;
+<<<<<<< HEAD
 import com.bot.cookbetter.utils.HSQLConnection;
+=======
+import com.bot.cookbetter.utils.IngredReportUtil;
+import com.bot.cookbetter.handler.IngredientReportHandler;
+>>>>>>> be5707b9b4a9b64ea0a545109dc28308c7c49178
 import com.bot.cookbetter.utils.IngredientNetwork;
 import com.bot.cookbetter.utils.RecipeDataHandler;
 import org.junit.Test;
@@ -18,17 +24,16 @@ import java.util.List;
 public class RecipeDataHandlerTest {
 
     private final static String INPUT_INGREDS = "Chicken, thyme, butter, pepper, egg, bread, honey, salt, abcde";
-    RecipeDataHandler handler;
-    IngredientNetwork ingredientNetwork;
+    IngredReportUtil ingredReportUtil;
+    IngredientReportHandler handler;
 
     @Test
     public void testGetRecipes(){
-        handler = new RecipeDataHandler();
-        List<Recipe> data = handler.getRecipes();
 
-        ingredientNetwork = new IngredientNetwork(INPUT_INGREDS);
-        ingredientNetwork.getAnalysis();
-        assertNotNull(data);
+        ingredReportUtil = new IngredReportUtil();
+        handler = new IngredientReportHandler();
+        handler.buildReport(INPUT_INGREDS);
+        assertNotNull(ingredReportUtil);
     }
 
     @Test
