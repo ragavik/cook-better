@@ -1,14 +1,20 @@
 package com.bot.cookbetter.utils;
 
+import com.bot.cookbetter.model.Recipe;
+import com.bot.cookbetter.handler.IngredientReportHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.*;
-
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class RequestHandlerUtil {
@@ -18,6 +24,26 @@ public class RequestHandlerUtil {
     private static Map<String, UserOptions> searchSession = new HashMap<>();
     private static Map<String, PersonalizeOptions> personalizeSession=new HashMap<>();
 
+    public JSONObject readJSONFile(String fileName) {
+        JSONObject response;
+        String result = "";
+        try {
+            InputStream is = getClass().getResourceAsStream(fileName);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+            while (line != null) {
+                sb.append(line);
+                line = br.readLine();
+            }
+            result = sb.toString();
+            logger.info(result);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        response = new JSONObject(result);
+        return response;
+    }
 
     public static RequestHandlerUtil getInstance() {
         if(requestHandlerUtil == null) {
@@ -35,9 +61,13 @@ public class RequestHandlerUtil {
     public void handleSlackRequest(HttpServletRequest request) {
         try {
             Map requestMap = readSlackRequest(request);
+            System.out.println("1");
             JSONObject responseObj = handleSlashCommand(requestMap);
+            System.out.println("2");
             String response_url = (String) requestMap.get("response_url");
+            System.out.println("3");
             String result = sendSlackResponse(response_url, responseObj);
+            System.out.println("4");
             logger.debug(requestMap.get("command") + ": " + result);
         }
         catch (Exception e) {
@@ -97,13 +127,26 @@ public class RequestHandlerUtil {
                     user.setQuickMeal(selectedValue);
                     break;
 
+
                 case "special_occasions":
                     user.setSpecialOccasion(selectedValue);
                     break;
 
                 case "search_button":
-                    user.startSearch(response_url);
+                    try {
+                        user.startSearch(response_url);
+                    }
+                    catch (Exception e){
+                        System.out.println(e.getMessage());
+                    }
                     user = null;
+                    break;
+
+                case "ynbutton":
+                    user.setLike(response_url, selectedValue, userID);
+                    break;
+                case "nybutton":
+                    user.setLikeSQL(response_url, selectedValue, userID, payloadObject);
                     break;
 
                 // Handling user selections for /personalize command
@@ -163,6 +206,36 @@ public class RequestHandlerUtil {
                     p_user.submitPreferences(response_url);
                     p_user = null;
                     break;
+                case "showrecipe":
+                    RecipeDataHandler handler = new RecipeDataHandler();
+                    List<Recipe> recipes = handler.getRecipes();
+                    JSONObject responseObj = readJSONFile("/recommendresponse.json");
+                    Recipe r = recipes.get(Integer.parseInt(selectedValue));
+                    String info = "";
+                    info += "Title: " + r.getTitle();
+                    info += "\nIngredients:\n" + r.getIngredientList();
+                    info += "\nCalories: " + r.getCalories();
+                    if(r.getDirections() != null){
+                        info += "\nDirections:\n";
+                        int step = 1;
+                        for(String st: r.getDirections()){
+                            info += step++ + ". " + st + "\n";
+                        }
+                    }
+                    info += "\nRating: " + r.getRating();
+                    responseObj.remove("text");
+                    responseObj.put("text", info);
+                    JSONObject likeObj = readJSONFile("/likebutton.json");
+                    JSONObject obj = new JSONObject();
+                    likeObj.remove("callback_id");
+                    likeObj.put("callback_id",selectedValue);
+                    List<JSONObject> l = new LinkedList<JSONObject>();
+                    l.add(responseObj);
+                    l.add(likeObj);
+                    obj.put("attachments",l);
+                    sendSlackResponse(response_url, obj);
+                    //sendSlackResponse(response_url, likeObj);
+//http://cookbetter-env.us-east-2.elasticbeanstalk.com/slack-interactive
             }
 
             searchSession.put(userID, user);
@@ -213,7 +286,23 @@ public class RequestHandlerUtil {
         else if("/surpriseme".equals(command)) {
             String userID = requestMap.get("user_id");
             responseObj = ResponseConstructionUtil.getInstance().surpriseMe(userID);
+            //responseObj = ResponseConstructionUtil.getInstance().surpriseMe();
         }
+        else if ("/test123".equals(command)) {
+            responseObj = ResponseConstructionUtil.getInstance().ynButton();
+        }
+        else if ("/beyourownchef".equals(command)){
+            responseObj = new IngredientReportHandler().buildReport(requestMap.get("text"));
+        }
+        else if("/recommend".equals(command)){
+            System.out.println("processing");
+            responseObj = ResponseConstructionUtil.getInstance().recommend(requestMap.get("user_id"));
+        }
+        else if("/recommendpopulate".equals(command)){
+            System.out.println("processing");
+            responseObj = ResponseConstructionUtil.getInstance().recommendpopulate(requestMap.get("user_id"));
+        }
+        System.out.println("returning");
         return responseObj;
     }
 

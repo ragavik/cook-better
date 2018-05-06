@@ -1,17 +1,23 @@
 package com.bot.cookbetter.utils;
 
+import com.bot.cookbetter.model.Recipe;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
 
+//handle request for JSON file and the main code of /supriseme
 public class ResponseConstructionUtil {
 
     private static ResponseConstructionUtil responseConstructionUtil;
@@ -57,11 +63,54 @@ public class ResponseConstructionUtil {
         return readJSONFile("/helpdoc.json");
     }
 
+    public JSONObject ynButton() {
+        RecipeDataHandler handler = new RecipeDataHandler();
+        List<Recipe> recipes = RecipeDataHandler.RECIPE_LIST;
+        JSONObject result = readJSONFile("/ynbutton.json");
+        result.put("text", recipes.get(0).getTitle());
+        return result;
+        //return readJSONFile("/ynbutton.json");
+    }
+
+
+
+
+    /*
+    public JSONObject surpriseMe() throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        String result = "Welcome";
+
+        try {
+            JSONObject json = ResponseConstructionUtil.getInstance().getRecipeData();
+            //result += json.length();
+        }
+        catch (Exception e){
+                System.console().writer().println("Can't get recipe data");
+        }
+        //JSONArray names = json.names();
+        //result +="\n" + names;
+        //System.out.println(result);
+        //recipe_data.
+
+        //original
+        jsonObject.put("text",result);
+        return jsonObject;
+
+
+
+
+
+
+    }
+    */
+
     public JSONObject surpriseMe(String userID) throws Exception {
 
         // Database connection
         Class.forName("com.mysql.jdbc.Driver");
-        String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+        //String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+        String connectionUrl = "jdbc:mysql://cookbetter.ci2drxnp952j.us-east-1.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
+
         Connection conn = DriverManager.getConnection(connectionUrl);
 
         String query = "select * from data where title is not null";
@@ -137,6 +186,7 @@ public class ResponseConstructionUtil {
         // Selecting 1 random row
         query += " order by rand() limit 1";
 
+
         ResultSet rs = conn.prepareStatement(query).executeQuery();
         JSONObject jsonObject = new JSONObject();
         String result = "";
@@ -159,8 +209,208 @@ public class ResponseConstructionUtil {
         }
 
         jsonObject.put("text",result);
-
         return jsonObject;
     }
+
+
+    public JSONObject recommendpopulate(String userID) {
+        System.out.println("recommend1");
+        RecipeDataHandler handler = new RecipeDataHandler();
+        List<Recipe> recipes = handler.getRecipes();
+        System.out.println("recommend3");
+        JSONObject result = readJSONFile("/recommendresponse.json");
+        System.out.println("recommend4");
+        //result.put("text", handler(userID, recipes, result));
+        System.out.println("recommend5");
+        return handler("99", recipes, result);
+        //return readJSONFile("/ynbutton.json");
+    }
+
+    public JSONObject recommend(String userID) {
+        System.out.println("recommend1");
+        RecipeDataHandler handler = new RecipeDataHandler();
+        List<Recipe> recipes = handler.getRecipes();
+        System.out.println("recommend3");
+        JSONObject result = readJSONFile("/recommendresponse.json");
+        System.out.println("recommend4");
+        //result.put("text", handler(userID, recipes, result));
+        System.out.println("recommend5");
+        return handler(userID, recipes, result);
+        //return readJSONFile("/ynbutton.json");
+    }
+
+
+    public  JSONObject handler(String userID, List<Recipe> rlist, JSONObject result) {
+        //Make list of list for data
+        List<List<Integer>> data = new LinkedList<List<Integer>>();
+
+        Connection con = null;
+        HashMap<String, List<Integer>> map = new HashMap<String, List<Integer>>();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "Kapil.963");
+            Statement statement = con.createStatement();
+            ResultSet rs = null;
+
+            rs = statement.executeQuery("Select * FROM cookdatabase.cookdata;");
+
+            while(rs.next()) {
+                String uid = rs.getString(1);
+                int rid = rs.getInt(2);
+                if(map.containsKey(uid)) {
+                    List<Integer> thelist = map.get(uid);
+                    if(!thelist.contains(rid)) {
+                        thelist.add(rid);
+                    }
+                    //System.out.println(thelist);
+                }else {
+                    List<Integer> thelist = new LinkedList<Integer>();
+                    thelist.add(rid);
+                    map.put(uid, thelist);
+                }
+            }
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for(String str : map.keySet()) {
+            data.add(map.get(str));
+        }
+
+
+        List<String> recipes = new LinkedList<String>();
+//        System.out.println("handler1");
+//        try {
+//            //Scanner sc = new Scanner(new File(ResponseConstructionUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath()+"datafile.txt"));
+//            InputStream is = getClass().getResourceAsStream("/datafile.txt");
+//            System.out.println("handler2");
+//            //BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//            Scanner sc = new Scanner(is);
+//            System.out.println("handler3");
+//            while(sc.hasNextLine()) {
+//                List<Integer> u = new LinkedList<Integer>();
+//                String s = sc.nextLine();
+//                String[] arr = s.split("#");
+//                for(int i=3; i<arr.length; i++) {
+//                    u.add(Integer.parseInt(arr[i]));
+//                }
+//                data.add(u);
+//            }
+
+
+
+            //System.out.println("Data: " + data);
+//            InputStream ist = getClass().getResourceAsStream("/recipelist.txt");
+//            //BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//            Scanner scs = new Scanner(ist);
+//            while(scs.hasNextLine()) {
+//                String str = scs.nextLine();
+//                recipes.add(str);
+//                //System.out.print(str);
+//            }
+            //for(int i=0; i<200; i++){
+            //    recipes.add("Recipe"+i);
+            //}
+            //System.out.println("Recipes: "+recipes);
+            //sc.close();
+//            scs.close();
+
+//        } catch (Exception e) {
+            //System.out.println("Error");
+//            e.printStackTrace();
+ //       }
+
+        List<Integer> userRecipes = map.get(userID);
+        List<List<Integer>> sol = recommendOnList(data, userRecipes);
+
+
+        //System.out.println(rlist);
+        for(int i=0; i<200; i++){
+            recipes.add(rlist.get(i).getTitle());
+        }
+
+
+
+        //Display results
+        return displayResults(sol, recipes, result);
+    }
+
+    public JSONObject displayResults(List<List<Integer>> list, List<String> recipes, JSONObject result) {
+        int len = list.size();
+        JSONObject obj = new JSONObject();
+        List<JSONObject> objs = new LinkedList<JSONObject>();
+        System.out.println(objs);
+        for(int i=0; i<len; i++) {
+            List<Integer> details = list.get(i);
+            JSONObject o = readJSONFile("/recommendresponse.json");
+            List<JSONObject> lis = new LinkedList<JSONObject>();
+            JSONObject ac = readJSONFile("/recaction.json");
+            ac.remove("value");
+            ac.put("value", details.get(0));
+            lis.add(ac);
+            o.put("actions", lis);
+            String answer = (details.get(1) + "% of the people who like \'" + recipes.get(details.get(2)) + "\' also like \'" + recipes.get(details.get(0)) + "\'");
+            o.remove("text");
+            o.put("text", answer);
+            objs.add(o);
+        }
+        System.out.println(obj);
+        obj.put("attachments", objs);
+        System.out.println(obj);
+        return obj;
+    }
+
+    public static List<Integer> recommendOnRecipe(List<List<Integer>> list, int recipe, List<Integer> userRecipes) {
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        int userwithrecipe = 0;
+        for(List<Integer> user: list) {
+            if(user.contains(recipe)) {
+                userwithrecipe++;
+                for(int item : user) {
+                    if(!userRecipes.contains(item)) {
+                        if(map.containsKey(item)) {
+                            int val = map.get(item);
+                            map.replace(item, val+1);
+                        }else {
+                            map.put(item, 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        int max_i = -1, max_count = 0;
+        for(int i : map.keySet()) {
+            if(i != recipe) {
+                if(map.get(i) > max_count) {
+                    max_i = i;
+                    max_count = map.get(i);
+                }
+            }
+        }
+
+        List<Integer> details = new LinkedList<Integer>();
+        if(max_count < 1) {
+            return details;
+        }
+        details.add(max_i);
+        int percentage = 100*max_count/userwithrecipe;
+        details.add(percentage);
+        details.add(recipe);
+        return details;
+    }
+
+    //list - sublists has the users who like the recipe at that index in the list.
+    //recipes - the list of recipes that the user likes.
+    public static List<List<Integer>> recommendOnList(List<List<Integer>> data, List<Integer> user_recipes) {
+        List<List<Integer>> solution = new LinkedList<List<Integer>>();
+        for(int recipe : user_recipes) {
+            List<Integer> details = recommendOnRecipe(data, recipe, user_recipes);
+            if(!details.isEmpty())
+                solution.add(details);
+        }
+        return solution;
+    }
+
 
 }

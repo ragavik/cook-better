@@ -1,0 +1,19 @@
+{
+  "text": "Do you like this recipe?",
+  "attachment_type":"default",
+  "callback_id":"ynbutton_callback",
+  "actions": [
+    {
+      "name": "nybutton",
+      "text": "Yes",
+      "type": "button",
+      "value": "yes"
+    },
+    {
+      "name": "nybutton",
+      "text": "No",
+      "type": "button",
+      "value": "no"
+    }
+  ]
+}

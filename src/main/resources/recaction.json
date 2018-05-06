@@ -1,0 +1,6 @@
+{
+  "name": "showrecipe",
+  "text": "Show the recipe",
+  "type": "button",
+  "value": "showrecipe"
+}
