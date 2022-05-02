@@ -113,7 +113,6 @@ public class  PersonalizeOptions {
     }*/
 
     public void submitPreferences(String response_url) throws Exception {
-
         Connection conn = DatabaseUtil.getConnection();
         String query = "";
         String selectQuery = "select * from personalize where userid = '"+this.userID + "'";

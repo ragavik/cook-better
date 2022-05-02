@@ -72,8 +72,8 @@ public class ResponseConstructionUtil {
     }
 
     public JSONObject surpriseMe(String userID) throws Exception {
-
         Connection conn = DatabaseUtil.getConnection();
+
         String query = "select * from data where title is not null";
 
         // Getting user's personalization conditions
