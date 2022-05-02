@@ -1,4 +1,4 @@
-# Cook Better
+# Cook Better Bot
 
 Cook Better is a Slack chat bot that recommends recipes based on available ingredients, and user's dietary and health restrictions.
 
@@ -26,6 +26,29 @@ Cook Better is a Slack chat bot that recommends recipes based on available ingre
 <li>This command suggests a random recipe every time (while keeping in mind your personalization criteria)!
 </ul>
 
+### /imagesearch
+<ul>
+ <li>Upload a photo of the ingredients you have & type this command to get recipes.
+ <li>Note: The last image you uploaded will be used for searching for recipes. If timeout occurs, try again in a while.
+</ul>
+
+### /suggest
+<ul>
+ <li>Use this command to search for recipes using natural language.
+ <li>Example: /suggest Show me chicken recipes
+ <li>Example: /suggest onion, tomato, chicken
+</ul>
+
+### /recipestats
+<ul>
+ <li>Use this command to get statistics of our recipes.
+</ul>
+
+### /addcomment
+<ul>
+ <li>Example: /addcomment {<i>Recipe Name</i>} <i>Your comment..</i> 
+</ul>
+
 ### /cookbetterhelp
 <ul>
 <li>Come back to this space in case you get stuck and to watch out for any new features we might add!
@@ -33,8 +56,7 @@ Cook Better is a Slack chat bot that recommends recipes based on available ingre
 
 ## Note
 <ul>
-<li>To test the chat bot join this <a href = "https://join.slack.com/t/cookbetter/shared_invite/enQtMzI3ODczNDA0Mjc1LTE3ZTdjZmNkZGYzMGQzMTM3ZjFlNGRjZDc5ZmYwMjkwOTRjNzZhOWFjZjJlMDYyMzNiZTQ1MmQ1NzE1ZDdmNzU">workspace</a> and try out the slash commands.
-<li>Evaluation results conducted for CSC 510 (Spring 2018) can be found <a href = "https://docs.google.com/spreadsheets/d/1fQGg2BpN0p5x_VaZ33qUwYhCCYA8SKHLrHzOEIC_n4E/edit#gid=1590162455">here</a>.
+<li>To test the chat bot join this <a href = "http://tiny.cc/g9jxsy">workspace</a> and try out the slash commands.
  </ul>
 
 ## Instructions

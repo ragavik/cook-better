@@ -1,4 +1,8 @@
 package com.bot.cookbetter.utils;
+import com.bot.cookbetter.version2.DatabaseUtil;
+import com.bot.cookbetter.version2.Ingredient;
+import com.bot.cookbetter.version2.Recipe;
+import com.bot.cookbetter.version2.RecommenderSystem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -7,10 +11,15 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class UserOptions {
     private String userID;
-    private String ing1, ing2, ing3;
+    private Set<Ingredient> ingredients;
+    //private String ing1, ing2, ing3;
     private String recipeType;
     private String specialOccasion;
     private boolean quickMeal;
@@ -19,9 +28,18 @@ public class UserOptions {
 
     public UserOptions(String userID) {
         this.userID = userID;
+        ingredients = new HashSet<>();
     }
 
-    public void setIngredient(int num, String value) {
+    public void setIngredients(String ingredient) {
+        this.ingredients.add(new Ingredient(ingredient));
+    }
+
+    public void setIngredientList(Set<Ingredient> ingredientset) {
+        this.ingredients = ingredientset;
+    }
+
+    /*public void setIngredient(int num, String value) {
         switch (num) {
             case 1:
                 this.ing1 = value;
@@ -33,7 +51,7 @@ public class UserOptions {
                 this.ing3 = value;
                 break;
         }
-    }
+    }*/
 
     public void setRecipeType(String value) {
         this.recipeType = value;
@@ -62,50 +80,30 @@ public class UserOptions {
         logger.info(this.specialOccasion);
     }*/
 
-    public void startSearch(String response_url) throws Exception {
+    public JSONObject startSearch(String response_url) throws Exception {
 
         // Error message when user does not select any ingredient
-        if(ing1 == null && ing2 == null && ing3 == null) {
-            JSONObject response = new JSONObject();
-            JSONArray attachments = new JSONArray();
-            JSONObject item = new JSONObject();
-            item.put("color", "#FF0000");
-            item.put("text", "Oops! Looks like you have not selected any ingredients. Please select at least 1 ingredient & try again!");
-            attachments.put(item);
-            response.put("attachments", attachments);
-            RequestHandlerUtil.getInstance().sendSlackResponse(response_url, response);
-            return;
+        if(this.ingredients.isEmpty()) {
+            ResponseConstructionUtil.getInstance().noIngredientsSelectedResponse(response_url);
+            return null;
         }
 
-        Class.forName("com.mysql.jdbc.Driver");
-        String connectionUrl = "jdbc:mysql://mydbinstance.ckzbitlijtbu.us-west-2.rds.amazonaws.com:3306/cookbetter?useUnicode=true&characterEncoding=UTF-8&user=cookbetter&password=cookbetter";
-        Connection conn = DriverManager.getConnection(connectionUrl);
+        Connection conn = DatabaseUtil.getConnection();
 
         boolean firstConditionSet = false;
 
         String query = "select * from data where";
-        if(ing1 != null) {
-            firstConditionSet = true;
-            query += " " + ing1 + " =1";
-        }
-        if(ing2 != null) {
-            if(firstConditionSet) {
-                query += " and " + ing2 + " =1";
+
+        for(Ingredient ingredient : ingredients) {
+            if(!firstConditionSet) {
+                firstConditionSet = true;
+                query += " " + ingredient.getName() + " = 1";
             }
             else {
-                firstConditionSet = true;
-                query += " " + ing2 + " =1";
+                query += " and " + ingredient.getName() + " = 1";
             }
         }
-        if(ing3 != null) {
-            if(firstConditionSet) {
-                query += " and " + ing3 + " =1";
-            }
-            else {
-                firstConditionSet = true;
-                query += " " + ing3 + " =1";
-            }
-        }
+
         if(quickMeal)
             query+= " and col_22_minute_meals = 1";
         if(recipeType != null)
@@ -182,28 +180,56 @@ public class UserOptions {
 
         ResultSet rs = conn.prepareStatement(query).executeQuery();
         JSONObject jsonObject = new JSONObject();
-        String result = "";
-        int resultCount = 0;
-        while(rs.next()){
-            resultCount++;
-            String id = rs.getString(1); // Unused for now
-            String title = rs.getString(2);
 
-            result+="<";
+        List<Recipe> recipes = new ArrayList<>();
+        recipes = new RecommenderSystem().recommend(this.ingredients);
+        /*while(rs.next()){
+
+            Recipe recipe = new Recipe();
+            int ID = rs.getInt(1); // Unused for now
+            String name = rs.getString(2);
+            double rating = rs.getDouble("rating");
+            recipe.setID(ID);
+            recipe.setName(name);
+            recipe.setRating(rating);
+            recipes.add(recipe);
+
+            /*result+="<";
             String link = "https://www.epicurious.com/search/";
-            String modTitle = title.replaceAll(" ", "%20");
+            String modTitle = name.replaceAll(" ", "%20");
             link+=modTitle+"%20";
-            result+= link + "|"+title+"> \n";
-        }
+            result+= link + "|"+name+"> \n";*/
+        /*}*/
 
+
+        logger.info("RESULT SET SIZE = " + recipes.size());
+
+        jsonObject.put("text", ":pushpin: Here are your search results!");
+        JSONArray attachments = new JSONArray();
         // Error message when no recipes are found
-        if(resultCount == 0) {
-            result = "Sorry, we couldn't find any recipes based on your search criteria right now.:worried:\nWe are working on adding more recipes *very* soon!\nPlease try searching again with different ingredients!";
+        if(recipes.isEmpty()) {
+
+            JSONObject item = new JSONObject();
+            item.put("color", "#FF0000");
+            item.put("text", "Sorry, we couldn't find any recipes based on your search criteria right now.:worried:\nWe are working on adding more recipes *very* soon!\nPlease try searching again with different ingredients!");
+            attachments.put(item);
         }
 
-        logger.info(result);
-        jsonObject.put("text",result);
-        RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);
+        else {
+
+            for(Recipe recipe : recipes) {
+                JSONObject recipeResponse = ResponseConstructionUtil.getInstance().constructRecipeResponse(recipe);
+                attachments.put(recipeResponse);
+            }
+
+        }
+        jsonObject.put("attachments", attachments);
+
+        if(response_url != null) {
+            RequestHandlerUtil.getInstance().sendSlackResponse(response_url,jsonObject);
+        }
+        conn.close();
+        return jsonObject;
     }
 
 }
